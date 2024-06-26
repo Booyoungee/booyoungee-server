@@ -1,0 +1,46 @@
+version: '1.0'
+
+services:
+  backend:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.Backend
+    container_name: booyoungee-server-1
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./src:/app/src
+      - ./gradle:/app/gradle
+      - ./build:/app/build
+      - ./gradlew:/app/gradlew
+      - ./gradlew.bat:/app/gradlew.bat
+      - ./build.gradle:/app/build.gradle
+      - ./settings.gradle:/app/settings.gradle
+    env_file:
+      - .env
+    environment:
+      - DB.URL=${DB_URL}
+      - DB.USERNAME=${DB_USERNAME}
+      - DB.PASSWORD=${DB_PASSWORD}
+    restart: always
+
+  mysql:
+    image: mysql:5.7
+    container_name: booyoungee-db-1
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql-db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+
+volumes:
+  booyoungee-db-1:
