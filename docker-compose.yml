@@ -37,10 +37,10 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - mysql-db:/var/lib/mysql
+      - booyoungee-db:/var/lib/mysql
     ports:
       - "3306:3306"
     restart: always
 
 volumes:
-  booyoungee-db-1:
+  booyoungee-db:
