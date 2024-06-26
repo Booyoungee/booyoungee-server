@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile.Backend
     container_name: booyoungee-server-1
     ports:
-      - "8082:8082"
+      - "8282:8282"
     volumes:
       - ./src:/app/src
       - ./gradle:/app/gradle
@@ -27,7 +27,7 @@ services:
     restart: always
 
   mysql:
-    image: mysql:5.7
+    image: mysql:latest
     container_name: booyoungee-db-1
     env_file:
       - .env
