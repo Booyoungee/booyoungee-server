@@ -19,3 +19,7 @@ server:
 logging:
   level:
     org.springframework.security: INFO
+
+kakao:
+  api:
+    key: ${KAKAO.API.KEY}
