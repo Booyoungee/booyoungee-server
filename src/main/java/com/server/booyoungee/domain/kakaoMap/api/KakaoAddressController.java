@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.kakaoMap.application.KakaoAddressSearchService;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoApiResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
+import com.server.booyoungee.domain.kakaoMap.dto.KakaoTransCoordResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,5 +47,14 @@ public class KakaoAddressController {
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
 		return kakaoAddressSearchService.searchByKeyword(query, x, y, radius, page, size);
+	}
+
+	@GetMapping("/geo/transcoord")
+	public KakaoTransCoordResponseDto transCoord(
+		@RequestParam double x,
+		@RequestParam double y,
+		@RequestParam String inputCoord,
+		@RequestParam String outputCoord) {
+		return kakaoAddressSearchService.transCoord(x, y, inputCoord, outputCoord);
 	}
 }

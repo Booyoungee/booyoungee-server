@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoApiResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
+import com.server.booyoungee.domain.kakaoMap.dto.KakaoTransCoordResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -92,5 +93,15 @@ public class KakaoAddressSearchService {
 			.queryParam("size", size);
 
 		return callKakaoApi("/search/category.json", uriBuilder, KakaoKeywordResponseDto.class);
+	}
+
+	public KakaoTransCoordResponseDto transCoord(double x, double y, String inputCoord, String outputCoord) {
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
+			.queryParam("x", x)
+			.queryParam("y", y)
+			.queryParam("input_coord", inputCoord)
+			.queryParam("output_coord", outputCoord);
+
+		return callKakaoApi("/geo/transcoord.json", uriBuilder, KakaoTransCoordResponseDto.class);
 	}
 }
