@@ -39,3 +39,6 @@ springdoc:
     doc-expansion: none
   paths-to-match:
     - /api/**
+movies:
+  api:
+    key: ${TMDB.API.KEY}
