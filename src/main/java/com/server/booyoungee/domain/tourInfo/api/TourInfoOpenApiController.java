@@ -37,8 +37,8 @@ public class TourInfoOpenApiController {
 	@GetMapping("/location")
 	@Operation(summary = "국문 관광정보 Open API 위치기반 검색 (mapY : 129, mapX : 35, radius : 20000(20km))")
 	public ResponseEntity<?> getOpenApiInfoByLocation(
-		@RequestParam int numOfRows,
-		@RequestParam int pageNo,
+		@RequestParam(defaultValue = "10") int numOfRows,
+		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String mapX,
 		@RequestParam String mapY,
 		@RequestParam String radius
@@ -64,8 +64,8 @@ public class TourInfoOpenApiController {
 	@GetMapping("/keyword")
 	@Operation(summary = "국문 관광정보 Open API 부산 키워드 전체 검색")
 	public ResponseEntity<?> getOpenApiInfoByKeyword(
-		@RequestParam int numOfRows,
-		@RequestParam int pageNo,
+		@RequestParam(defaultValue = "10") int numOfRows,
+		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String keyword
 	) {
 		String encodedKeyword =  URLEncoder.encode(keyword, StandardCharsets.UTF_8);
@@ -89,8 +89,8 @@ public class TourInfoOpenApiController {
 	@GetMapping("/festival")
 	@Operation(summary = "국문 관광정보 Open API 부산 행사 정보 검색")
 	public ResponseEntity<?> getOpenApiInfoByFestival(
-		@RequestParam String numOfRows,
-		@RequestParam String pageNo,
+		@RequestParam(defaultValue = "10") int numOfRows,
+		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String eventStartDate,
 		@RequestParam(required = false) String eventEndDate
 	) {
@@ -114,8 +114,8 @@ public class TourInfoOpenApiController {
 	@GetMapping("/stay")
 	@Operation(summary = "국문 관광정보 Open API 부산 숙박 정보 검색")
 	public ResponseEntity<?> getOpenApiInfoByStay(
-		@RequestParam String numOfRows,
-		@RequestParam String pageNo
+		@RequestParam(defaultValue = "10") int numOfRows,
+		@RequestParam(defaultValue = "0") int pageNo
 	) {
 		String url = baseUrl
 			+ "/searchStay1"
@@ -135,8 +135,8 @@ public class TourInfoOpenApiController {
 	@GetMapping("/info")
 	@Operation(summary = "국문 관광정보 Open API 부산 관광 정보 검색")
 	public ResponseEntity<?> getOpenApiInfoByAreaCode(
-		@RequestParam String numOfRows,
-		@RequestParam String pageNo
+		@RequestParam(defaultValue = "10") int numOfRows,
+		@RequestParam(defaultValue = "0") int pageNo
 	) {
 		String url = baseUrl
 			+ "/areaBasedList1"
