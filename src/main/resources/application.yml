@@ -24,6 +24,11 @@ kakao:
   api:
     key: ${KAKAO.API.KEY}
 
+tourInfo:
+  base_url: ${TOURINFO.URL}
+  service_key: ${TOURINFO.KEY}
+  data_format: ${TOURINFO.FORMAT}
+
 
 springdoc:
   api-docs:
@@ -39,6 +44,7 @@ springdoc:
     doc-expansion: none
   paths-to-match:
     - /api/**
+
 movies:
   api:
     key: ${TMDB.API.KEY}
