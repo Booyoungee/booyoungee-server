@@ -7,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoApiResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
@@ -26,82 +25,93 @@ public class KakaoAddressSearchService {
 
 	private final String baseUrl = "https://dapi.kakao.com/v2/local";
 
-	private <T> T callKakaoApi(String endpoint, UriComponentsBuilder uriBuilder, Class<T> responseType) {
-		String url = uriBuilder.path(endpoint).toUriString();
-
+	private <T> T callKakaoApi(String url, Class<T> responseType) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "KakaoAK " + apiKey);
-
 		HttpEntity<String> entity = new HttpEntity<>(headers);
-
 		ResponseEntity<T> response = restTemplate.exchange(
 			url,
 			HttpMethod.GET,
 			entity,
 			responseType
 		);
-
+		System.out.println(url);
 		return response.getBody();
 	}
 
 	public KakaoApiResponseDto searchAddress(String query, int page, int size) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
-			.queryParam("query", query)
-			.queryParam("page", page)
-			.queryParam("size", size)
-			.queryParam("analyze_type", "similar");
+		//String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+		String url = baseUrl
+			+ "/search/address.json"
+			+ "?query=" + query
+			+ "&page=" + page
+			+ "&size=" + size
+			+ "&analyze_type=similar";
 
-		return callKakaoApi("/search/address.json", uriBuilder, KakaoApiResponseDto.class);
+		return callKakaoApi(url, KakaoApiResponseDto.class);
 	}
 
 	public KakaoApiResponseDto coordToRegionCode(double x, double y) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
-			.queryParam("x", x)
-			.queryParam("y", y);
+		String url = baseUrl
+			+ "/geo/coord2regioncode.json"
+			+ "?x=" + x
+			+ "&y=" + y;
 
-		return callKakaoApi("/geo/coord2regioncode.json", uriBuilder, KakaoApiResponseDto.class);
+		return callKakaoApi(url, KakaoApiResponseDto.class);
 	}
 
 	public KakaoApiResponseDto coordToAddress(double x, double y) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
-			.queryParam("x", x)
-			.queryParam("y", y);
+		String url = baseUrl
+			+ "/geo/coord2address.json"
+			+ "?x=" + x
+			+ "&y=" + y;
 
-		return callKakaoApi("/geo/coord2address.json", uriBuilder, KakaoApiResponseDto.class);
+		return callKakaoApi(url, KakaoApiResponseDto.class);
 	}
 
 	public KakaoKeywordResponseDto searchByKeyword(String query, double x, double y, int radius, int page, int size) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
-			.queryParam("query", query)
-			.queryParam("x", x)
-			.queryParam("y", y)
-			.queryParam("radius", radius)
-			.queryParam("page", page)
-			.queryParam("size", size);
+		String location;
+		if (x != -9999) {
+			location = ""
+				+ "&x=" + x
+				+ "&y=" + y
+				+ "&radius=" + radius;
+		} else {
+			location = "";
+		}
 
-		return callKakaoApi("/search/keyword.json", uriBuilder, KakaoKeywordResponseDto.class);
+		String url = baseUrl
+			+ "/search/keyword.json"
+			+ "?query=" + query
+			+ location
+			+ "&page=" + page
+			+ "&size=" + size
+			+ "&analyze_type=similar";
+		return callKakaoApi(url, KakaoKeywordResponseDto.class);
 	}
 
 	public KakaoKeywordResponseDto searchByCategory(String categoryGroupCode, double x, double y, int radius, int page,
 		int size) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
-			.queryParam("category_group_code", categoryGroupCode)
-			.queryParam("x", x)
-			.queryParam("y", y)
-			.queryParam("radius", radius)
-			.queryParam("page", page)
-			.queryParam("size", size);
+		String url = baseUrl
+			+ "/search/category.json"
+			+ "?category_group_code=" + categoryGroupCode
+			+ "&x=" + x
+			+ "&y=" + y
+			+ "&radius=" + radius
+			+ "&page=" + page
+			+ "&size=" + size;
 
-		return callKakaoApi("/search/category.json", uriBuilder, KakaoKeywordResponseDto.class);
+		return callKakaoApi(url, KakaoKeywordResponseDto.class);
 	}
 
 	public KakaoTransCoordResponseDto transCoord(double x, double y, String inputCoord, String outputCoord) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl)
-			.queryParam("x", x)
-			.queryParam("y", y)
-			.queryParam("input_coord", inputCoord)
-			.queryParam("output_coord", outputCoord);
+		String url = baseUrl
+			+ "/geo/transcoord.json"
+			+ "?x=" + x
+			+ "&y=" + y
+			+ "&input_coord=" + inputCoord
+			+ "&output_coord=" + outputCoord;
 
-		return callKakaoApi("/geo/transcoord.json", uriBuilder, KakaoTransCoordResponseDto.class);
+		return callKakaoApi(url, KakaoTransCoordResponseDto.class);
 	}
 }

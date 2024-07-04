@@ -41,8 +41,8 @@ public class KakaoAddressController {
 	@GetMapping("/search/keyword")
 	public KakaoKeywordResponseDto searchByKeyword(
 		@RequestParam String query,
-		@RequestParam double x,
-		@RequestParam double y,
+		@RequestParam(defaultValue = "-9999") double x,
+		@RequestParam(defaultValue = "-9999") double y,
 		@RequestParam(defaultValue = "20000") int radius,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
@@ -53,8 +53,8 @@ public class KakaoAddressController {
 	public KakaoTransCoordResponseDto transCoord(
 		@RequestParam double x,
 		@RequestParam double y,
-		@RequestParam String inputCoord,
-		@RequestParam String outputCoord) {
+		@RequestParam(defaultValue = "WGS84") String inputCoord,
+		@RequestParam(defaultValue = "WGS84") String outputCoord) {
 		return kakaoAddressSearchService.transCoord(x, y, inputCoord, outputCoord);
 	}
 }
