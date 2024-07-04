@@ -47,9 +47,8 @@ public class TourInfoOpenApiController {
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String keyword
 	) {
-		String encodedKeyword =  URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		Object jsonResult = tourInfoOpenApiService
-			.getTourInfoByKeyword(numOfRows, pageNo, encodedKeyword);
+			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
 
 		return ResponseEntity.ok(jsonResult);
 	}

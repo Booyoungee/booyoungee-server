@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,7 @@ public class TourInfoOpenApiService {
 	}
 
 	public Object getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
+		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		String requestUrl = baseUrl
 			+ "/searchKeyword1"
 			+ "?ServiceKey=" + serviceKey
@@ -52,7 +55,7 @@ public class TourInfoOpenApiService {
 			+ "&pageNo=" + pageNo
 			+ "&MobileOS=AND"
 			+ "&MobileApp=booyoungee"
-			+ "&keyword=" + keyword
+			+ "&keyword=" + encodedKeyword
 			+ "&areaCode=" + "6" // 부산 지역코드 : 6
 			+ "&_type=" + _type;
 
