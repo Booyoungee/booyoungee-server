@@ -8,11 +8,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +40,7 @@ public class TourInfoOpenApiService {
 	@Value("${tourInfo.format}")
 	private String _type;
 
-	public Object getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) {
+	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) throws IOException {
 		String requestUrl = baseUrl
 			+ "/locationBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -43,10 +53,11 @@ public class TourInfoOpenApiService {
 			+ "&mapY=" + mapY
 			+ "&radius=" + radius;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
 	}
 
-	public Object getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
+	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) throws IOException {
 		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		String requestUrl = baseUrl
 			+ "/searchKeyword1"
@@ -59,10 +70,11 @@ public class TourInfoOpenApiService {
 			+ "&areaCode=" + "6" // 부산 지역코드 : 6
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
 	}
 
-	public Object getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate, String eventEndDate) {
+	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate, String eventEndDate) throws IOException {
 		String requestUrl = baseUrl
 			+ "/searchFestival1"
 			+ "?ServiceKey=" + serviceKey
@@ -75,10 +87,11 @@ public class TourInfoOpenApiService {
 			+ "&areaCode=" + "6" // 부산 지역코드 : 6
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
 	}
 
-	public Object getTourInfoByStay(int numOfRows, int pageNo) {
+	public List<TourInfoStayResponseDto> getTourInfoByStay(int numOfRows, int pageNo) throws IOException {
 		String requestUrl = baseUrl
 			+ "/searchStay1"
 			+ "?ServiceKey=" + serviceKey
@@ -89,10 +102,11 @@ public class TourInfoOpenApiService {
 			+ "&areaCode=" + "6" // 부산 지역코드 : 6
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoStayResponseDto[].class));
 	}
 
-	public Object getTourInfoByAreaCode(int numOfRows, int pageNo) {
+	public List<TourInfoAreaResponseDto> getTourInfoByAreaCode(int numOfRows, int pageNo) throws IOException {
 		String requestUrl = baseUrl
 			+ "/areaBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -103,10 +117,11 @@ public class TourInfoOpenApiService {
 			+ "&areaCode=" + "6" // 부산 지역코드 : 6
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoAreaResponseDto[].class));
 	}
 
-	public Object getCommonInfoByContentId(String contentId) {
+	public List<TourInfoDetailsResponseDto> getCommonInfoByContentId(String contentId) throws IOException {
 		String requestUrl = baseUrl
 			+ "/detailCommon1"
 			+ "?ServiceKey=" + serviceKey
@@ -122,10 +137,12 @@ public class TourInfoOpenApiService {
 			+ "&overviewYN=" + "Y"
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoDetailsResponseDto[].class));
 	}
 
-	public Object getIntroInfoByContentId(String contentId, String contentTypeId) {
+	public List<TourInfoIntroResponseDto> getIntroInfoByContentId(String contentId, String contentTypeId) throws
+		IOException {
 		String requestUrl = baseUrl
 			+ "/detailIntro1"
 			+ "?ServiceKey=" + serviceKey
@@ -135,10 +152,11 @@ public class TourInfoOpenApiService {
 			+ "&MobileApp=booyoungee"
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoIntroResponseDto[].class));
 	}
 
-	public Object getImageInfoByContentId(String contentId) {
+	public List<TourInfoImageResponseDto> getImageInfoByContentId(String contentId) throws IOException {
 		String requestUrl = baseUrl
 			+ "/detailImage1"
 			+ "?ServiceKey=" + serviceKey
@@ -149,11 +167,12 @@ public class TourInfoOpenApiService {
 			+ "&subImageYN=" + "Y"
 			+ "&_type=" + _type;
 
-		return getTourInfo(requestUrl);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoImageResponseDto[].class));
 	}
 
-	public Object getAreaCode() {
-		String url = baseUrl
+	public List<TourInfoAreaCodeResponseDto> getAreaCode() throws IOException {
+		String requestUrl = baseUrl
 			+ "/areaCode1"
 			+ "?ServiceKey=" + serviceKey
 			+ "&MobileOS=AND"
@@ -161,29 +180,32 @@ public class TourInfoOpenApiService {
 			+ "&areaCode=" + "6" // 부산 지역코드 : 6
 			+ "&_type=" + _type;
 
-		return getTourInfo(url);
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoAreaCodeResponseDto[].class));
 	}
 
-	private Object getTourInfo(String url) {
+	private JsonNode getTourInfo(String url) throws IOException {
 		HttpURLConnection urlConnection = null;
-		Object jsonResult = null;
-		InputStream stream;
+		InputStream stream = null;
 		String result;
+		JsonNode jsonResult = null;
 
 		try {
 			URL requestUrl = new URL(url);
-
-			urlConnection = (HttpURLConnection)requestUrl.openConnection();
+			urlConnection = (HttpURLConnection) requestUrl.openConnection();
 			stream = getNetworkConnection(urlConnection);
 			result = readStreamToString(stream);
 
-			jsonResult = objectMapper.readValue(result, Object.class);
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode rootNode = objectMapper.readTree(result);
+			jsonResult = rootNode.path("response").path("body").path("items").path("item");
 
-			if (stream != null)
-				stream.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
+			if (stream != null) {
+				stream.close();
+			}
 			if (urlConnection != null) {
 				urlConnection.disconnect();
 			}
@@ -218,4 +240,5 @@ public class TourInfoOpenApiService {
 
 		return result.toString();
 	}
+
 }
