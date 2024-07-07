@@ -69,7 +69,8 @@ public class KakaoAddressSearchService {
 		return callKakaoApi(url, KakaoApiResponseDto.class);
 	}
 
-	public KakaoKeywordResponseDto searchByKeyword(String query, double x, double y, int radius, int page, int size) {
+	public KakaoKeywordResponseDto searchByKeywordWithRadius(String query, double x, double y, int radius, int page,
+		int size) {
 		String location;
 		if (x != -9999) {
 			location = ""
@@ -84,6 +85,17 @@ public class KakaoAddressSearchService {
 			+ "/search/keyword.json"
 			+ "?query=" + query
 			+ location
+			+ "&page=" + page
+			+ "&size=" + size
+			+ "&analyze_type=similar";
+		return callKakaoApi(url, KakaoKeywordResponseDto.class);
+	}
+
+	public KakaoKeywordResponseDto searchByKeyword(String query, int page, int size) {
+
+		String url = baseUrl
+			+ "/search/keyword.json"
+			+ "?query=" + query
 			+ "&page=" + page
 			+ "&size=" + size
 			+ "&analyze_type=similar";
@@ -114,4 +126,5 @@ public class KakaoAddressSearchService {
 
 		return callKakaoApi(url, KakaoTransCoordResponseDto.class);
 	}
+
 }
