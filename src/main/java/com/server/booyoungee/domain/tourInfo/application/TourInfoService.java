@@ -51,6 +51,6 @@ public class TourInfoService {
 	}
 
 	private TourInfo findById(String contentId) {
-		return tourInfoRepository.findById(contentId).orElse(null);
+		return tourInfoRepository.findById(contentId).orElseThrow(() -> new IllegalArgumentException("해당 관광 정보가 존재하지 않습니다."));
 	}
 }

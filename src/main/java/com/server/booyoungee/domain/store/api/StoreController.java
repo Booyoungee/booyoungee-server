@@ -1,15 +1,12 @@
 package com.server.booyoungee.domain.store.api;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.store.application.StoreService;
-import com.server.booyoungee.domain.store.dto.StoreResponseDto;
+import com.server.booyoungee.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +17,12 @@ public class StoreController {
 	private final StoreService storeService;
 
 	@GetMapping("/name")
-	public ResponseEntity<List<StoreResponseDto>> getStoresByName(@RequestParam String name) {
-		return ResponseEntity.ok(storeService.getStoreByName(name));
+	public ApiResponse<?> getStoresByName(@RequestParam String name) {
+		return ApiResponse.success(storeService.getStoreByName(name));
 	}
 
 	@GetMapping("/district")
-	public ResponseEntity<List<StoreResponseDto>> getStoresByDistrict(@RequestParam String district) {
-		return ResponseEntity.ok(storeService.getStoreByDistrict(district));
+	public ApiResponse<?> getStoresByDistrict(@RequestParam String district) {
+		return ApiResponse.success(storeService.getStoreByDistrict(district));
 	}
 }
