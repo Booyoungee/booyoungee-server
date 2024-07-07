@@ -9,6 +9,7 @@ import com.server.booyoungee.domain.kakaoMap.application.KakaoAddressSearchServi
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoApiResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoTransCoordResponseDto;
+import com.server.booyoungee.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,42 +20,54 @@ public class KakaoAddressController {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 
 	@GetMapping("/search/address")
-	public KakaoApiResponseDto searchAddress(@RequestParam String query, @RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		return kakaoAddressSearchService.searchAddress(query, page, size);
+	public ApiResponse<?> searchAddress(
+		@RequestParam String query,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		KakaoApiResponseDto kakaoApiResponseDto = kakaoAddressSearchService.searchAddress(query, page, size);
+		return ApiResponse.success(kakaoApiResponseDto);
 	}
 
 	@GetMapping("/geo/coord2regioncode")
-	public KakaoApiResponseDto getRegionCode(
+	public ApiResponse<?> getRegionCode(
 		@RequestParam double x,
-		@RequestParam double y) {
-		return kakaoAddressSearchService.coordToRegionCode(x, y);
+		@RequestParam double y
+	) {
+		KakaoApiResponseDto kakaoApiResponseDto = kakaoAddressSearchService.coordToRegionCode(x, y);
+		return ApiResponse.success(kakaoApiResponseDto);
 	}
 
 	@GetMapping("/geo/coord2address")
-	public KakaoApiResponseDto getAddress(
+	public ApiResponse<?> getAddress(
 		@RequestParam double x,
-		@RequestParam double y) {
-		return kakaoAddressSearchService.coordToAddress(x, y);
+		@RequestParam double y
+	) {
+		KakaoApiResponseDto kakaoApiResponseDto = kakaoAddressSearchService.coordToAddress(x, y);
+		return ApiResponse.success(kakaoApiResponseDto);
 	}
 
 	@GetMapping("/search/keyword")
-	public KakaoKeywordResponseDto searchByKeyword(
+	public ApiResponse<?> searchByKeyword(
 		@RequestParam String query,
 		@RequestParam(defaultValue = "-9999") double x,
 		@RequestParam(defaultValue = "-9999") double y,
 		@RequestParam(defaultValue = "20000") int radius,
 		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		return kakaoAddressSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size);
+		@RequestParam(defaultValue = "10") int size
+	) {
+		KakaoKeywordResponseDto kakaoKeywordResponseDto = kakaoAddressSearchService.searchByKeyword(query, x, y, radius, page, size);
+		return ApiResponse.success(kakaoKeywordResponseDto);
 	}
 
 	@GetMapping("/geo/transcoord")
-	public KakaoTransCoordResponseDto transCoord(
+	public ApiResponse<?> transCoord(
 		@RequestParam double x,
 		@RequestParam double y,
 		@RequestParam(defaultValue = "WGS84") String inputCoord,
-		@RequestParam(defaultValue = "WGS84") String outputCoord) {
-		return kakaoAddressSearchService.transCoord(x, y, inputCoord, outputCoord);
+		@RequestParam(defaultValue = "WGS84") String outputCoord
+	) {
+		KakaoTransCoordResponseDto kakaoTransCoordResponseDto = kakaoAddressSearchService.transCoord(x, y, inputCoord, outputCoord);
+		return ApiResponse.success(kakaoTransCoordResponseDto);
 	}
 }

@@ -2,7 +2,6 @@ package com.server.booyoungee.domain.tourInfo.api;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
+import com.server.booyoungee.global.common.ApiResponse;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
@@ -32,8 +32,8 @@ public class TourInfoOpenApiController {
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	@GetMapping("/location")
-	@Operation(summary = "국문 관광정보 Open API 위치기반 검색 (mapX : 129, mapY : 35, radius : 20000(20km))")
-	public ResponseEntity<?> getOpenApiInfoByLocation(
+	@Operation(summary = "국문 관광정보 Open API 위치기반 검색 (mapY : 129, mapX : 35, radius : 20000(20km))")
+	public ApiResponse<?> getOpenApiInfoByLocation(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String mapX,
@@ -43,12 +43,12 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponseDto> jsonResult = tourInfoOpenApiService
 			.getTourInfoByLocation(numOfRows, pageNo, mapX, mapY, radius);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/keyword")
 	@Operation(summary = "국문 관광정보 Open API 부산 키워드 전체 검색")
-	public ResponseEntity<?> getOpenApiInfoByKeyword(
+	public ApiResponse<?> getOpenApiInfoByKeyword(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String keyword
@@ -56,12 +56,12 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponseDto> jsonResult = tourInfoOpenApiService
 			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/festival")
 	@Operation(summary = "국문 관광정보 Open API 부산 행사 정보 검색")
-	public ResponseEntity<?> getOpenApiInfoByFestival(
+	public ApiResponse<?> getOpenApiInfoByFestival(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String eventStartDate,
@@ -70,19 +70,19 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponseDto> jsonResult = tourInfoOpenApiService.getTourInfoByFestival(
 			numOfRows, pageNo, eventStartDate, eventEndDate);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/stay")
 	@Operation(summary = "국문 관광정보 Open API 부산 숙박 정보 검색")
-	public ResponseEntity<?> getOpenApiInfoByStay(
+	public ApiResponse<?> getOpenApiInfoByStay(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo
 	) throws IOException {
 		List<TourInfoStayResponseDto> jsonResult = tourInfoOpenApiService
 			.getTourInfoByStay(numOfRows, pageNo);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/info")
@@ -99,19 +99,19 @@ public class TourInfoOpenApiController {
 
 	@GetMapping("/detail/common")
 	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 공통 정보 조회 (ex. contentId : 2786391)")
-	public ResponseEntity<?> getOpenApiCommonInfoByContentId(
+	public ApiResponse<?> getOpenApiCommonInfoByContentId(
 		@RequestParam String contentId
 	) throws IOException {
 		List<TourInfoDetailsResponseDto> jsonResult = tourInfoOpenApiService
 			.getCommonInfoByContentId(contentId);
 		tourInfoService.viewContent(contentId);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/detail/intro")
 	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 소개 정보 조회 (ex. contentId : 2786391, contentTypeId : 15)")
-	public ResponseEntity<?> getOpenApiIntroInfoByContentId(
+	public ApiResponse<?> getOpenApiIntroInfoByContentId(
 		@RequestParam String contentId,
 		@RequestParam String contentTypeId
 	) throws IOException {
@@ -119,28 +119,28 @@ public class TourInfoOpenApiController {
 			.getIntroInfoByContentId(contentId, contentTypeId);
 		tourInfoService.viewContent(contentId);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/detail/image")
 	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 이미지 정보 조회 (ex. contentId : 2786391)")
-	public ResponseEntity<?> getOpenApiImageByContentId(
+	public ApiResponse<?> getOpenApiImageByContentId(
 		@RequestParam String contentId
 	) throws IOException {
 		List<TourInfoImageResponseDto> jsonResult = tourInfoOpenApiService
 			.getImageInfoByContentId(contentId);
 		tourInfoService.viewContent(contentId);
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 	@GetMapping("/areaCode")
 	@Operation(summary = "국문 관광정보 Open API 부산 지역 코드 조회")
-	public ResponseEntity<?> getOpenApiAreaCode() throws IOException {
-		List<TourInfoAreaCodeResponseDto> jsonResult = tourInfoOpenApiService
+	public ApiResponse<?> getOpenApiAreaCode() {
+		Object jsonResult = tourInfoOpenApiService
 			.getAreaCode();
 
-		return ResponseEntity.ok(jsonResult);
+		return ApiResponse.success(jsonResult);
 	}
 
 }
