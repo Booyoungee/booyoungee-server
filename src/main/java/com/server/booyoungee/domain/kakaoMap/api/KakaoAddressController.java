@@ -46,7 +46,7 @@ public class KakaoAddressController {
 		@RequestParam(defaultValue = "20000") int radius,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		return kakaoAddressSearchService.searchByKeyword(query, x, y, radius, page, size);
+		return kakaoAddressSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size);
 	}
 
 	@GetMapping("/geo/transcoord")
