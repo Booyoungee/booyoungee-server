@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.tourInfo.api;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,14 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
-import com.server.booyoungee.global.common.ApiResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
+import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -136,9 +136,8 @@ public class TourInfoOpenApiController {
 
 	@GetMapping("/areaCode")
 	@Operation(summary = "국문 관광정보 Open API 부산 지역 코드 조회")
-	public ApiResponse<?> getOpenApiAreaCode() {
-		Object jsonResult = tourInfoOpenApiService
-			.getAreaCode();
+	public ApiResponse<?> getOpenApiAreaCode() throws IOException {
+		Object jsonResult = tourInfoOpenApiService.getAreaCode();
 
 		return ApiResponse.success(jsonResult);
 	}
