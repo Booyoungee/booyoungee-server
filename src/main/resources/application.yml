@@ -14,7 +14,14 @@ spring:
     open-in-view: false
 
 server:
-  port: 8282
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: ${SSL_STORE}
+    key-store-password: ${SSL_PASSWORD}
+    key-store-type: ${SSL_STORE_TYPE}
+    key-alias: tomcat
+
 
 logging:
   level:
@@ -48,3 +55,5 @@ springdoc:
 movies:
   api:
     key: ${TMDB.API.KEY}
+
+
