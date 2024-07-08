@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.server.booyoungee.domain.tourInfo.dao.TourInfoRepository;
 import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
+import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
 
 @Repository
 @SuppressWarnings("deprecation")
@@ -41,6 +42,11 @@ public class FakeTourInfoRepository implements TourInfoRepository {
 	@Override
 	public List<TourInfo> findAll() {
 		return new ArrayList<>(database.values());
+	}
+
+	@Override
+	public List<TourInfo> findAllByTypes(TourContentType type) {
+		return null;
 	}
 
 	@Override

@@ -10,4 +10,5 @@ import lombok.Getter;
 public class TourInfoResponseDto {
 	private String contentId;
 	private Long views;
+	private String description;
 }
