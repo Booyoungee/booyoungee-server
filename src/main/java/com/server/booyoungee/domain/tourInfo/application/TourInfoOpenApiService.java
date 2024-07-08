@@ -40,7 +40,8 @@ public class TourInfoOpenApiService {
 	@Value("${tourInfo.format}")
 	private String _type;
 
-	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) throws IOException {
+	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY,
+		String radius) throws IOException {
 		String requestUrl = baseUrl
 			+ "/locationBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -57,7 +58,8 @@ public class TourInfoOpenApiService {
 		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) throws IOException {
+	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) throws
+		IOException {
 		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		String requestUrl = baseUrl
 			+ "/searchKeyword1"
@@ -74,7 +76,8 @@ public class TourInfoOpenApiService {
 		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate, String eventEndDate) throws IOException {
+	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate,
+		String eventEndDate) throws IOException {
 		String requestUrl = baseUrl
 			+ "/searchFestival1"
 			+ "?ServiceKey=" + serviceKey
@@ -184,7 +187,7 @@ public class TourInfoOpenApiService {
 		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoAreaCodeResponseDto[].class));
 	}
 
-	private JsonNode getTourInfo(String url) throws IOException {
+	public JsonNode getTourInfo(String url) throws IOException {
 		HttpURLConnection urlConnection = null;
 		InputStream stream = null;
 		String result;
@@ -192,7 +195,7 @@ public class TourInfoOpenApiService {
 
 		try {
 			URL requestUrl = new URL(url);
-			urlConnection = (HttpURLConnection) requestUrl.openConnection();
+			urlConnection = (HttpURLConnection)requestUrl.openConnection();
 			stream = getNetworkConnection(urlConnection);
 			result = readStreamToString(stream);
 
