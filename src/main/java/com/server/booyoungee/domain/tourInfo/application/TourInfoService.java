@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.tourInfo.dao.TourInfoRepository;
 import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
+import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,17 @@ public class TourInfoService {
 		TourInfo tourInfo = findById(contentId);
 		if (tourInfo == null) {
 			saveContent(contentId);
-		}else {
+		} else {
+			tourInfo.increaseViewCount();
+			tourInfoRepository.save(tourInfo);
+		}
+	}
+
+	public void viewContent(String contentId, String contentTypeId) {
+		TourInfo tourInfo = findById(contentId, contentTypeId);
+		if (tourInfo == null) {
+			saveContent(contentId, contentTypeId);
+		} else {
 			tourInfo.increaseViewCount();
 			tourInfoRepository.save(tourInfo);
 		}
@@ -30,6 +41,7 @@ public class TourInfoService {
 		return TourInfoResponseDto.builder()
 			.contentId(tourInfo.getContentId())
 			.views(tourInfo.getViews())
+			.description(tourInfo.getContentTypeId().getDescription())
 			.build();
 	}
 
@@ -38,6 +50,7 @@ public class TourInfoService {
 			.map(tourInfo -> TourInfoResponseDto.builder()
 				.contentId(tourInfo.getContentId())
 				.views(tourInfo.getViews())
+				.description(tourInfo.getContentTypeId().getDescription())
 				.build())
 			.toList();
 	}
@@ -50,7 +63,32 @@ public class TourInfoService {
 		tourInfoRepository.save(tourInfo);
 	}
 
+	private void saveContent(String contentId, String contentTypeId) {
+		TourContentType type = TourContentType.fromCode(contentTypeId);
+		TourInfo tourInfo = TourInfo.builder()
+			.contentId(contentId)
+			.views(1L)
+			.contentTypeId(type)
+			.build();
+		tourInfoRepository.save(tourInfo);
+	}
+
 	private TourInfo findById(String contentId) {
-		return tourInfoRepository.findById(contentId).orElseThrow(() -> new IllegalArgumentException("해당 관광 정보가 존재하지 않습니다."));
+		return tourInfoRepository.findById(contentId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 관광 정보가 존재하지 않습니다."));
+	}
+
+	private TourInfo findById(String contentId, String type) {
+		return tourInfoRepository.findById(contentId).orElse(null);
+	}
+
+	public List<TourInfoResponseDto> getTourInfoListByType(TourContentType contentId) {
+		return tourInfoRepository.findAllByTypes(contentId).stream()
+			.map(tourInfo -> TourInfoResponseDto.builder()
+				.contentId(tourInfo.getContentId())
+				.views(tourInfo.getViews())
+				.description(tourInfo.getContentTypeId().getDescription())
+				.build())
+			.toList();
 	}
 }

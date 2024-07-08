@@ -17,6 +17,7 @@ import com.server.booyoungee.domain.kakaoMap.dto.KeywordSearchDto;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchListResponseDto;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
+import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class PlaceSearchService {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
+	private final TourInfoService tourInfoService;
 	private final ObjectMapper objectMapper;
 
 	@Value("${tourInfo.url}")
@@ -68,8 +70,13 @@ public class PlaceSearchService {
 
 		String firstImage1 = null;
 		String firstImage2 = null;
+		String contentId = null;
+		String type = null;
 
 		if (tourInfo != null && !tourInfo.isEmpty()) {
+			contentId = tourInfo.get(0).getContentid();
+			type = tourInfo.get(0).getContenttypeid();
+			tourInfoService.viewContent(contentId, type);
 			firstImage1 = tourInfo.get(0).getFirstimage();
 			firstImage2 = tourInfo.get(0).getFirstimage2();
 		}
@@ -79,6 +86,7 @@ public class PlaceSearchService {
 			.info(placeInfo)
 			.firstImage1(firstImage1)
 			.firstImage2(firstImage2)
+			.contentId(contentId)
 			.build();
 		return responseDto;
 	}

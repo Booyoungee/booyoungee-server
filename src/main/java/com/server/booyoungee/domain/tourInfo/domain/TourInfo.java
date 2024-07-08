@@ -1,7 +1,11 @@
 package com.server.booyoungee.domain.tourInfo.domain;
 
+import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -29,6 +33,9 @@ public class TourInfo {
 
 	@Column(nullable = false)
 	private Long views;
+
+	@Enumerated(EnumType.STRING)
+	private TourContentType contentTypeId;
 
 	public void increaseViewCount() {
 		this.views++;

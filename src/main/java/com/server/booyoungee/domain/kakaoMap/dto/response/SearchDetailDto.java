@@ -15,7 +15,7 @@ public class SearchDetailDto {
 	private String keyword;
 	@JsonProperty("location_info")
 	private KeywordSearchDto info;
-
+	private String contentId;
 	private String firstImage1;
 	private String firstImage2;
 
