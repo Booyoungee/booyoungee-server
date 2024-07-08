@@ -22,7 +22,7 @@ public class WebhookController {
 		@RequestParam("hub.challenge") String challenge) {
 		// Verify the webhook
 		String VERIFY_TOKEN = verifyTokens;
-		System.out.print("hello world");
+		System.out.println(verifyTokens);
 		if (mode.equals("subscribe") && verifyToken.equals(VERIFY_TOKEN)) {
 			System.out.print("hello world");
 			return challenge;
