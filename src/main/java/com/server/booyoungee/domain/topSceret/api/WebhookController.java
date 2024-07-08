@@ -23,6 +23,7 @@ public class WebhookController {
 		// Verify the webhook
 		String VERIFY_TOKEN = verifyTokens;
 		System.out.println(verifyTokens);
+		System.out.println("input " + verifyToken);
 		if (mode.equals("subscribe") && verifyToken.equals(VERIFY_TOKEN)) {
 			System.out.print("hello world");
 			return challenge;
