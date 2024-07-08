@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.RequiredArgsConstructor;
 
-@OpenAPIDefinition(servers = {@Server(url = "https://49.50.160.96:8282")},
+@OpenAPIDefinition(servers = {@Server(url = "https://49.50.160.96:8443")},
 	info = @Info(title = "부영이 API 명세서",
 		description = "부영이 백엔드 API 명세서",
 		version = "v1"))
