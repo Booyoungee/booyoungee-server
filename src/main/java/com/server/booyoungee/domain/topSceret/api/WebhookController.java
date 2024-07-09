@@ -141,6 +141,40 @@ public class WebhookController {
 		}
 	}
 
+	@GetMapping("/authLong")
+	public ApiResponse<?> handleAuthLong(
+		@RequestParam("token") String token,
+		@RequestParam("client_id") String clientId) {
+		String apiUrl = "https://api.instagram.com/oauth/access_token";
+
+		// 요청 헤더 설정
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		// 요청 바디 설정
+		String requestBody = "client_id=" + clientId + "&client_secret=" + CLIENT_SECRET
+			+ "&grant_type=ig_exchange_token&access_token=" + token;
+
+		System.out.println("requestBody=" + requestBody);
+		// HttpEntity에 헤더와 바디 설정
+		HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(
+			apiUrl,
+			HttpMethod.POST,
+			entity,
+			String.class);
+
+		try {
+			JsonNode json = objectMapper.readTree(response.getBody());
+			return ApiResponse.success(json);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ApiResponse.success("Authentication failed");
+		}
+	}
+
 	@PostMapping("/deauthorize")
 	public ResponseEntity<String> handleDeauthorize(@RequestBody String payload) {
 		try {
