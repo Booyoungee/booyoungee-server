@@ -84,7 +84,8 @@ public class WebhookController {
 		// Instagram 게시물 ID 추출
 		String postId = extractPostId(instagramUrl);
 		String apiUrl = "https://graph.instagram.com/" + postId
-			+ "?fields=id,media_type,media_url,username,timestamp,caption&access_token=" + ACCESS_TOKEN;
+			+ "?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username&access_token="
+			+ ACCESS_TOKEN;
 
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
