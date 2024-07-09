@@ -105,7 +105,6 @@ public class WebhookController {
 
 	@GetMapping("/auth")
 	public String handleAuth(@RequestParam("code") String code) {
-		// 액세스 토큰 교환 로직
 		String apiUrl = "https://api.instagram.com/oauth/access_token";
 		RestTemplate restTemplate = new RestTemplate();
 		Map<String, String> requestMap = new HashMap<>();
