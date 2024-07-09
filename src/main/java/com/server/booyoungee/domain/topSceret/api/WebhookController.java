@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.global.common.ApiResponse;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,19 +16,15 @@ public class WebhookController {
 	@Value("${movies.api.key}")
 	private String verifyTokens;
 
-	@GetMapping("")
-	public ApiResponse<?> verifyWebhook(@RequestParam("hub.mode") String mode,
+	@GetMapping("/webhook")
+	public String verifyWebhook(@RequestParam("hub.mode") String mode,
 		@RequestParam("hub.verify_token") String verifyToken,
 		@RequestParam("hub.challenge") String challenge) {
-		// Verify the webhook
-		String VERIFY_TOKEN = verifyTokens;
-		System.out.println(verifyTokens);
-		System.out.println("input " + verifyToken);
-		if (mode.equals("subscribe") && verifyToken.equals(VERIFY_TOKEN)) {
-			System.out.print("hello world");
-			return ApiResponse.success(challenge);
+		if ("subscribe".equals(mode) && verifyTokens.equals(verifyToken)) {
+			return challenge;
 		} else {
-			return ApiResponse.success("Verification failed");
+			return "Verification failed";
 		}
 	}
+
 }
