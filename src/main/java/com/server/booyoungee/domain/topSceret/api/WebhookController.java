@@ -6,6 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,21 +110,30 @@ public class WebhookController {
 
 	@GetMapping("/auth")
 	public String handleAuth(@RequestParam("code") String code) {
-		// 변수 값을 로그로 출력하여 확인
-		System.out.println("Client ID: " + CLIENT_ID);
-		System.out.println("Client Secret: " + CLIENT_SECRET);
-		System.out.println("Redirect URI: " + REDIRECT_URI);
-
 		String apiUrl = "https://api.instagram.com/oauth/access_token";
-		RestTemplate restTemplate = new RestTemplate();
-		Map<String, String> requestMap = new HashMap<>();
-		requestMap.put("client_id", CLIENT_ID);
-		requestMap.put("client_secret", CLIENT_SECRET);
-		requestMap.put("grant_type", "authorization_code");
-		requestMap.put("redirect_uri", REDIRECT_URI);
-		requestMap.put("code", code);
 
-		ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestMap, String.class);
+		// 요청 헤더 설정
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		// 요청 파라미터 설정
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
+			.queryParam("client_id", CLIENT_ID)
+			.queryParam("client_secret", CLIENT_SECRET)
+			.queryParam("grant_type", "authorization_code")
+			.queryParam("redirect_uri", REDIRECT_URI)
+			.queryParam("code", code);
+
+		// HttpEntity에 헤더와 바디 설정
+		HttpEntity<?> entity = new HttpEntity<>(headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(
+			builder.toUriString(),
+			HttpMethod.POST,
+			entity,
+			String.class);
+
 		try {
 			JsonNode json = objectMapper.readTree(response.getBody());
 			ACCESS_TOKEN = json.get("access_token").asText();
