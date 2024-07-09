@@ -34,9 +34,9 @@ public class WebhookController {
 	@Value("${instagram.client_secret}")
 	private String CLIENT_SECRET;
 	@Value("${instagram.redirect_url}")
-	private String REDIRECT_URI = "your_redirect_uri";
+	private String REDIRECT_URI;
 	@Value("${instagram.access_token}")
-	private String ACCESS_TOKEN = "your_access_token";
+	private String ACCESS_TOKEN;
 
 	@GetMapping("")
 	public String verifyWebhook(@RequestParam("hub.mode") String mode,
@@ -122,6 +122,43 @@ public class WebhookController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Authentication failed";
+		}
+	}
+
+	@PostMapping("/deauthorize")
+	public ResponseEntity<String> handleDeauthorize(@RequestBody String payload) {
+		try {
+			JsonNode json = objectMapper.readTree(payload);
+			// deauthorize 로직을 추가합니다.
+			String userId = json.get("user_id").asText();
+			System.out.println("User ID: " + userId);
+			// 사용자 데이터 삭제 또는 처리 로직
+			return ResponseEntity.ok("Deauthorized successfully");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("Deauthorization failed");
+		}
+	}
+
+	@PostMapping("/data_deletion")
+	public ResponseEntity<Map<String, String>> handleDataDeletion(@RequestBody String payload) {
+		try {
+			JsonNode json = objectMapper.readTree(payload);
+			String userId = json.get("user_id").asText();
+			System.out.println("Data Deletion Request for User ID: " + userId);
+			// 데이터 삭제 로직을 추가합니다.
+
+			// 응답 데이터 구성
+			Map<String, String> response = new HashMap<>();
+			response.put("url", "https://post2trip.site/data_deletion_status");
+			response.put("confirmation_code", "deletion-request-" + userId);
+
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, String> response = new HashMap<>();
+			response.put("error", "Data deletion failed");
+			return ResponseEntity.status(500).body(response);
 		}
 	}
 
