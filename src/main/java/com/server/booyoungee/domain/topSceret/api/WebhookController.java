@@ -105,6 +105,11 @@ public class WebhookController {
 
 	@GetMapping("/auth")
 	public String handleAuth(@RequestParam("code") String code) {
+		// 변수 값을 로그로 출력하여 확인
+		System.out.println("Client ID: " + CLIENT_ID);
+		System.out.println("Client Secret: " + CLIENT_SECRET);
+		System.out.println("Redirect URI: " + REDIRECT_URI);
+
 		String apiUrl = "https://api.instagram.com/oauth/access_token";
 		RestTemplate restTemplate = new RestTemplate();
 		Map<String, String> requestMap = new HashMap<>();
