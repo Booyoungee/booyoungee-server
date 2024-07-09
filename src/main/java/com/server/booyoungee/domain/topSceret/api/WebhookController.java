@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,28 +115,25 @@ public class WebhookController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		// 요청 파라미터 설정
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-			.queryParam("client_id", CLIENT_ID)
-			.queryParam("client_secret", CLIENT_SECRET)
-			.queryParam("grant_type", "authorization_code")
-			.queryParam("redirect_uri", REDIRECT_URI)
-			.queryParam("code", code);
+		// 요청 바디 설정
+		String requestBody = "client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET
+			+ "&grant_type=authorization_code&redirect_uri=" + REDIRECT_URI + "&code=" + code;
 
+		System.out.println("requestBody=" + requestBody);
 		// HttpEntity에 헤더와 바디 설정
-		HttpEntity<?> entity = new HttpEntity<>(headers);
+		HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(
-			builder.toUriString(),
+			apiUrl,
 			HttpMethod.POST,
 			entity,
 			String.class);
 
 		try {
 			JsonNode json = objectMapper.readTree(response.getBody());
-			ACCESS_TOKEN = json.get("access_token").asText();
-			return "Authenticated successfully, access token: " + ACCESS_TOKEN;
+			String accessToken = json.get("access_token").asText();
+			return "Authenticated successfully, access token: " + accessToken;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Authentication failed";
