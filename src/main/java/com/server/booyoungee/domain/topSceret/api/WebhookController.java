@@ -49,7 +49,7 @@ public class WebhookController {
 		}
 	}
 
-	@PostMapping("/webhook")
+	@PostMapping("")
 	public void handleWebhook(@RequestBody String payload) {
 		try {
 			JsonNode json = objectMapper.readTree(payload);
