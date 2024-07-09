@@ -57,3 +57,8 @@ movies:
     key: ${TMDB.API.KEY}
 
 
+instagram:
+  client_id: ${CLIENT_ID}
+  client_secret: ${CLIENT_SECRET}
+  redirect_url: ${REDIRECT_URI}
+  access_token: ${ACCESS_TOKEN}
