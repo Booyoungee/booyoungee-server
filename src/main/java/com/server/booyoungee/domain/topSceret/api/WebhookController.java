@@ -142,17 +142,15 @@ public class WebhookController {
 	}
 
 	@GetMapping("/authLong")
-	public ApiResponse<?> handleAuthLong(
-		@RequestParam("token") String token,
-		@RequestParam("client_id") String clientId) {
-		String apiUrl = "https://api.instagram.com/oauth/access_token";
+	public ApiResponse<?> handleAuthLong(@RequestParam("token") String token) {
+		String apiUrl = "https://graph.instagram.com/access_token";
 
 		// 요청 헤더 설정
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 		// 요청 바디 설정
-		String requestBody = "client_id=" + clientId + "&client_secret=" + CLIENT_SECRET
+		String requestBody = "grant_type=ig_exchange_token&client_secret=" + CLIENT_SECRET
 			+ "&grant_type=ig_exchange_token&access_token=" + token;
 
 		System.out.println("requestBody=" + requestBody);
