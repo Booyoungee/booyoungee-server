@@ -10,13 +10,16 @@ import org.springframework.context.annotation.Configuration;
 public class ServerConfig {
 	@Bean
 	public WebServerFactoryCustomizer<TomcatServletWebServerFactory> containerCustomizer() {
-		return server -> server.addAdditionalTomcatConnectors(createHttpConnector());
+		return server -> {
+			server.addAdditionalTomcatConnectors(createHttpConnector(8080));
+			server.addAdditionalTomcatConnectors(createHttpConnector(8282));
+		};
 	}
 
-	private Connector createHttpConnector() {
+	private Connector createHttpConnector(int port) {
 		Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
 		connector.setScheme("http");
-		connector.setPort(8282);  // HTTP 포트 설정
+		connector.setPort(port);  // 설정한 포트 사용
 		connector.setSecure(false);
 		connector.setRedirectPort(8443);  // HTTPS 포트로 리디렉션
 		return connector;
