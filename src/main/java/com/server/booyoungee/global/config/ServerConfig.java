@@ -5,6 +5,8 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class ServerConfig {
@@ -24,4 +26,19 @@ public class ServerConfig {
 		connector.setRedirectPort(8443);  // HTTPS 포트로 리디렉션
 		return connector;
 	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+					.allowedOrigins("*") // 모든 도메인 허용
+					.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+					.allowedHeaders("*")
+					.allowCredentials(true);
+			}
+		};
+	}
 }
+
