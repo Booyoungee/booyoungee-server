@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition(servers = {
-	@Server(url = "http://post2trip.site", description = "Default Server URL")
+	@Server(url = "https://post2trip.site", description = "Default Server URL")
 })
 @SpringBootApplication
 public class BooyoungeeApplication {
