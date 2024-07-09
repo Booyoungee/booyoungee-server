@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/webhook")
 @RequiredArgsConstructor
 public class WebhookController {
 
 	@Value("${movies.api.key}")
 	private String verifyTokens;
 
-	@GetMapping("/webhook")
+	@GetMapping("")
 	public String verifyWebhook(@RequestParam("hub.mode") String mode,
 		@RequestParam("hub.verify_token") String verifyToken,
 		@RequestParam("hub.challenge") String challenge) {
