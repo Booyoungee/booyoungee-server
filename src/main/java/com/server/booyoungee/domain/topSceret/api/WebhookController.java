@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.server.booyoungee.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -108,7 +109,7 @@ public class WebhookController {
 	}
 
 	@GetMapping("/auth")
-	public String handleAuth(@RequestParam("code") String code) {
+	public ApiResponse<?> handleAuth(@RequestParam("code") String code) {
 		String apiUrl = "https://api.instagram.com/oauth/access_token";
 
 		// 요청 헤더 설정
@@ -133,10 +134,10 @@ public class WebhookController {
 		try {
 			JsonNode json = objectMapper.readTree(response.getBody());
 			String accessToken = json.get("access_token").asText();
-			return "Authenticated successfully, access token: " + accessToken;
+			return ApiResponse.success(json);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Authentication failed";
+			return ApiResponse.success("Authentication failed");
 		}
 	}
 
