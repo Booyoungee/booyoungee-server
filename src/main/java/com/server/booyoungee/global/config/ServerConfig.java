@@ -33,7 +33,7 @@ public class ServerConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-					.allowedOrigins("*") // 모든 도메인 허용
+					.allowedOrigins("https://post2trip.site", "https://www.post2trip.site") // 특정 도메인 명시
 					.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 					.allowedHeaders("*")
 					.allowCredentials(true);
