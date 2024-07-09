@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/webhook")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class WebhookController {
 
