@@ -31,4 +31,11 @@ public class StoreService {
 			.map(StoreResponseDto::new)
 			.collect(Collectors.toList());
 	}
+
+	public List<StoreResponseDto> getStores() {
+		List<Store> stores = storeRepository.findAll();
+		return stores.stream()
+			.map(StoreResponseDto::new)
+			.collect(Collectors.toList());
+	}
 }

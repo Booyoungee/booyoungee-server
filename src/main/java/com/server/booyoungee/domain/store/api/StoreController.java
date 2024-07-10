@@ -25,4 +25,9 @@ public class StoreController {
 	public ApiResponse<?> getStoresByDistrict(@RequestParam String district) {
 		return ApiResponse.success(storeService.getStoreByDistrict(district));
 	}
+
+	@GetMapping("")
+	public ApiResponse<?> getStoresList() {
+		return ApiResponse.success(storeService.getStores());
+	}
 }
