@@ -25,6 +25,7 @@ import com.server.booyoungee.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
+@SuppressWarnings("checkstyle:RegexpMultiline")
 @RestController
 @RequestMapping("/api/webhook")
 @RequiredArgsConstructor
@@ -143,8 +144,7 @@ public class WebhookController {
 
 	@GetMapping("/authLong")
 	public ApiResponse<?> handleAuthLong(
-		@RequestParam("token") String token,
-		@RequestParam("client_id") String clientId) {
+		@RequestParam("token") String token) {
 		String apiUrl = "https://graph.instagram.com/access_token";
 
 		// 요청 헤더 설정
@@ -210,6 +210,35 @@ public class WebhookController {
 			Map<String, String> response = new HashMap<>();
 			response.put("error", "Data deletion failed");
 			return ResponseEntity.status(500).body(response);
+		}
+	}
+
+	@GetMapping("/fetchInstagramMedia")
+	public ApiResponse<?> fetchInstagramMedia(
+		@RequestParam("post_id") String postId,
+		@RequestParam("access_token") String accessToken) {
+
+		String apiUrl = "https://graph.instagram.com/" + postId
+			+ "/media?fields=id,media_type,media_url,permalink,thumbnail_url,username,caption&access_token="
+			+ accessToken;
+
+		// 요청 헤더 설정
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(
+			apiUrl,
+			HttpMethod.GET,
+			entity,
+			String.class);
+
+		try {
+			JsonNode json = objectMapper.readTree(response.getBody());
+			return ApiResponse.success(json);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ApiResponse.success("Failed to fetch Instagram media");
 		}
 	}
 
