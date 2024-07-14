@@ -37,6 +37,21 @@ dependencies {
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
 
+
+    //oauth
+    implementation 'org.springframework.cloud:spring-cloud-starter-config:4.1.3'
+    // implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
@@ -44,6 +59,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
 }
 
 tasks.named('test') {

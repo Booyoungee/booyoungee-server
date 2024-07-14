@@ -67,4 +67,8 @@ public class User {
 		USER,
 		ADMIN
 	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
 }
