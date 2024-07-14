@@ -10,14 +10,19 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemes;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @OpenAPIDefinition(
+	servers = {
+		@Server(url = "http://localhost:8080", description = "http://localhost:8080")
+	},
 	info = @Info(title = "부영이 API 명세서",
 		description = "부영이 백엔드 API 명세서",
+
 		version = "v1"))
 @RequiredArgsConstructor
 @SecuritySchemes({

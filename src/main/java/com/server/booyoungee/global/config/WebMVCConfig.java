@@ -32,7 +32,8 @@ public class WebMVCConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOriginPatterns("http://localhost:8282",
-				"https://post2trip.site") // Replace with your allowed origins
+				"https://post2trip.site", "https://kauth.kakao.com",
+				"http://localhost:3000") // Replace with your allowed origins
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 			.allowedHeaders("*")
 			.allowCredentials(true);

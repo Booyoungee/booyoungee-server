@@ -6,10 +6,8 @@ import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +24,6 @@ import com.server.booyoungee.global.common.ApiResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
@@ -43,7 +40,6 @@ public class AuthController {
 	@Value("${kakao.redirect.url}")
 	private String redirectUri;// Replace with your actual redirect URI
 
-	@CrossOrigin(origins = "localhost:8282")
 	@GetMapping("")
 	public void redirectToKakaoLogin(HttpServletResponse response) throws IOException {
 		String clientId = apiKey;  // Replace with your Kakao REST API Key
@@ -70,12 +66,12 @@ public class AuthController {
 		}
 	}
 
-	@PostMapping("/login")
+	/*	@PostMapping("/login")
 	public ApiResponse<JwtTokenResponse> login(
 		@NotNull @RequestHeader(Constants.PROVIDER_TOKEN_HEADER) String providerToken,
 		@Valid @RequestBody LoginRequestDto request) throws IOException {
 		return ApiResponse.success(authService.login(providerToken, request));
-	}
+	}*/
 
 	@PostMapping("/refresh")
 	public ApiResponse<JwtTokenResponse> reissue(
