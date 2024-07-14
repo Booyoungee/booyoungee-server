@@ -42,21 +42,19 @@ public class AuthService {
 		}
 	}
 
-	private User loadOrCreateUser(Provider provider, SocialInfoDto socialInfo) throws IOException {
-		boolean isRegistered = userRepository.existsBySerialId(socialInfo.serialId());
-
-		if (!isRegistered) {
-			User newUser = User.builder()
-				.serialId(socialInfo.serialId())
-				.email(socialInfo.email())
-				.name(socialInfo.name())
-				.role(User.Role.USER)
-				.build();
-			userRepository.save(newUser);
-		}
-
+	private User loadOrCreateUser(Provider provider, SocialInfoDto socialInfo) {
 		return userRepository.findBySerialId(socialInfo.serialId())
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR));
+			.orElseGet(() -> {
+				User newUser = User.builder()
+					.serialId(socialInfo.serialId())
+					.email(socialInfo.email())
+					.name(socialInfo.name())
+					.role(User.Role.USER)
+					.refreshToken("") // Initialize refreshToken as empty string
+					.build();
+				userRepository.save(newUser);
+				return newUser;
+			});
 	}
 
 	private JwtTokenResponse generateTokensWithUpdateRefreshToken(User user) {
@@ -91,7 +89,7 @@ public class AuthService {
 	@Transactional
 	public void logout(Long userId) {
 		User user = userRepository.findByUserId(userId).get();
-		user.updateRefreshToken(null);
+		user.updateRefreshToken("");
 	}
 
 }

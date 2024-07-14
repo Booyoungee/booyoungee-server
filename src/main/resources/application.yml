@@ -28,6 +28,8 @@ logging:
 kakao:
   api:
     key: ${KAKAO.API.KEY}
+  redirect:
+    url: ${KAKAO.REDIRECT.URL}
 
 tourInfo:
   base_url: ${TOURINFO.URL}

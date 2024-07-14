@@ -41,7 +41,7 @@ public class JwtUtil implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-		this.key = Keys.hmacShaKeyFor(keyBytes);
+		this.key = Keys.hmacShaKeyFor(keyBytes); // HS512용 보안 키 생성
 	}
 
 	public JwtTokenResponse generateTokens(Long id, User.Role role) {
@@ -79,7 +79,7 @@ public class JwtUtil implements InitializingBean {
 			.setClaims(claims)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + expirePeriod))
-			.signWith(key, SignatureAlgorithm.HS512)
+			.signWith(key, SignatureAlgorithm.HS512) // HS512 알고리즘 사용
 			.compact();
 	}
 }

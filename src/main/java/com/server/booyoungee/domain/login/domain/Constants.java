@@ -7,9 +7,11 @@ public class Constants {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String PROVIDER_TOKEN_HEADER = "X-Provider-Token";
 	public static final String[] AUTH_WHITELIST = {
+		
 		"/api/oauth/login",
 		"/api/oauth",
-		"/api/oauth/kakao/callback",
+		"/api/oauth/logout",
+		"/api/oauth/callback",
 		"/api/oauth/refresh",
 		"/actuator/health",
 		"/api-docs.html",
