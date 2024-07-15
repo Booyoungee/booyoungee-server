@@ -17,14 +17,15 @@ import com.server.booyoungee.domain.login.application.AuthService;
 import com.server.booyoungee.domain.login.application.KakaoLoginService;
 import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
+import com.server.booyoungee.domain.login.dto.SocialInfoDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
-import com.server.booyoungee.global.annotation.UserId;
 import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.exception.CustomException;
+import com.server.booyoungee.global.exception.ErrorCode;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -48,8 +49,13 @@ public class AuthController {
 			+ "?response_type=code"
 			+ "&client_id=" + clientId
 			+ "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString())
-			+ "&response_type=code&scope=profile_nickname";
-		System.out.println(kakaoAuthUrl);
+			+ "&scope=profile_nickname";
+
+		// Set CORS headers
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:8282");
+		response.setHeader("Access-Control-Allow-Credentials", "true");
+
+		// Perform the redirect
 		response.sendRedirect(kakaoAuthUrl);
 	}
 
@@ -74,25 +80,30 @@ public class AuthController {
 	}*/
 
 	@PostMapping("/refresh")
-	public ApiResponse<JwtTokenResponse> reissue(
-		@NotNull @RequestHeader(Constants.AUTHORIZATION_HEADER) String authorizationHeader) {
-		// Authorization 헤더에서 토큰 추출
-		String refreshToken = authorizationHeader.replace("Bearer ", "");
+	public ApiResponse<JwtTokenResponse> refreshToken(
+		@RequestHeader(Constants.AUTHORIZATION_HEADER) String authorizationHeader) {
+		if (authorizationHeader == null || !authorizationHeader.startsWith(Constants.BEARER_PREFIX)) {
+			throw new CustomException(ErrorCode.INVALID_JWT);
+		}
+		String refreshToken = authorizationHeader.substring(Constants.BEARER_PREFIX.length());
+		System.out.println("token: " + refreshToken);
 		return ApiResponse.success(authService.refresh(refreshToken));
 	}
 
 	@PostMapping("/logout")
-	public ApiResponse<?> logout(@UserId Long userId) {
+	public ApiResponse<?> logout() {
 		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
 		authService.logout(Long.parseLong(authentication.getName()));
 		return ApiResponse.success("로그아웃에 성공하였습니다.");
 	}
 
-	@GetMapping("/me")
-	public ApiResponse<?> getMe(@UserId Long userId) {
-		System.out.println(userId);
+	@GetMapping("/user/me")
+	public SocialInfoDto getUserInfo() {
 		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
-		authService.logout(Long.parseLong(authentication.getName()));
-		return ApiResponse.success("로그아웃에 성공하였습니다.");
+		System.out.println("authentication: " + authentication.getName());
+		System.out.println("token " + authentication.getAccessToken());
+		return null;
+		//return kakaoLoginService.getInfo(accessToken.replace("Bearer ", ""));
 	}
+
 }

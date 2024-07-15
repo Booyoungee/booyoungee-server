@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.server.booyoungee.domain.login.domain.Constants;
@@ -41,6 +42,7 @@ public class SecurityConfig {
 				exceptionHandlingConfigurer.authenticationEntryPoint(customJwtAuthenticationEntryPoint))
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
+					.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 					.requestMatchers(Constants.AUTH_WHITELIST).permitAll()
 					.anyRequest().authenticated())
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -53,7 +55,7 @@ public class SecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:8282"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		configuration.setAllowedHeaders(Arrays.asList("*"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

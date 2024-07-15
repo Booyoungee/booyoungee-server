@@ -40,10 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			Claims claims = jwtUtil.getTokenBody(token);
 			Long userId = claims.get(Constants.USER_ID_CLAIM_NAME, Long.class);
 			if (claims.get(Constants.USER_ROLE_CLAIM_NAME, String.class) == null) {
-				if (!request.getRequestURI().equals("/api/auth/refresh"))
+				System.out.println(request.getRequestURI());
+				if (!request.getRequestURI().equals("/api/oauth/refresh"))
 					throw new CustomException(ErrorCode.INVALID_TOKEN_TYPE);
 			}
-			UserAuthentication authentication = new UserAuthentication(userId, null, null);
+			UserAuthentication authentication = new UserAuthentication(userId, null, null, token);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
