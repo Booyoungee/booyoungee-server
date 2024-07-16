@@ -2,7 +2,13 @@ package com.server.booyoungee.domain.login.application;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
@@ -13,9 +19,10 @@ import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
+import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 import com.server.booyoungee.global.utils.JwtUtil;
 
-import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -26,12 +33,17 @@ public class AuthService {
 	private final KakaoLoginService kakaoLoginService;
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
+	private final RestTemplate restTemplate;
 
 	@Transactional
-	public JwtTokenResponse login(String providerToken, LoginRequestDto request) throws IOException {
-		SocialInfoDto socialInfo = getSocialInfo(request, providerToken);
+	public JwtTokenResponse login(KakaoTokenResponse providerToken, LoginRequestDto request) throws IOException {
+		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.getAccess_token());
 		User user = loadOrCreateUser(request.provider(), socialInfo);
-		return generateTokensWithUpdateRefreshToken(user);
+		String refreshToken = providerToken.getRefresh_token();
+		if (refreshToken == null) {
+			refreshToken = user.getRefreshToken();
+		}
+		return generateTokensWithUpdateRefreshToken(user, providerToken.getAccess_token(), refreshToken);
 	}
 
 	private SocialInfoDto getSocialInfo(LoginRequestDto request, String providerToken) {
@@ -57,13 +69,14 @@ public class AuthService {
 			});
 	}
 
-	private JwtTokenResponse generateTokensWithUpdateRefreshToken(User user) {
-		JwtTokenResponse jwtTokenResponse = jwtUtil.generateTokens(user.getUserId(), user.getRole());
-		user.updateRefreshToken(jwtTokenResponse.refreshToken());
+	private JwtTokenResponse generateTokensWithUpdateRefreshToken(User user, String accessToken, String refreshToken) {
+		JwtTokenResponse jwtTokenResponse = jwtUtil.generateTokens(user.getUserId(), user.getRole(), accessToken,
+			refreshToken);
+		user.updateRefreshToken(refreshToken);
 		return jwtTokenResponse;
 	}
 
-	@Transactional
+/*	@Transactional
 	public JwtTokenResponse refresh(String token) {
 		String refreshToken = getToken(token);
 		Claims claims = jwtUtil.getTokenBody(refreshToken);
@@ -76,7 +89,7 @@ public class AuthService {
 			throw new CustomException(ErrorCode.INVALID_JWT);
 		}
 		return generateTokensWithUpdateRefreshToken(user);
-	}
+	}*/
 
 	private String getToken(String token) {
 		if (token.startsWith(Constants.BEARER_PREFIX)) {
@@ -87,9 +100,28 @@ public class AuthService {
 	}
 
 	@Transactional
-	public void logout(Long userId) {
-		User user = userRepository.findByUserId(userId).get();
-		user.updateRefreshToken("");
+	public void logout(UserAuthentication authentication) {
+		System.out.println("JWT: token: " + authentication.getAccessToken());
+		String accessToken = jwtUtil.getOriginalAccessToken(authentication.getAccessToken());
+		System.out.println("orginal token: " + accessToken);
+		String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.set("Authorization", "Bearer " + accessToken);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
+		try {
+			Long userId = Long.parseLong(authentication.getName());
+			User user = userRepository.findByUserId(userId).get();
+			user.updateRefreshToken("");
+		} catch (HttpClientErrorException e) {
+			throw new RuntimeException("HTTP error while getting access token from Kakao: " + e.getStatusCode() + " - "
+				+ e.getResponseBodyAsString(), e);
+		} catch (Exception e) {
+			throw new RuntimeException("Unexpected error while getting access token from Kakao", e);
+		}
+
 	}
 
 }

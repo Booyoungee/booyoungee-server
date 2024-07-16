@@ -8,21 +8,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.login.application.AuthService;
 import com.server.booyoungee.domain.login.application.KakaoLoginService;
-import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
-import com.server.booyoungee.domain.login.dto.SocialInfoDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.global.common.ApiResponse;
-import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -63,7 +59,7 @@ public class AuthController {
 	public ApiResponse<?> kakaoCallback(@RequestParam String code) throws IOException {
 		try {
 			System.out.println("callback start");
-			String accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
+			KakaoTokenResponse accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
 			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
 			JwtTokenResponse tokens = authService.login(accessToken, request);
 			return ApiResponse.success(tokens);
@@ -79,7 +75,7 @@ public class AuthController {
 		return ApiResponse.success(authService.login(providerToken, request));
 	}*/
 
-	@PostMapping("/refresh")
+/*	@PostMapping("/refresh")
 	public ApiResponse<JwtTokenResponse> refreshToken(
 		@RequestHeader(Constants.AUTHORIZATION_HEADER) String authorizationHeader) {
 		if (authorizationHeader == null || !authorizationHeader.startsWith(Constants.BEARER_PREFIX)) {
@@ -88,22 +84,21 @@ public class AuthController {
 		String refreshToken = authorizationHeader.substring(Constants.BEARER_PREFIX.length());
 		System.out.println("token: " + refreshToken);
 		return ApiResponse.success(authService.refresh(refreshToken));
-	}
+	}*/
 
 	@PostMapping("/logout")
 	public ApiResponse<?> logout() {
 		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
-		authService.logout(Long.parseLong(authentication.getName()));
+		authService.logout(authentication);
 		return ApiResponse.success("로그아웃에 성공하였습니다.");
 	}
 
-	@GetMapping("/user/me")
-	public SocialInfoDto getUserInfo() {
-		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("authentication: " + authentication.getName());
-		System.out.println("token " + authentication.getAccessToken());
-		return null;
-		//return kakaoLoginService.getInfo(accessToken.replace("Bearer ", ""));
+	@PostMapping("/refresh-kakao-token")
+	public ApiResponse<?> refreshKakaoToken(@RequestParam String refreshToken) throws IOException {
+		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
+		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
+		JwtTokenResponse tokens = authService.login(response, request);
+		return ApiResponse.success((tokens));
 	}
 
 }

@@ -44,10 +44,11 @@ public class JwtUtil implements InitializingBean {
 		this.key = Keys.hmacShaKeyFor(keyBytes); // HS512용 보안 키 생성
 	}
 
-	public JwtTokenResponse generateTokens(Long id, User.Role role) {
+	public JwtTokenResponse generateTokens(Long id, User.Role role, String access, String refresh) {
 		return JwtTokenResponse.of(
-			generateToken(id, role, accessTokenExpirePeriod),
-			generateToken(id, null, refreshTokenExpirePeriod));
+			generateToken(id, role, accessTokenExpirePeriod, access),
+			refresh);
+		//generateToken(id, null, refreshTokenExpirePeriod));
 	}
 
 	public Claims getTokenBody(String token) {
@@ -68,12 +69,13 @@ public class JwtUtil implements InitializingBean {
 		}
 	}
 
-	private String generateToken(Long id, User.Role role, Integer expirePeriod) {
+	private String generateToken(Long id, User.Role role, Integer expirePeriod, String accessToken) {
 		Claims claims = Jwts.claims();
 		claims.put(Constants.USER_ID_CLAIM_NAME, id);
 		if (role != null)
 			claims.put(Constants.USER_ROLE_CLAIM_NAME, role);
-
+		if (accessToken != null)
+			claims.put("accessToken", accessToken);
 		return Jwts.builder()
 			.setHeaderParam(Header.JWT_TYPE, Header.JWT_TYPE)
 			.setClaims(claims)
@@ -81,5 +83,10 @@ public class JwtUtil implements InitializingBean {
 			.setExpiration(new Date(System.currentTimeMillis() + expirePeriod))
 			.signWith(key, SignatureAlgorithm.HS512) // HS512 알고리즘 사용
 			.compact();
+	}
+
+	public String getOriginalAccessToken(String token) {
+		Claims claims = getTokenBody(token);
+		return claims.get("accessToken", String.class);
 	}
 }

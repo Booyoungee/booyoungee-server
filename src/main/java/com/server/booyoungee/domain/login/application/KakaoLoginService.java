@@ -1,7 +1,6 @@
 package com.server.booyoungee.domain.login.application;
 
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.server.booyoungee.domain.login.dto.SocialInfoDto;
 import com.server.booyoungee.global.oauth.KakaoFeignClient;
+import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.dto.KakaoUserDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,17 +24,22 @@ public class KakaoLoginService {
 
 	private final RestTemplate restTemplate;
 
+	@Value("${kakao.api.key}")
+	private String apiKey;
+	@Value("${kakao.redirect.url}")
+	private String redirectUri;// Replace with your actual redirect URI
+
+	private String tokenUri = "https://kauth.kakao.com/oauth/token";
+
 	public SocialInfoDto getInfo(String providerToken) {
 		KakaoUserDto kakaoUserdto = kakaoFeignClient.getUserInformation("Bearer " + providerToken);
 		return SocialInfoDto.of(
 			kakaoUserdto.id().toString(),
 			kakaoUserdto.kakaoAccount().email(),
-			//kakaoUserdto.kakaoAccount().email(),
 			kakaoUserdto.kakaoAccount().kakaoUserProfile().nickname());
 	}
 
-	public String getAccessToken(String code, String clientId, String redirectUri) {
-		String tokenUri = "https://kauth.kakao.com/oauth/token";
+	public KakaoTokenResponse getAccessToken(String code, String clientId, String redirectUri) {
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(tokenUri)
 			.queryParam("grant_type", "authorization_code")
@@ -42,7 +47,39 @@ public class KakaoLoginService {
 			.queryParam("redirect_uri", redirectUri)
 			.queryParam("code", code);
 
-		System.out.println(uriBuilder.toUriString());
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		try {
+			ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(
+				uriBuilder.toUriString(),
+				HttpMethod.POST,
+				entity,
+				KakaoTokenResponse.class
+			);
+
+			KakaoTokenResponse responseBody = response.getBody();
+			if (responseBody != null) {
+				return responseBody;
+			} else {
+				throw new RuntimeException("Failed to get access token from Kakao: " + responseBody);
+			}
+		} catch (HttpClientErrorException e) {
+			throw new RuntimeException("HTTP error while getting access token from Kakao: " + e.getStatusCode() + " - "
+				+ e.getResponseBodyAsString(), e);
+		} catch (Exception e) {
+			throw new RuntimeException("Unexpected error while getting access token from Kakao", e);
+		}
+	}
+
+	public KakaoTokenResponse refreshKakaoToken(String refreshToken) {
+
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(tokenUri)
+			.queryParam("grant_type", "refresh_token")
+			.queryParam("client_id", apiKey)
+			.queryParam("refresh_token", refreshToken);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/x-www-form-urlencoded");
@@ -50,16 +87,16 @@ public class KakaoLoginService {
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		try {
-			ResponseEntity<Map> response = restTemplate.exchange(
+			ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(
 				uriBuilder.toUriString(),
 				HttpMethod.POST,
 				entity,
-				Map.class
+				KakaoTokenResponse.class
 			);
 
-			Map<String, Object> responseBody = response.getBody();
-			if (responseBody != null && responseBody.containsKey("access_token")) {
-				return (String)responseBody.get("access_token");
+			KakaoTokenResponse responseBody = response.getBody();
+			if (responseBody != null) {
+				return responseBody;
 			} else {
 				throw new RuntimeException("Failed to get access token from Kakao: " + responseBody);
 			}
