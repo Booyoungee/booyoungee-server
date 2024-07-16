@@ -12,17 +12,26 @@ spring:
       ddl-auto: update
     show-sql: false
     open-in-view: false
+  cloud:
+    config:
+      enabled: false
+    import-check:
+      enabled: false
 
 server:
   port: 8282
 
 logging:
   level:
-    org.springframework.security: INFO
+    org:
+      springframework:
+        security: DEBUG
 
 kakao:
   api:
     key: ${KAKAO.API.KEY}
+  redirect:
+    url: ${KAKAO.REDIRECT.URL}
 
 tourInfo:
   base_url: ${TOURINFO.URL}
@@ -48,3 +57,9 @@ springdoc:
 movies:
   api:
     key: ${TMDB.API.KEY}
+
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-token-expire-period: 1296000  # Access token 만료 기간 (15일 = 1296000초)
+  refresh-token-expire-period: 1296000  # Refresh token 만료 기간 (15일 = 1296000초)

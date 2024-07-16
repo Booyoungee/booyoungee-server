@@ -33,7 +33,7 @@ public class User {
 	@Column(nullable = false)
 	private String serialId;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String refreshToken;
 
 	@Column(nullable = false)
@@ -66,5 +66,9 @@ public class User {
 	public enum Role {
 		USER,
 		ADMIN
+	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 }
