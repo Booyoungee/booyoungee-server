@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.movieLocation.dao.MovieLocationRepository;
 import com.server.booyoungee.domain.movieLocation.domain.MovieLocation;
+import com.server.booyoungee.domain.movieLocation.dto.response.MovieLocationResponseDto;
 import com.server.booyoungee.global.handler.ExcelSheetHandler;
 
 import jakarta.transaction.Transactional;
@@ -51,5 +54,72 @@ public class MovieLocationService {
 		if (!batchList.isEmpty()) {
 			movieLocationRepository.saveAll(batchList);
 		}
+	}
+
+	public MovieLocationResponseDto getMovieLocation(Long id) {
+		MovieLocation movieLocation = movieLocationRepository.findById(id).orElseThrow();
+		return MovieLocationResponseDto.builder()
+			.id(movieLocation.getId())
+			.movieName(movieLocation.getMovieName())
+			.movieCode(movieLocation.getMovieCode())
+			.locationName(movieLocation.getLocationName())
+			.locationAddress(movieLocation.getLocationAddress())
+			.description(movieLocation.getDescription())
+			.area(movieLocation.getArea())
+			.mapx(movieLocation.getMapx())
+			.mapy(movieLocation.getMapy())
+			.productedAt(movieLocation.getProductedAt())
+			.build();
+	}
+
+	public Page<MovieLocationResponseDto> getMovieLocationList(Pageable pageable) {
+		return movieLocationRepository.findAll(pageable)
+			.map(movieLocation -> MovieLocationResponseDto.builder()
+				.id(movieLocation.getId())
+				.movieName(movieLocation.getMovieName())
+				.movieCode(movieLocation.getMovieCode())
+				.locationName(movieLocation.getLocationName())
+				.locationAddress(movieLocation.getLocationAddress())
+				.description(movieLocation.getDescription())
+				.area(movieLocation.getArea())
+				.mapx(movieLocation.getMapx())
+				.mapy(movieLocation.getMapy())
+				.productedAt(movieLocation.getProductedAt())
+				.build()
+			);
+	}
+
+	public Page<MovieLocationResponseDto> getMovieLocationListByMovieNameKeyword(String keyword, Pageable pageable) {
+		return movieLocationRepository.searchByMovieKeyword(keyword, pageable)
+			.map(movieLocation -> MovieLocationResponseDto.builder()
+				.id(movieLocation.getId())
+				.movieName(movieLocation.getMovieName())
+				.movieCode(movieLocation.getMovieCode())
+				.locationName(movieLocation.getLocationName())
+				.locationAddress(movieLocation.getLocationAddress())
+				.description(movieLocation.getDescription())
+				.area(movieLocation.getArea())
+				.mapx(movieLocation.getMapx())
+				.mapy(movieLocation.getMapy())
+				.productedAt(movieLocation.getProductedAt())
+				.build()
+			);
+	}
+
+	public Page<MovieLocationResponseDto> getMovieLocationListByLocationKeyword(String keyword, Pageable pageable){
+		return movieLocationRepository.searchByMovieLocationKeyword(keyword, pageable)
+				.map(movieLocation -> MovieLocationResponseDto.builder()
+						.id(movieLocation.getId())
+						.movieName(movieLocation.getMovieName())
+						.movieCode(movieLocation.getMovieCode())
+						.locationName(movieLocation.getLocationName())
+						.locationAddress(movieLocation.getLocationAddress())
+						.description(movieLocation.getDescription())
+						.area(movieLocation.getArea())
+						.mapx(movieLocation.getMapx())
+						.mapy(movieLocation.getMapy())
+						.productedAt(movieLocation.getProductedAt())
+						.build()
+				);
 	}
 }
