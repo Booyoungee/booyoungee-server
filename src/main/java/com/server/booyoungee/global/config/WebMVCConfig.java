@@ -11,7 +11,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.server.booyoungee.domain.user.interceptor.UserIdArgumentResolver;
+import com.server.booyoungee.domain.user.interceptor.UserArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebMvc
 @RequiredArgsConstructor
 public class WebMVCConfig implements WebMvcConfigurer {
-	private final UserIdArgumentResolver userIdArgumentResolver;
+	private final UserArgumentResolver userIdArgumentResolver;
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

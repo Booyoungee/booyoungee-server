@@ -30,6 +30,6 @@ public class UserService {
 
 	public User findByUser(Long userId) {
 		return userRepository.findByUserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 관광 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 	}
 }
