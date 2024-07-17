@@ -18,5 +18,6 @@ public class SearchDetailDto {
 	private String contentId;
 	private String firstImage1;
 	private String firstImage2;
+	private String type;
 
 }

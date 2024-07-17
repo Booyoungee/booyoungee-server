@@ -46,6 +46,7 @@ public class PlaceSearchService {
 		SearchListResponseDto responseDto = SearchListResponseDto.builder()
 			.keyword(dto.getMeta().getSameName().getKeyword())
 			.region(dto.getMeta().getSameName().getSelectedRegion())
+			.type("tour")
 			.placesList(dto.getDocuments()).build();
 		return responseDto;
 	}
@@ -55,6 +56,7 @@ public class PlaceSearchService {
 		SearchListResponseDto responseDto = SearchListResponseDto.builder()
 			.keyword(dto.getMeta().getSameName().getKeyword())
 			.region(dto.getMeta().getSameName().getSelectedRegion())
+			.type("tour")
 			.placesList(dto.getDocuments()).build();
 		return responseDto;
 	}
@@ -87,6 +89,7 @@ public class PlaceSearchService {
 			.firstImage1(firstImage1)
 			.firstImage2(firstImage2)
 			.contentId(contentId)
+			.type("tour")
 			.build();
 		return responseDto;
 	}

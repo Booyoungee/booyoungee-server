@@ -51,6 +51,9 @@ public class Stamp {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
+	@Column(nullable = false, columnDefinition = "tour")
+	private String type;
+
 	@PrePersist
 	protected void onCreate() {
 		createdAt = LocalDateTime.now();

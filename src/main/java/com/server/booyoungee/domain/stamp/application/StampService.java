@@ -56,7 +56,11 @@ public class StampService {
 			.map(stamp -> {
 				String placeName = null;
 				try {
-					placeName = tourInfoOpenApiService.getTitle(stamp.getPlaceId());
+					if (stamp.getType().equals("tour")) {
+						placeName = tourInfoOpenApiService.getTitle(stamp.getPlaceId());
+					} else {
+
+					}
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
