@@ -7,8 +7,6 @@ import lombok.Getter;
 @Getter
 public class StampRequestDto {
 
-	private Long userId;
-
 	private String placeId;
 
 	private double userX; //현재 위치 x

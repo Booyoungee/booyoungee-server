@@ -1,5 +1,8 @@
 package com.server.booyoungee.domain.stamp.dao;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +17,8 @@ public interface StampRepository extends JpaRepository<Stamp, Long> {
 	@Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Stamp s WHERE s.user = :user AND s.placeId = :placeId")
 	boolean existsByUserAndPlaceId(@Param("user") User user, @Param("placeId") String placeId);
 
+	@Query("SELECT s FROM Stamp s WHERE s.user = :user")
+	List<Stamp> findAllByUser(@Param("user") User user);
+
+	Optional<Stamp> findByUserAndStampId(User user, Long stampId);
 }
