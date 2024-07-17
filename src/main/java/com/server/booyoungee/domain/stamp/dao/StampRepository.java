@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.server.booyoungee.domain.stamp.domain.Stamp;
+import com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto;
 import com.server.booyoungee.domain.user.domain.User;
 
 @Repository
@@ -21,4 +22,12 @@ public interface StampRepository extends JpaRepository<Stamp, Long> {
 	List<Stamp> findAllByUser(@Param("user") User user);
 
 	Optional<Stamp> findByUserAndStampId(User user, Long stampId);
+
+	List<Stamp> findByPlaceId(String placeId);
+
+	@Query("SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type) " +
+		"FROM Stamp s " +
+		"GROUP BY s.placeId, s.type " +
+		"ORDER BY COUNT(s) DESC")
+	List<PlaceStampCountDto> findPlaceStampCounts();
 }
