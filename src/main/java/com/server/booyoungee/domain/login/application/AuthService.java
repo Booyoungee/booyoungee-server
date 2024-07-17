@@ -76,21 +76,6 @@ public class AuthService {
 		return jwtTokenResponse;
 	}
 
-/*	@Transactional
-	public JwtTokenResponse refresh(String token) {
-		String refreshToken = getToken(token);
-		Claims claims = jwtUtil.getTokenBody(refreshToken);
-		if (claims.get(Constants.USER_ROLE_CLAIM_NAME, String.class) != null) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN_TYPE);
-		}
-		Long userId = claims.get(Constants.USER_ID_CLAIM_NAME, Long.class);
-		User user = userRepository.findByUserId(userId).get();
-		if (!user.getRefreshToken().equals(refreshToken)) {
-			throw new CustomException(ErrorCode.INVALID_JWT);
-		}
-		return generateTokensWithUpdateRefreshToken(user);
-	}*/
-
 	private String getToken(String token) {
 		if (token.startsWith(Constants.BEARER_PREFIX)) {
 			return token.substring(Constants.BEARER_PREFIX.length());

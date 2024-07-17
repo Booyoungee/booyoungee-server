@@ -10,8 +10,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.server.booyoungee.domain.login.api.KakaoFeignClient;
 import com.server.booyoungee.domain.login.dto.SocialInfoDto;
-import com.server.booyoungee.global.oauth.KakaoFeignClient;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.dto.KakaoUserDto;
 

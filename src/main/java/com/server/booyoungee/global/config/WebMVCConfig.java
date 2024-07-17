@@ -11,7 +11,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.server.booyoungee.global.interceptor.UserIdArgumentResolver;
+import com.server.booyoungee.domain.user.interceptor.UserIdArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 

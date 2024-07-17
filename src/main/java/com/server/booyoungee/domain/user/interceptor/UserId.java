@@ -1,4 +1,4 @@
-package com.server.booyoungee.global.annotation;
+package com.server.booyoungee.domain.user.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

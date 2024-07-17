@@ -1,4 +1,4 @@
-package com.server.booyoungee.global.oauth;
+package com.server.booyoungee.domain.login.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
