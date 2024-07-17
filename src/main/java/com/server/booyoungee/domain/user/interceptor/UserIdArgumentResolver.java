@@ -1,4 +1,4 @@
-package com.server.booyoungee.global.interceptor;
+package com.server.booyoungee.domain.user.interceptor;
 
 import java.security.Principal;
 
@@ -9,7 +9,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.server.booyoungee.global.annotation.UserId;
 import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.ErrorCode;
 
