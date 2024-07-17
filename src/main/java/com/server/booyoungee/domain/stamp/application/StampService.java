@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.stamp.dao.StampRepository;
@@ -115,24 +117,22 @@ public class StampService {
 		return getStampByPlaceId(placeId).size();
 	}
 
-	public List<StampResponseDto> getPlaceStampCounts() throws IOException {
-		List<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCounts();
+	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable) throws IOException {
+		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCounts(pageable);
 
-		return placeStampCounts.stream()
-			.map(dto -> {
-				try {
-					String placeName = getPlaceName(dto.getType(), dto.getPlaceId());
-					return StampResponseDto.builder()
-						.placeId(dto.getPlaceId())
-						.placeName(placeName)
-						.type(dto.getType())
-						.count(dto.getCount())
-						.build();
-				} catch (IOException e) {
-					throw new RuntimeException("Failed to get place name", e);
-				}
-			})
-			.collect(Collectors.toList());
+		return placeStampCounts.map(dto -> {
+			try {
+				String placeName = getPlaceName(dto.getType(), dto.getPlaceId());
+				return StampResponseDto.builder()
+					.placeId(dto.getPlaceId())
+					.placeName(placeName)
+					.type(dto.getType())
+					.count(dto.getCount())
+					.build();
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to get place name", e);
+			}
+		});
 	}
 
 }

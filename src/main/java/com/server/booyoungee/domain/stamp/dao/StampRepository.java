@@ -3,6 +3,8 @@ package com.server.booyoungee.domain.stamp.dao;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +32,11 @@ public interface StampRepository extends JpaRepository<Stamp, Long> {
 		"GROUP BY s.placeId, s.type " +
 		"ORDER BY COUNT(s) DESC")
 	List<PlaceStampCountDto> findPlaceStampCounts();
+
+	@Query("SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type) " +
+		"FROM Stamp s " +
+		"GROUP BY s.placeId, s.type " +
+		"ORDER BY COUNT(s) DESC")
+	Page<PlaceStampCountDto> findPlaceStampCounts(Pageable pageable);
+
 }

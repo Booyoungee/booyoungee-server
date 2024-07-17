@@ -2,6 +2,8 @@ package com.server.booyoungee.domain.stamp.api;
 
 import java.io.IOException;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,9 +63,13 @@ public class StampController {
 
 	@Operation(summary = "장소 별 스탬프 수 조회")
 	@GetMapping("/place-stamp-counts")
-	public ApiResponse<?> getPlaceStampCounts() {
+	public ApiResponse<?> getPlaceStampCounts(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		Pageable pageable = PageRequest.of(page, size);
 		try {
-			return ApiResponse.success(stampService.getPlaceStampCounts());
+			return ApiResponse.success(stampService.getPlaceStampCounts(pageable));
 		} catch (IOException e) {
 			return ApiResponse.error("Failed to retrieve place stamp counts");
 		}
