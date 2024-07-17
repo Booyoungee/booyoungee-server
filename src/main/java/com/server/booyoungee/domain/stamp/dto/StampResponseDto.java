@@ -21,5 +21,6 @@ public class StampResponseDto {
 	private String placeId;
 	private String placeName;
 	private String type;
+	private long count;
 
 }

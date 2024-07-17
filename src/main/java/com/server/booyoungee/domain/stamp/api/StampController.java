@@ -2,11 +2,14 @@ package com.server.booyoungee.domain.stamp.api;
 
 import java.io.IOException;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.stamp.application.StampService;
@@ -51,4 +54,24 @@ public class StampController {
 		return ApiResponse.success(stampService.getStamp(user, stampId));
 	}
 
+	@Operation(summary = "특정 장소 스탬프 수 조회")
+	@GetMapping("/count")
+	public ApiResponse<?> getCountStampByPlaceId(
+		@RequestParam String id) {
+		return ApiResponse.success(stampService.getStampCountByPlaceId(id));
+	}
+
+	@Operation(summary = "장소 별 스탬프 수 조회")
+	@GetMapping("/place-stamp-counts")
+	public ApiResponse<?> getPlaceStampCounts(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		Pageable pageable = PageRequest.of(page, size);
+		try {
+			return ApiResponse.success(stampService.getPlaceStampCounts(pageable));
+		} catch (IOException e) {
+			return ApiResponse.error("Failed to retrieve place stamp counts");
+		}
+	}
 }
