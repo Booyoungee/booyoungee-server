@@ -29,6 +29,10 @@ public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
+	private static final String[] PERMIT_ALL_PATTERNS = {
+		"api/movieLocation/init",
+	};
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -44,6 +48,7 @@ public class SecurityConfig {
 				authorizationManagerRequestMatcherRegistry
 					.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 					.requestMatchers(Constants.AUTH_WHITELIST).permitAll()
+					.requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
 					.anyRequest().authenticated())
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
