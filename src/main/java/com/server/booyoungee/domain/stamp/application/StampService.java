@@ -35,6 +35,7 @@ public class StampService {
 				Stamp stamp = Stamp.builder()
 					.user(user)
 					.placeId(dto.getPlaceId())
+					.type(dto.getType())
 					.build();
 				stampRepository.save(stamp);
 			} else {
@@ -69,6 +70,7 @@ public class StampService {
 					.createdAt(stamp.getCreatedAt())
 					.updatedAt(stamp.getUpdatedAt())
 					.placeId(stamp.getPlaceId())
+					.type(stamp.getType())
 					.placeName(placeName)
 					.build();
 			})
@@ -90,6 +92,7 @@ public class StampService {
 			.createdAt(stamp.getCreatedAt())
 			.updatedAt(stamp.getUpdatedAt())
 			.placeId(stamp.getPlaceId())
+			.type(stamp.getType())
 			.placeName(placeName)
 			.build();
 	}

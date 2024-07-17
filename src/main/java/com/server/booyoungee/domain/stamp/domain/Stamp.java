@@ -51,7 +51,7 @@ public class Stamp {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
-	@Column(nullable = false, columnDefinition = "tour")
+	@Column(nullable = true)
 	private String type;
 
 	@PrePersist
