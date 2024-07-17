@@ -20,5 +20,6 @@ public class StampResponseDto {
 	private LocalDateTime updatedAt;
 	private String placeId;
 	private String placeName;
+	private String type;
 
 }
