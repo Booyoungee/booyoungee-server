@@ -16,5 +16,6 @@ public class SearchListResponseDto {
 	private String region;
 	private String keyword;
 	private List<KeywordSearchDto> placesList;
+	private String type;
 
 }

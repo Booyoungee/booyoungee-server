@@ -9,6 +9,8 @@ public class StampRequestDto {
 
 	private String placeId;
 
+	private String type;
+
 	private double userX; //현재 위치 x
 	private double userY; //현재 위치 y
 
