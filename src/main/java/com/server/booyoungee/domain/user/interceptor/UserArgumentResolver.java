@@ -9,6 +9,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.ErrorCode;
 
@@ -16,11 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
+public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+
+	private final UserService userService;
+
+	public UserArgumentResolver(UserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		return parameter.getParameterType().equals(Long.class)
+		return parameter.getParameterType().equals(com.server.booyoungee.domain.user.domain.User.class)
 			&& parameter.hasParameterAnnotation(UserId.class);
 	}
 
@@ -33,6 +40,7 @@ public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
 		if (principal == null) {
 			throw new CustomException(ErrorCode.EMPTY_PRINCIPAL);
 		}
-		return Long.valueOf(principal.getName());
+		Long userId = Long.valueOf(principal.getName());
+		return userService.findByUser(userId);
 	}
 }
