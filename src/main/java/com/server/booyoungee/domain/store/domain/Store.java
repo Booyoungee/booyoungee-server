@@ -1,7 +1,9 @@
 package com.server.booyoungee.domain.store.domain;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,4 +28,7 @@ public class Store {
 	private String contactNumber;
 
 	private String mainBusiness;
+
+	@Column(nullable = false) // Ensure this is not nullable to avoid null values
+	private int views = 0;  // Default value set to 0
 }

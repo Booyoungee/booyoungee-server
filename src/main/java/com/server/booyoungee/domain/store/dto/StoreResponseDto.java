@@ -10,6 +10,8 @@ import lombok.Getter;
 @Data
 @Getter
 public class StoreResponseDto {
+	@JsonProperty("store_id")
+	private Long storeId;
 
 	@JsonProperty("기본주소")
 	private String basicAddress;
@@ -31,9 +33,12 @@ public class StoreResponseDto {
 
 	@JsonProperty("주요사업")
 	private String mainBusiness;
+	@JsonProperty("조회수")
+	private int views;
 
 	@Builder
 	public StoreResponseDto(Store store) {
+		this.storeId = store.getStoreId();
 		this.basicAddress = store.getBasicAddress();
 		this.detailedAddress = store.getDetailedAddress();
 		this.district = store.getDistrict();
@@ -41,5 +46,6 @@ public class StoreResponseDto {
 		this.businessName = store.getBusinessName();
 		this.contactNumber = store.getContactNumber();
 		this.mainBusiness = store.getMainBusiness();
+		this.views = store.getViews();
 	}
 }
