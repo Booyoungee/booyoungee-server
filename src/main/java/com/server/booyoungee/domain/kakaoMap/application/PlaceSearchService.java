@@ -122,4 +122,37 @@ public class PlaceSearchService {
 		}
 	}
 
+	public SearchDetailDto searchByKeywordDetailsAddtypeOption(String query, String apiType) throws IOException {
+		KakaoKeywordResponseDto dto = kakaoAddressSearchService.searchByKeyword(query, 1, 5);
+
+		KeywordSearchDto placeInfo = dto.getDocuments().stream()
+			.filter(doc -> doc.getCategoryName().contains("관광"))
+			.findFirst()
+			.orElse(dto.getDocuments().get(0)); // Default to the first document if none match
+		List<TourInfoCommonResponseDto> tourInfo = getTourInfoByKeyword(10, 1, query);
+
+		String firstImage1 = null;
+		String firstImage2 = null;
+		String contentId = null;
+		String type = null;
+
+		if (tourInfo != null && !tourInfo.isEmpty()) {
+			contentId = tourInfo.get(0).getContentid();
+			type = tourInfo.get(0).getContenttypeid();
+			tourInfoService.viewContent(contentId, type);
+			firstImage1 = tourInfo.get(0).getFirstimage();
+			firstImage2 = tourInfo.get(0).getFirstimage2();
+		}
+		SearchDetailDto responseDto = SearchDetailDto.builder()
+			.keyword(dto.getMeta().getSameName().getKeyword())
+			.region(dto.getMeta().getSameName().getSelectedRegion())
+			.info(placeInfo)
+			.firstImage1(firstImage1)
+			.firstImage2(firstImage2)
+			.contentId(contentId)
+			.type(apiType)
+			.build();
+		return responseDto;
+	}
+
 }

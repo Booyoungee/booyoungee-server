@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.stamp.application.StampService;
+import com.server.booyoungee.domain.stamp.domain.PlaceType;
 import com.server.booyoungee.domain.stamp.dto.StampRequestDto;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
@@ -70,6 +71,21 @@ public class StampController {
 		Pageable pageable = PageRequest.of(page, size);
 		try {
 			return ApiResponse.success(stampService.getPlaceStampCounts(pageable));
+		} catch (IOException e) {
+			return ApiResponse.error("Failed to retrieve place stamp counts");
+		}
+	}
+
+	@Operation(summary = "장소 별 스탬프 수 조회")
+	@GetMapping("/place-stamp-counts/type")
+	public ApiResponse<?> getPlaceStampCountsByType(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam PlaceType type
+	) {
+		Pageable pageable = PageRequest.of(page, size);
+		try {
+			return ApiResponse.success(stampService.getPlaceStampCounts(pageable, type.getKey()));
 		} catch (IOException e) {
 			return ApiResponse.error("Failed to retrieve place stamp counts");
 		}

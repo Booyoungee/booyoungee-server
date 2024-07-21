@@ -119,7 +119,15 @@ public class StampService {
 
 	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable) throws IOException {
 		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCounts(pageable);
+		return stampToStampResponseDto(placeStampCounts);
+	}
 
+	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable, String type) throws IOException {
+		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCountsByType(type, pageable);
+		return stampToStampResponseDto(placeStampCounts);
+	}
+
+	public Page<StampResponseDto> stampToStampResponseDto(Page<PlaceStampCountDto> placeStampCounts) {
 		return placeStampCounts.map(dto -> {
 			try {
 				String placeName = getPlaceName(dto.getType(), dto.getPlaceId());

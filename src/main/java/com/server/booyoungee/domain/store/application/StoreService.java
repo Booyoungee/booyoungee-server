@@ -52,7 +52,7 @@ public class StoreService {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR));
 		store.setViews(store.getViews() + 1);
 		storeRepository.save(store);
-		return placeSearchService.searchByKeywordDetails(store.getBusinessName());
+		return placeSearchService.searchByKeywordDetailsAddtypeOption(store.getBusinessName(), "store");
 	}
 
 	public void restoreViews() {
