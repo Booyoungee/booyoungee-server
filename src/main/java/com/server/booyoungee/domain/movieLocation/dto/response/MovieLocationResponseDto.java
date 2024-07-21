@@ -13,5 +13,12 @@ public record MovieLocationResponseDto(
 	String area,
 	String mapx,
 	String mapy,
-	String productedAt
-) {}
+	String productedAt,
+	String placeType
+) {
+	public MovieLocationResponseDto {
+		if (placeType == null || placeType.isBlank()) {
+			placeType = "movie";
+		}
+	}
+}
