@@ -1,14 +1,19 @@
 package com.server.booyoungee.domain.tourInfo.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
+import lombok.Builder;
+
 @Builder
-@AllArgsConstructor
-public class TourInfoResponseDto {
-	private String contentId;
-	private Long views;
-	private String description;
+public record TourInfoResponseDto(
+	@JsonProperty("contentId") String contentId,
+	@JsonProperty("views") Long views,
+	@JsonProperty("description") String description,
+	@JsonProperty("placeType") String placeType
+) {
+	public TourInfoResponseDto {
+		if (description == null || description.isBlank()) {
+			description = "tour";
+		}
+	}
 }
