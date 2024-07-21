@@ -74,11 +74,11 @@ public class PlaceSearchService {
 		String type = null;
 
 		if (tourInfo != null && !tourInfo.isEmpty()) {
-			contentId = tourInfo.get(0).getContentid();
-			type = tourInfo.get(0).getContenttypeid();
+			contentId = tourInfo.get(0).contentid();
+			type = tourInfo.get(0).contenttypeid();
 			tourInfoService.viewContent(contentId, type);
-			firstImage1 = tourInfo.get(0).getFirstimage();
-			firstImage2 = tourInfo.get(0).getFirstimage2();
+			firstImage1 = tourInfo.get(0).firstimage();
+			firstImage2 = tourInfo.get(0).firstimage2();
 		}
 		SearchDetailDto responseDto = SearchDetailDto.builder()
 			.keyword(dto.getMeta().getSameName().getKeyword())

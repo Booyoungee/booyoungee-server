@@ -30,7 +30,8 @@ public class SecurityConfig {
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
 	private static final String[] PERMIT_ALL_PATTERNS = {
-		"api/movieLocation/**",
+		"/api/movieLocation/**",
+		"/api/tourInfoOpenApi/**",
 	};
 
 	@Bean

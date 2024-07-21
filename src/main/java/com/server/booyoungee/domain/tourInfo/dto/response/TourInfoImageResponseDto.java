@@ -2,29 +2,23 @@ package com.server.booyoungee.domain.tourInfo.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
 @Builder
-@AllArgsConstructor
-public class TourInfoImageResponseDto {
-	@JsonProperty("contentid")
-	private String contentid;
+public record TourInfoImageResponseDto(
+	@JsonProperty("contentid") String contentid,
+	@JsonProperty("originimgurl") String originimgurl,
+	@JsonProperty("imgname") String imgname,
+	@JsonProperty("smallimageurl") String smallimageurl,
+	@JsonProperty("cpyrhtDivCd") String cpyrhtDivCd,
+	@JsonProperty("serialnum") String serialnum,
+	@JsonProperty("placeType") String placeType
 
-	@JsonProperty("originimgurl")
-	private String originimgurl;
-
-	@JsonProperty("imgname")
-	private String imgname;
-
-	@JsonProperty("smallimageurl")
-	private String smallimageurl;
-
-	@JsonProperty("cpyrhtDivCd")
-	private String cpyrhtDivCd;
-
-	@JsonProperty("serialnum")
-	private String serialnum;
+) {
+	public TourInfoImageResponseDto {
+		if (placeType == null || placeType.isBlank()) {
+			placeType = "tour";
+		}
+	}
 }
+
