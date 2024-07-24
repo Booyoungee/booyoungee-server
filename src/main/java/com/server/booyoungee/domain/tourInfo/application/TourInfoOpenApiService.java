@@ -245,6 +245,6 @@ public class TourInfoOpenApiService {
 	}
 
 	public String getTitle(String stampId) throws IOException {
-		return getCommonInfoByContentId(stampId).get(0).getTitle();
+		return getCommonInfoByContentId(stampId).get(0).title();
 	}
 }

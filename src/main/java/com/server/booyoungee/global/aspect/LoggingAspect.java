@@ -44,7 +44,8 @@ public class LoggingAspect {
 		Method method = getMethod(joinPoint);
 		log.error("AfterThrowing Method: {} || Exception: {}", method.getName(), exception.getMessage());
 		log.error("Exception type: {}", exception.getClass().toGenericString());
-		log.error("Exception point: {}", exception.getStackTrace()[0]);
+		log.error("Exception final point: {}", exception.getStackTrace()[0]);
+		log.error("Exception point: {}", exception.getStackTrace()[1]);
 	}
 
 	private Method getMethod(JoinPoint joinPoint) {
