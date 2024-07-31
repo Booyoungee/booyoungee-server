@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.movieLocation.api;
+package com.server.booyoungee.domain.place.api.movie;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.movieLocation.application.MovieLocationService;
-import com.server.booyoungee.domain.movieLocation.dto.response.MovieLocationResponseDto;
+import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponseDto;
 import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/movieLocation")
 @Tag(name = "MovieLocation", description = "영화 촬영지 관리")
-public class MovieLocationController {
-	private final MovieLocationService movieLocationService;
+public class MoviePlaceController {
+	private final MoviePlaceService moviePlaceService;
 
 	@PostMapping("/init")
 	@Operation(summary = "영화 촬영지 데이터 init")
 	public ApiResponse<?> initMovieLocationData() throws Exception {
-		movieLocationService.initData();
+		moviePlaceService.initData();
 		return ApiResponse.success(true);
 	}
 
@@ -37,7 +37,7 @@ public class MovieLocationController {
 	public ApiResponse<?> getMovieLocation(
 		@PathVariable Long movieLocationId
 	) {
-		MovieLocationResponseDto movieLocation = movieLocationService.getMovieLocation(movieLocationId);
+		MoviePlaceResponseDto movieLocation = moviePlaceService.getMovieLocation(movieLocationId);
 		return ApiResponse.success(movieLocation);
 	}
 
@@ -48,7 +48,7 @@ public class MovieLocationController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<MovieLocationResponseDto> movieLocationList = movieLocationService.getMovieLocationList(pageable);
+		Page<MoviePlaceResponseDto> movieLocationList = moviePlaceService.getMovieLocationList(pageable);
 		return ApiResponse.success(movieLocationList);
 	}
 
@@ -60,7 +60,7 @@ public class MovieLocationController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<MovieLocationResponseDto> movieLocationList = movieLocationService.getMovieLocationListByMovieNameKeyword(keyword, pageable);
+		Page<MoviePlaceResponseDto> movieLocationList = moviePlaceService.getMovieLocationListByMovieNameKeyword(keyword, pageable);
 		return ApiResponse.success(movieLocationList);
 	}
 
@@ -72,7 +72,7 @@ public class MovieLocationController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<MovieLocationResponseDto> movieLocationList = movieLocationService.getMovieLocationListByLocationKeyword(keyword, pageable);
+		Page<MoviePlaceResponseDto> movieLocationList = moviePlaceService.getMovieLocationListByLocationKeyword(keyword, pageable);
 		return ApiResponse.success(movieLocationList);
 	}
 }

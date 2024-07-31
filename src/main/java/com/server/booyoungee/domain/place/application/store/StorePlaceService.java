@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.store.application;
+package com.server.booyoungee.domain.place.application.store;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
-import com.server.booyoungee.domain.store.dao.StoreRepository;
-import com.server.booyoungee.domain.store.domain.Store;
-import com.server.booyoungee.domain.store.dto.StoreResponseDto;
+import com.server.booyoungee.domain.place.dao.store.StorePlaceRepository;
+import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
+import com.server.booyoungee.domain.place.dto.response.store.StoreResponseDto;
 import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.ErrorCode;
 
@@ -19,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class StoreService {
-	private final StoreRepository storeRepository;
+public class StorePlaceService {
+	private final StorePlaceRepository storePlaceRepository;
 	private final PlaceSearchService placeSearchService;
 
 	public List<StoreResponseDto> getStoreByName(String name) {
 
-		List<Store> stores = storeRepository.findAllByBusinessName(name);
+		List<StorePlace> stores = storePlaceRepository.findAllByBusinessName(name);
 		return stores.stream()
 			.map(StoreResponseDto::new)
 			.collect(Collectors.toList());
@@ -33,14 +33,14 @@ public class StoreService {
 
 	public List<StoreResponseDto> getStoreByDistrict(String district) {
 
-		List<Store> stores = storeRepository.findAllByDistrict(district);
+		List<StorePlace> stores = storePlaceRepository.findAllByDistrict(district);
 		return stores.stream()
 			.map(StoreResponseDto::new)
 			.collect(Collectors.toList());
 	}
 
 	public List<StoreResponseDto> getStores(Pageable pageable) {
-		List<Store> stores = storeRepository.findAllOrderByViews(pageable).getContent();
+		List<StorePlace> stores = storePlaceRepository.findAllOrderByViews(pageable).getContent();
 		return stores.stream()
 			.map(StoreResponseDto::new)
 			.collect(Collectors.toList());
@@ -48,14 +48,14 @@ public class StoreService {
 
 	@Transactional
 	public Object getStoreById(Long storeId) throws IOException {
-		Store store = storeRepository.findByStoreId(storeId)
+		StorePlace store = storePlaceRepository.findByStoreId(storeId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR));
-		store.setViews(store.getViews() + 1);
-		storeRepository.save(store);
-		return placeSearchService.searchByKeywordDetailsAddtypeOption(store.getBusinessName(), "store");
+		// store.setViewCount(store.getViewCount() + 1); TODO: 도메인 규칙에 viewCount 증가 추가
+		storePlaceRepository.save(store);
+		return placeSearchService.searchByKeywordDetailsAddtypeOption(store.getName(), "store");
 	}
 
 	public void restoreViews() {
-		storeRepository.resetViewsForAllStores();
+		storePlaceRepository.resetViewsForAllStores();
 	}
 }

@@ -1,22 +1,21 @@
-package com.server.booyoungee.domain.movieLocation.dto.response;
+package com.server.booyoungee.domain.place.dto.response.movie;
 
 import lombok.Builder;
 
 @Builder
-public record MovieLocationResponseDto(
+public record MoviePlaceResponseDto(
 	Long id,
 	String movieName,
 	String movieCode,
-	String locationName,
+	String name,
 	String locationAddress,
 	String description,
-	String area,
-	String mapx,
-	String mapy,
-	String productedAt,
+	String mapX,
+	String mapY,
+	String productionYear,
 	String placeType
 ) {
-	public MovieLocationResponseDto {
+	public MoviePlaceResponseDto {
 		if (placeType == null || placeType.isBlank()) {
 			placeType = "movie";
 		}

@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.store.dto;
+package com.server.booyoungee.domain.place.dto.response.store;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

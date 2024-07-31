@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.place.domain.movie;
+package com.server.booyoungee.domain.place.domain.storePlace;
 
 import com.server.booyoungee.domain.place.domain.Place;
 
@@ -14,23 +14,17 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Entity
 @SuperBuilder
-@Table(name = "movie")
-@DiscriminatorValue("MOVIE")
+@Table(name = "store_place")
+@DiscriminatorValue("STORE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Movie extends Place {
+public class StorePlace extends Place {
 
 	@Column(nullable = false)
-	private String movieName;
+	private Long storeId;
 
-	private String movieCode;
+	private String detailAddress;
 
-	private String description;
+	private String tel;
 
-	@Column(nullable = false)
-	private String mapX;
-
-	@Column(nullable = false)
-	private String mapY;
-
-	private String productionYear;
+	private String mainBusiness;
 }

@@ -1,7 +1,7 @@
-package com.server.booyoungee.domain.store.dto;
+package com.server.booyoungee.domain.place.dto.response.store;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.server.booyoungee.domain.store.domain.Store;
+import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
 
 import lombok.Builder;
 import lombok.Data;
@@ -22,9 +22,6 @@ public class StoreResponseDto {
 	@JsonProperty("시군구")
 	private String district;
 
-	@JsonProperty("시도")
-	private String city;
-
 	@JsonProperty("업체명")
 	private String businessName;
 
@@ -34,18 +31,17 @@ public class StoreResponseDto {
 	@JsonProperty("주요사업")
 	private String mainBusiness;
 	@JsonProperty("조회수")
-	private int views;
+	private Long viewCount;
 
 	@Builder
-	public StoreResponseDto(Store store) {
-		this.storeId = store.getStoreId();
-		this.basicAddress = store.getBasicAddress();
-		this.detailedAddress = store.getDetailedAddress();
-		this.district = store.getDistrict();
-		this.city = store.getCity();
-		this.businessName = store.getBusinessName();
-		this.contactNumber = store.getContactNumber();
-		this.mainBusiness = store.getMainBusiness();
-		this.views = store.getViews();
+	public StoreResponseDto(StorePlace storePlace) {
+		this.storeId = storePlace.getStoreId();
+		this.basicAddress = storePlace.getBasicAddress();
+		this.detailedAddress = storePlace.getDetailAddress();
+		this.district = storePlace.getDistrict();
+		this.businessName = storePlace.getName();
+		this.contactNumber = storePlace.getTel();
+		this.mainBusiness = storePlace.getMainBusiness();
+		this.viewCount = storePlace.getViewCount();
 	}
 }

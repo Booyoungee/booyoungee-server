@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.store.api;
+package com.server.booyoungee.domain.place.api.store;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.store.application.StoreService;
+import com.server.booyoungee.domain.place.application.store.StorePlaceService;
 import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,17 +19,17 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/store")
 @RequiredArgsConstructor
-public class StoreController {
-	private final StoreService storeService;
+public class StorePlaceController {
+	private final StorePlaceService storePlaceService;
 
 	@GetMapping("/name")
 	public ApiResponse<?> getStoresByName(@RequestParam String name) {
-		return ApiResponse.success(storeService.getStoreByName(name));
+		return ApiResponse.success(storePlaceService.getStoreByName(name));
 	}
 
 	@GetMapping("/district")
 	public ApiResponse<?> getStoresByDistrict(@RequestParam String district) {
-		return ApiResponse.success(storeService.getStoreByDistrict(district));
+		return ApiResponse.success(storePlaceService.getStoreByDistrict(district));
 	}
 
 	@Operation(summary = "조회수 랭킹")
@@ -39,17 +39,17 @@ public class StoreController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		return ApiResponse.success(storeService.getStores(pageable));
+		return ApiResponse.success(storePlaceService.getStores(pageable));
 	}
 
 	@GetMapping("/details")
 	public ApiResponse<?> getStoreDetails(@RequestParam Long storeId) throws IOException {
-		return ApiResponse.success(storeService.getStoreById(storeId));
+		return ApiResponse.success(storePlaceService.getStoreById(storeId));
 	}
 
 	@PostMapping("/reset/views")
 	public ApiResponse<?> resetViews() {
-		storeService.restoreViews();
+		storePlaceService.restoreViews();
 		return ApiResponse.success("views를 초기화 하였습니다.");
 	}
 }
