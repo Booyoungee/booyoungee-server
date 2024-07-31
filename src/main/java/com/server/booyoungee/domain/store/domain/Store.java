@@ -13,21 +13,21 @@ import lombok.Setter;
 @Table(name = "store")
 public class Store {
 	@Id
-	private Long storeId;
+	private Long storeId; // id
 
-	private String basicAddress;
+	private String basicAddress; // 기본주소
 
-	private String detailedAddress;
+	private String detailedAddress; // 상세 주소
 
-	private String district;
+	private String district; // 군구
 
-	private String city;
+	private String city; // 시
 
-	private String businessName;
+	private String businessName; // 상호명
 
-	private String contactNumber;
+	private String contactNumber; // 연락처
 
-	private String mainBusiness;
+	private String mainBusiness; // 주요업종
 
 	@Column(nullable = false) // Ensure this is not nullable to avoid null values
 	private int views = 0;  // Default value set to 0

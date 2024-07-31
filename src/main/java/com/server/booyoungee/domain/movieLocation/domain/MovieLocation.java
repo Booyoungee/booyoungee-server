@@ -22,28 +22,28 @@ public class MovieLocation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long id; // id
 
 	@Column(nullable = false)
-	private String movieName;
+	private String movieName; // 영화 제목
 
-	private String movieCode;
-
-	@Column(nullable = false)
-	private String locationName;
+	private String movieCode; // 영화 코드
 
 	@Column(nullable = false)
-	private String locationAddress;
-
-	private String description;
-
-	private String area;
+	private String locationName; // 장소명
 
 	@Column(nullable = false)
-	private String mapx;
+	private String locationAddress; // 주소
+
+	private String description; // 설명
+
+	private String area; // 지역
 
 	@Column(nullable = false)
-	private String mapy;
+	private String mapx; // x좌표
 
-	private String productedAt;
+	@Column(nullable = false)
+	private String mapy; // y좌표
+
+	private String productedAt; // 제작년도
 }
