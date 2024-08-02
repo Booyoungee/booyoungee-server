@@ -2,8 +2,6 @@ package com.server.booyoungee.domain.place.api.store;
 
 import java.io.IOException;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +26,7 @@ public class StorePlaceController {
 	private final StorePlaceService storePlaceService;
 
 	@GetMapping("/name")
+	@Operation(summary = "식당 이름으로 조회")
 	public ApiResponse<StorePlaceListResponse> getStoresByName(
 		@RequestParam String name
 	) {
@@ -36,6 +35,7 @@ public class StorePlaceController {
 	}
 
 	@GetMapping("/district")
+	@Operation(summary = "군/구 별 식당 조회")
 	public ApiResponse<StorePlaceListResponse> getStoresByDistrict(
 		@RequestParam String district
 	) {
@@ -43,8 +43,9 @@ public class StorePlaceController {
 		return ApiResponse.success(response);
 	}
 
-	@Operation(summary = "조회수 랭킹")
+
 	@GetMapping("")
+	@Operation(summary = "식당 가장 많이 조회한 순")
 	public ApiResponse<StorePlacePageResponse<StorePlace>> getStoresList(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size
@@ -54,11 +55,13 @@ public class StorePlaceController {
 	}
 
 	@GetMapping("/details")
+	@Operation(summary = "식당 상세 정보 조회")
 	public ApiResponse<?> getStoreDetails(@RequestParam Long storeId) throws IOException {
 		return ApiResponse.success(storePlaceService.getStoreById(storeId));
 	}
 
 	@PostMapping("/reset/viewCount")
+	@Operation(summary = "조회수 초기화")
 	public ApiResponse<?> resetViews() {
 		storePlaceService.restoreViews();
 		return ApiResponse.success("view count를 초기화 하였습니다.");

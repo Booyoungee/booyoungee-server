@@ -2,8 +2,8 @@ package com.server.booyoungee.domain.place.dto.response.store;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
-import com.server.booyoungee.global.common.PlaceType;
 import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
+import com.server.booyoungee.global.common.PlaceType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

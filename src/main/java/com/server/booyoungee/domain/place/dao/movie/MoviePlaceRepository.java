@@ -13,16 +13,6 @@ import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
 
 @Repository
 public interface MoviePlaceRepository extends JpaRepository<MoviePlace, Long> {
-	Page<MoviePlace> findAll(Pageable pageable);
-
-	@Query("SELECT m FROM MoviePlace m WHERE m.movieName LIKE %:keyword%")
-	Page<MoviePlace> searchByMovieKeyword(String keyword, Pageable pageable);
-
-	@Query("SELECT m FROM MoviePlace m WHERE m.name LIKE %:keyword% OR m.basicAddress LIKE %:keyword%")
-	Page<MoviePlace> searchByMovieLocationKeyword(String keyword, Pageable pageable);
-
-	@Query("SELECT s FROM MoviePlace s ORDER BY s.viewCount DESC")
-	List<MoviePlace> findAllOrderByViewCount(Pageable pageable);
 
 	Long countByMovieNameContaining(String keyword);
 
@@ -31,4 +21,8 @@ public interface MoviePlaceRepository extends JpaRepository<MoviePlace, Long> {
 	List<MoviePlace> findAllByNameContainingOrderByViewCount(String keyword, Pageable pageable);
 
 	List<MoviePlace> findAllByMovieNameContainingOrderByViewCount(String keyword, Pageable pageable);
+
+	@Query("SELECT s FROM MoviePlace s ORDER BY s.viewCount DESC")
+	List<MoviePlace> findAllOrderByViewCount(Pageable pageable);
+	// TODO : QueryDsl로 변경
 }
