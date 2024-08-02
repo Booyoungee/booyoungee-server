@@ -23,6 +23,12 @@ import com.server.booyoungee.global.common.ApiResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	@ExceptionHandler(CustomException.class)
+	protected ResponseEntity<ApiResponse<?>> handleCustomException(CustomException exception) {
+		return ResponseEntity.status(exception.getHttpStatusCode())
+			.body(ApiResponse.error(exception.getErrorMessage().name()));
+	}
+
 	@ExceptionHandler({
 		ArrayIndexOutOfBoundsException.class,
 		ArithmeticException.class,
@@ -86,5 +92,4 @@ public class GlobalExceptionHandler {
 			return ErrorCode.INTERNAL_SERVER_ERROR;
 		}
 	}
-
 }
