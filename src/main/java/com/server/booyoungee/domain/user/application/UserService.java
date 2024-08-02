@@ -1,7 +1,5 @@
 package com.server.booyoungee.domain.user.application;
 
-import java.util.Date;
-
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.user.dao.UserRepository;
@@ -39,19 +37,13 @@ public class UserService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 	}
 
-	public Date getTokenExpiredTime(String token) {
-		return jwtUtil.getExpirationDateFromToken(token);
-	}
-
 	public void updateNickname(String nickname) {
 	}
 
 	public String duplicateNickname(String nickname) {
 		if (userRepository.existsByName(nickname)) {
-			// Throw a custom exception if the nickname is already in use
 			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
 		} else {
-			// Return the nickname if it is not a duplicate
 			return nickname;
 		}
 	}
