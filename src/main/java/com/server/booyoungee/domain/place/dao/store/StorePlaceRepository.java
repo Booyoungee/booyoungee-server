@@ -20,16 +20,16 @@ public interface StorePlaceRepository extends JpaRepository<StorePlace, Long> {
 
 	List<StorePlace> findAllByDistrict(String district);
 
-	@Query("SELECT s FROM StorePlace s WHERE s.businessName LIKE %:businessName%")
-	List<StorePlace> findAllByBusinessName(@Param("businessName") String businessName);
+	@Query("SELECT s FROM StorePlace s WHERE s.name LIKE %:name%")
+	List<StorePlace> findAllByName(@Param("name") String businessName);
 
-	@Query("SELECT s FROM StorePlace s ORDER BY s.views DESC")
-	Page<StorePlace> findAllOrderByViews(Pageable pageable);
+	@Query("SELECT s FROM StorePlace s ORDER BY s.viewCount DESC")
+	List<StorePlace> findAllOrderByViewCount(Pageable pageable);
 
 	Optional<StorePlace> findByStoreId(Long storeId);
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE StorePlace s SET s.views = 0")
+	@Query("UPDATE StorePlace s SET s.viewCount = 0")
 	void resetViewsForAllStores();
 }

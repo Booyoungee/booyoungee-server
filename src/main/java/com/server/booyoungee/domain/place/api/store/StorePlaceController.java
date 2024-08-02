@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
+import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
+import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
+import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,23 +26,29 @@ public class StorePlaceController {
 	private final StorePlaceService storePlaceService;
 
 	@GetMapping("/name")
-	public ApiResponse<?> getStoresByName(@RequestParam String name) {
-		return ApiResponse.success(storePlaceService.getStoreByName(name));
+	public ApiResponse<StorePlaceListResponse> getStoresByName(
+		@RequestParam String name
+	) {
+		StorePlaceListResponse response = storePlaceService.getStoreByName(name);
+		return ApiResponse.success(response);
 	}
 
 	@GetMapping("/district")
-	public ApiResponse<?> getStoresByDistrict(@RequestParam String district) {
-		return ApiResponse.success(storePlaceService.getStoreByDistrict(district));
+	public ApiResponse<StorePlaceListResponse> getStoresByDistrict(
+		@RequestParam String district
+	) {
+		StorePlaceListResponse response = storePlaceService.getStoreByDistrict(district);
+		return ApiResponse.success(response);
 	}
 
 	@Operation(summary = "조회수 랭킹")
 	@GetMapping("")
-	public ApiResponse<?> getStoresList(
+	public ApiResponse<StorePlacePageResponse<StorePlace>> getStoresList(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size
 	) {
-		Pageable pageable = PageRequest.of(page, size);
-		return ApiResponse.success(storePlaceService.getStores(pageable));
+		StorePlacePageResponse<StorePlace> response = storePlaceService.getStores(page, size);
+		return ApiResponse.success(response);
 	}
 
 	@GetMapping("/details")

@@ -37,6 +37,10 @@ public class Place {
 
 	private String district;
 
-	@ColumnDefault("0L")
-	private Long viewCount;
+	@ColumnDefault("0")
+	private int viewCount;
+
+	public void increaseViewCount() {
+		this.viewCount++;
+	}
 }
