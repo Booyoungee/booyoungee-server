@@ -37,7 +37,19 @@ public class UserService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 	}
 
-	public void updateNickname(String nickname) {
+	public void updateNickname(User user, String nickname) {
+		try {
+			// Check if the nickname already exists
+			String validatedNickname = duplicateNickname(nickname);
+
+			// Update the user's nickname
+			user.updateName(validatedNickname);
+			// Save the updated user entity to the repository
+			userRepository.save(user);
+		} catch (Exception e) {
+			// Handle any other exceptions that might occur
+			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
+		}
 	}
 
 	public String duplicateNickname(String nickname) {

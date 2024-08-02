@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.user.api;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,5 +40,13 @@ public class UserController {
 	public ApiResponse<?> checkDuplicate(
 		@RequestParam String nickname) {
 		return ApiResponse.success(userService.duplicateNickname(nickname));
+	}
+
+	@PutMapping("/nickname")
+	public ApiResponse<?> updateNickname(
+		@Parameter(hidden = true) @UserId User user,
+		@RequestParam String nickname) {
+		userService.updateNickname(user, nickname);
+		return ApiResponse.success("");
 	}
 }
