@@ -17,11 +17,13 @@ import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageRespo
 import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/store")
+@RequestMapping("/api/storePlace")
 @RequiredArgsConstructor
+@Tag(name = "StorePlace", description = "지역 상생 식당 api / 관리자 : 이영학")
 public class StorePlaceController {
 	private final StorePlaceService storePlaceService;
 
@@ -56,9 +58,9 @@ public class StorePlaceController {
 		return ApiResponse.success(storePlaceService.getStoreById(storeId));
 	}
 
-	@PostMapping("/reset/views")
+	@PostMapping("/reset/viewCount")
 	public ApiResponse<?> resetViews() {
 		storePlaceService.restoreViews();
-		return ApiResponse.success("views를 초기화 하였습니다.");
+		return ApiResponse.success("view count를 초기화 하였습니다.");
 	}
 }

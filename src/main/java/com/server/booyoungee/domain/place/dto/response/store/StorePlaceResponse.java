@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.place.dto.response.store;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
+import com.server.booyoungee.global.common.PlaceType;
 import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,17 +23,20 @@ public record StorePlaceResponse(
 	@Schema(description = "조회수", example = "512", requiredMode = REQUIRED)
 	int viewCount,
 
-	@Schema(description = "가게 고유 ID", example = "550", requiredMode = REQUIRED)
+	@Schema(description = "식당 고유 ID", example = "550", requiredMode = REQUIRED)
 	Long storeId,
 
 	@Schema(description = "상세 주소", example = "98번길 94 희망통닭", requiredMode = REQUIRED)
 	String detailAddress,
 
-	@Schema(description = "가게 전화번호", example = "051-555-0000", requiredMode = REQUIRED)
+	@Schema(description = "식당 전화번호", example = "051-555-0000", requiredMode = REQUIRED)
 	String tel,
 
 	@Schema(description = "주요 메뉴", example = "치킨", requiredMode = REQUIRED)
-	String mainBusiness
+	String mainBusiness,
+
+	@Schema(description = "장소 타입", example = "STORE", requiredMode = REQUIRED)
+	PlaceType placeType
 ) {
 	public static StorePlaceResponse from(final StorePlace storePlace) {
 		return new StorePlaceResponse(
@@ -44,7 +48,8 @@ public record StorePlaceResponse(
 			storePlace.getStoreId(),
 			storePlace.getDetailAddress(),
 			storePlace.getTel(),
-			storePlace.getMainBusiness()
+			storePlace.getMainBusiness(),
+			PlaceType.STORE
 		);
 	}
 }
