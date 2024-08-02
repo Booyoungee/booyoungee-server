@@ -11,11 +11,13 @@ import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoTransCoordResponseDto;
 import com.server.booyoungee.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/kakaoAddress")
 @RequiredArgsConstructor
+@Tag(name = "KakaoAddress", description = "카카오 지도 관련 api / 담당자 : 이영학")
 public class KakaoAddressController {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 

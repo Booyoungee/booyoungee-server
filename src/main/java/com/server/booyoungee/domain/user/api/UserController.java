@@ -11,11 +11,13 @@ import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+@Tag(name = "User", description = "유저 관련 api / 담당자 : 이영학")
 public class UserController {
 
 	private final UserService userService;

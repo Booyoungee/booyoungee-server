@@ -10,11 +10,13 @@ import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.movie.dto.response.TmdbResponseDto;
 import com.server.booyoungee.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/kmdb")
+@Tag(name = "Tmdb", description = "영화 이미지 관련 api / 담당자 : 이영학")
 public class TmdbController {
 
 	private final TmdbApiService tmdbApiService;

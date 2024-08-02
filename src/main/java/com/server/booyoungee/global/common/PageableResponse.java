@@ -33,6 +33,13 @@ public record PageableResponse<T>(
 	int totalPages,
 
 	@Schema(
+		defaultValue = "30",
+		description = "전체 요소 갯수 입니다.",
+		requiredMode = REQUIRED
+	)
+	Long totalElements,
+
+	@Schema(
 		defaultValue = "false",
 		description = "현재 응답하는 페이지가 마지막 일 시, true로 설정됩니다.",
 		requiredMode = REQUIRED
@@ -40,13 +47,14 @@ public record PageableResponse<T>(
 	boolean isEnd
 ) {
 
-	public static <T> PageableResponse<T> of(Pageable pageable, List<T> totalElements) {
-		int totalPageSize = (int)Math.ceil((double)totalElements.size() / pageable.getPageSize());
+	public static <T> PageableResponse<T> of(Pageable pageable, Long totalElements) {
+		int totalPageSize = (int) Math.ceil(totalElements / (double) pageable.getPageSize());
 		boolean isEnd = pageable.getPageNumber() + 1 >= totalPageSize;
 		return PageableResponse.<T>builder()
 			.page(pageable.getPageNumber())
 			.size(pageable.getPageSize())
 			.totalPages(totalPageSize)
+			.totalElements(totalElements)
 			.isEnd(isEnd)
 			.build();
 	}

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tourInfoOpenApi")
-@Tag(name = "TourInfoOpenApi", description = "국문 관광정보 OpenAPI 관리")
+@Tag(name = "TourInfoOpenApi", description = "국문 관광정보 OpenAPI 관리 / 담당자 : 이한음")
 public class TourInfoOpenApiController {
 	private final TourInfoService tourInfoService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;

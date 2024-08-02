@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
 import com.server.booyoungee.global.common.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/locationInfo")
 @RequiredArgsConstructor
+@Tag(name = "PlaceSerce", description = "장소 검색 api / 담당자 : 이영학")
 public class PlaceSearchController {
 
 	private final PlaceSearchService placeSearchService;
