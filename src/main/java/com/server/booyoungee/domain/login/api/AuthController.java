@@ -21,12 +21,14 @@ import com.server.booyoungee.global.common.ApiResponse;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/oauth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "카카오 로그인 api / 담당자 : 이영학")
 public class AuthController {
 
 	private final AuthService authService;

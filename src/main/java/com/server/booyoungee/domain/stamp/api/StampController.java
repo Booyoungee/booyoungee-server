@@ -21,11 +21,13 @@ import com.server.booyoungee.global.common.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/stamp")
 @RequiredArgsConstructor
+@Tag(name = "Stamp", description = "스탬프 관련 api / 담당자 : 이영학")
 public class StampController {
 	private final StampService stampService;
 

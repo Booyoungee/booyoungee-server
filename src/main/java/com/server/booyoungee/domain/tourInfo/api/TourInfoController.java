@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tourInfo")
-@Tag(name = "TourInfoApi", description = "관광 정보 관리")
+@Tag(name = "TourInfoApi", description = "관광 정보 조회 api / 담당자 : 이한음")
 public class TourInfoController {
 	private final TourInfoService tourInfoService;
 
