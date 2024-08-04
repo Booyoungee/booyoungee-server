@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,14 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	protected ResponseEntity<ApiResponse<?>> handleCustomException(CustomException exception) {
+		Map<String, Object> errorDetails = new HashMap<>();
+		errorDetails.put("error", exception.getErrorMessage().name());
+		if (exception.getAdditionalInfo() != null) {
+			errorDetails.put("additionalInfo", exception.getAdditionalInfo());
+		}
+
 		return ResponseEntity.status(exception.getHttpStatusCode())
-			.body(ApiResponse.error(exception.getErrorMessage().name()));
+			.body(ApiResponse.error(errorDetails.toString()));
 	}
 
 	@ExceptionHandler({

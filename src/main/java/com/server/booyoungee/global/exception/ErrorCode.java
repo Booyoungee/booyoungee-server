@@ -22,6 +22,7 @@ public enum ErrorCode {
 	EXPIRED_JWT(HttpStatus.UNAUTHORIZED),
 	UNSUPPORTED_JWT(HttpStatus.UNAUTHORIZED),
 	DUPLICATE_ERROR(HttpStatus.CONFLICT),
+	NEW_USER(HttpStatus.BAD_REQUEST),
 	EXCEL_READ_ERROR(HttpStatus.INTERNAL_SERVER_ERROR);
 
 	private final HttpStatus httpStatus;

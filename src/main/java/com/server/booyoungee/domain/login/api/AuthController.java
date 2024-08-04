@@ -17,7 +17,10 @@ import com.server.booyoungee.domain.login.application.KakaoLoginService;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
+import com.server.booyoungee.domain.login.dto.response.SignUpResponseDto;
 import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.exception.CustomException;
+import com.server.booyoungee.global.exception.ErrorCode;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
@@ -70,6 +73,23 @@ public class AuthController {
 		}
 	}
 
+	@GetMapping("/signup")
+	public ApiResponse<?> signUp(@RequestParam String id, @RequestParam String nickName) throws IOException {
+		try {
+			JwtTokenResponse tokens = authService.signup(id, nickName);
+			SignUpResponseDto dto = SignUpResponseDto.builder()
+				.accesstoken(tokens.accessToken())
+				.refreshToken(tokens.refreshToken())
+				.nickname(nickName)
+				.build();
+			return ApiResponse.success(dto);
+		} catch (Exception e) {
+			return ApiResponse.error(e.getMessage());
+		}
+	}
+
+
+
 	/*	@PostMapping("/login")
 	public ApiResponse<JwtTokenResponse> login(
 		@NotNull @RequestHeader(Constants.PROVIDER_TOKEN_HEADER) String providerToken,
@@ -101,6 +121,12 @@ public class AuthController {
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
 		JwtTokenResponse tokens = authService.login(response, request);
 		return ApiResponse.success((tokens));
+	}
+
+	@GetMapping("/test")
+	public ApiResponse<?> test() {
+		throw new CustomException(ErrorCode.NEW_USER, "id");
+		
 	}
 
 }

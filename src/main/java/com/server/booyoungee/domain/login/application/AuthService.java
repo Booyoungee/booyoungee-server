@@ -1,6 +1,7 @@
 package com.server.booyoungee.domain.login.application;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,12 +39,20 @@ public class AuthService {
 	@Transactional
 	public JwtTokenResponse login(KakaoTokenResponse providerToken, LoginRequestDto request) throws IOException {
 		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.getAccess_token());
-		User user = loadOrCreateUser(request.provider(), socialInfo);
+		User user = loadOrCreateUser(request.provider(), socialInfo, providerToken);
+		System.out.println("login");
 		String refreshToken = providerToken.getRefresh_token();
 		if (refreshToken == null) {
 			refreshToken = user.getRefreshToken();
 		}
 		return generateTokensWithUpdateRefreshToken(user, providerToken.getAccess_token(), refreshToken);
+	}
+
+	@Transactional
+	public JwtTokenResponse signup(String id, String name) throws IOException {
+
+		Optional<User> user = userRepository.findBySerialId(id);
+		return generateTokensWithUpdateRefreshToken(user.get(), name);
 	}
 
 	private SocialInfoDto getSocialInfo(LoginRequestDto request, String providerToken) {
@@ -54,18 +63,21 @@ public class AuthService {
 		}
 	}
 
-	private User loadOrCreateUser(Provider provider, SocialInfoDto socialInfo) {
-		return userRepository.findBySerialId(socialInfo.serialId())
+	private User loadOrCreateUser(Provider provider, SocialInfoDto socialInfo, KakaoTokenResponse providerToken) {
+		return userRepository.findBySerialIdAndName(socialInfo.serialId())
 			.orElseGet(() -> {
 				User newUser = User.builder()
 					.serialId(socialInfo.serialId())
 					.email(socialInfo.email())
-					.name(socialInfo.name())
+					//name(socialInfo.name())
+					.name("")
 					.role(User.Role.USER)
-					.refreshToken("") // Initialize refreshToken as empty string
+					.refreshToken(providerToken.getRefresh_token() + "|"
+						+ providerToken.getAccess_token()) // Initialize refreshToken as empty string
 					.build();
 				userRepository.save(newUser);
-				return newUser;
+				System.out.println("new User");
+				throw new CustomException(ErrorCode.NEW_USER, socialInfo.serialId());
 			});
 	}
 
@@ -73,6 +85,16 @@ public class AuthService {
 		JwtTokenResponse jwtTokenResponse = jwtUtil.generateTokens(user.getUserId(), user.getRole(), accessToken,
 			refreshToken);
 		user.updateRefreshToken(refreshToken);
+		return jwtTokenResponse;
+	}
+
+	private JwtTokenResponse generateTokensWithUpdateRefreshToken(User user, String name) {
+		String refreshToken = user.getRefreshToken().split("|")[0];
+		String accessToken = user.getRefreshToken().split("|")[1];
+		JwtTokenResponse jwtTokenResponse = jwtUtil.generateTokens(user.getUserId(), user.getRole(), accessToken,
+			refreshToken);
+		user.updateRefreshToken(refreshToken);
+		user.updateName(name);
 		return jwtTokenResponse;
 	}
 
