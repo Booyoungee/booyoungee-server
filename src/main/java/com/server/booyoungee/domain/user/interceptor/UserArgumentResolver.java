@@ -10,6 +10,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.server.booyoungee.domain.user.application.UserService;
+import com.server.booyoungee.domain.user.exception.EmptyPrincipalException;
 import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
@@ -38,7 +39,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 		WebDataBinderFactory binderFactory) {
 		final Principal principal = webRequest.getUserPrincipal();
 		if (principal == null) {
-			throw new CustomException(GlobalExceptionCode.EMPTY_PRINCIPAL);
+			throw new EmptyPrincipalException();
 		}
 		Long userId = Long.valueOf(principal.getName());
 		return userService.findByUser(userId);

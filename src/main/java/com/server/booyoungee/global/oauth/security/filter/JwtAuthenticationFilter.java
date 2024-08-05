@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.server.booyoungee.domain.login.domain.Constants;
+import com.server.booyoungee.domain.user.exception.InvalidTokenTypeException;
 import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
@@ -42,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			if (claims.get(Constants.USER_ROLE_CLAIM_NAME, String.class) == null) {
 				System.out.println(request.getRequestURI());
 				if (!request.getRequestURI().equals("/api/oauth/refresh"))
-					throw new CustomException(GlobalExceptionCode.INVALID_TOKEN_TYPE);
+					throw new InvalidTokenTypeException();
 			}
 			UserAuthentication authentication = new UserAuthentication(userId, null, null, token);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
