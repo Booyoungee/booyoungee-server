@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Hidden
 @RestController
 @RequestMapping("/api/locationInfo")
 @RequiredArgsConstructor
@@ -21,29 +22,29 @@ import lombok.RequiredArgsConstructor;
 public class PlaceSearchController {
 
 	private final PlaceSearchService placeSearchService;
-	@Hidden
+  
 	@GetMapping("/keyword")
-	public ApiResponse<?> searchByKeyword(
-			@RequestParam(required = false) String query,
+	public ResponseModel<?> searchByKeyword(
+		@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		return ApiResponse.success(placeSearchService.searchByKeyword(query, page, size));
+		return ResponseModel.success(placeSearchService.searchByKeyword(query, page, size));
 	}
-	@Hidden
+
 	@GetMapping("/keyword/radius")
-	public ApiResponse<?> searchByKeyword(
-			@RequestParam(required = false) String query,
+	public ResponseModel<?> searchByKeyword(
+		@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "-9999") double x,
 		@RequestParam(defaultValue = "-9999") double y,
 		@RequestParam(defaultValue = "2000") int radius,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		return ApiResponse.success(placeSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size));
+		return ResponseModel.success(placeSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size));
 	}
-	@Hidden
+
 	@GetMapping("/details")
-	public ApiResponse<?> searchByKeyword(
+	public ResponseModel<?> searchByKeyword(
 		@RequestParam String query) throws IOException {
-		return ApiResponse.success(placeSearchService.searchByKeywordDetails(query));
+		return ResponseModel.success(placeSearchService.searchByKeywordDetails(query));
 	}
 }

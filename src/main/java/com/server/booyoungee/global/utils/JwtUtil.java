@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.exception.ExpiredJwtTokenException;
+import com.server.booyoungee.domain.user.exception.InvalidTokenTypeException;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -58,14 +60,10 @@ public class JwtUtil implements InitializingBean {
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-		} catch (MalformedJwtException ex) {
-			throw new CustomException(ErrorCode.INVALID_JWT);
 		} catch (ExpiredJwtException ex) {
-			throw new CustomException(ErrorCode.EXPIRED_JWT);
-		} catch (UnsupportedJwtException ex) {
-			throw new CustomException(ErrorCode.UNSUPPORTED_JWT);
-		} catch (IllegalArgumentException ex) {
-			throw new CustomException(ErrorCode.JWT_IS_EMPTY);
+			throw new ExpiredJwtTokenException();
+		} catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+			throw new InvalidTokenTypeException();
 		}
 	}
 

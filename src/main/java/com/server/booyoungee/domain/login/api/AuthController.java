@@ -17,7 +17,7 @@ import com.server.booyoungee.domain.login.application.KakaoLoginService;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
@@ -58,15 +58,15 @@ public class AuthController {
 	}
 
 	@GetMapping("/callback")
-	public ApiResponse<?> kakaoCallback(@RequestParam String code) throws IOException {
+	public ResponseModel<?> kakaoCallback(@RequestParam String code) throws IOException {
 		try {
 			System.out.println("callback start");
 			KakaoTokenResponse accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
 			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
 			JwtTokenResponse tokens = authService.login(accessToken, request);
-			return ApiResponse.success(tokens);
+			return ResponseModel.success(tokens);
 		} catch (Exception e) {
-			return ApiResponse.error(e.getMessage());
+			return ResponseModel.error(e.getMessage());
 		}
 	}
 
@@ -89,18 +89,18 @@ public class AuthController {
 	}*/
 
 	@PostMapping("/logout")
-	public ApiResponse<?> logout() {
+	public ResponseModel<?> logout() {
 		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
 		authService.logout(authentication);
-		return ApiResponse.success("로그아웃에 성공하였습니다.");
+		return ResponseModel.success("로그아웃에 성공하였습니다.");
 	}
 
 	@PostMapping("/refresh-kakao-token")
-	public ApiResponse<?> refreshKakaoToken(@RequestParam String refreshToken) throws IOException {
+	public ResponseModel<?> refreshKakaoToken(@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
 		JwtTokenResponse tokens = authService.login(response, request);
-		return ApiResponse.success((tokens));
+		return ResponseModel.success((tokens));
 	}
 
 }

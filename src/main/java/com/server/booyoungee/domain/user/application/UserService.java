@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.exception.DuplicateNicknameException;
+import com.server.booyoungee.domain.user.exception.NotFoundUserException;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -35,28 +37,19 @@ public class UserService {
 
 	public User findByUser(Long userId) {
 		return userRepository.findByUserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+			.orElseThrow(NotFoundUserException::new);
 	}
 
 	public String updateNickname(User user, String nickname) {
-		try {
-			// Check if the nickname already exists
-			String validatedNickname = duplicateNickname(nickname);
-
-			// Update the user's nickname
-			user.updateName(validatedNickname);
-			// Save the updated user entity to the repository
-			userRepository.save(user);
-			return validatedNickname;
-		} catch (Exception e) {
-			// Handle any other exceptions that might occur
-			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
-		}
+		String validatedNickname = duplicateNickname(nickname);
+		user.updateName(validatedNickname);
+		userRepository.save(user);
+    return validatedNickname;
 	}
 
 	public String duplicateNickname(String nickname) {
 		if (userRepository.existsByName(nickname)) {
-			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
+			throw new DuplicateNicknameException();
 		} else {
 			return nickname;
 		}

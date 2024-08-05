@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
 import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoResponseDto;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,19 +26,19 @@ public class TourInfoController {
 
 	@GetMapping("/{contentId}")
 	@Operation(summary = "관광 정보 조회")
-	public ApiResponse<?> getTourInfo(
+	public ResponseModel<?> getTourInfo(
 		@PathVariable String contentId
 	) {
 		tourInfoService.viewContent(contentId);
 		TourInfoResponseDto tourInfo = tourInfoService.getTourInfo(contentId);
-		return ApiResponse.success(tourInfo);
+		return ResponseModel.success(tourInfo);
 	}
 
 	@GetMapping("")
 	@Operation(summary = "관광 정보 목록 조회")
-	public ApiResponse<?> getTourInfoList() {
+	public ResponseModel<?> getTourInfoList() {
 		List<TourInfoResponseDto> tourInfoList = tourInfoService.getTourInfoList();
-		return ApiResponse.success(tourInfoList);
+		return ResponseModel.success(tourInfoList);
 	}
 
 	@GetMapping("/type")
@@ -54,8 +54,8 @@ public class TourInfoController {
 			+ "- SHOPPING: (쇼핑)\n"
 			+ "- RESTAURANT: (음식점)"
 	)
-	public ApiResponse<?> getTourInfoListByType(@RequestParam TourContentType contentId) {
+	public ResponseModel<?> getTourInfoListByType(@RequestParam TourContentType contentId) {
 		List<TourInfoResponseDto> tourInfoList = tourInfoService.getTourInfoListByType(contentId);
-		return ApiResponse.success(tourInfoList);
+		return ResponseModel.success(tourInfoList);
 	}
 }

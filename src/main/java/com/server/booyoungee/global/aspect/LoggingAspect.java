@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LoggingAspect {
 
-	@Pointcut("execution(* com.server.booyoungee.domain..api.*Controller.*(..))")
+	@Pointcut(
+		"execution(* com.server.booyoungee.domain..api.*Controller.*(..)) || " +
+			"execution(* com.server.booyoungee.domain..api.*.*Controller.*(..))"
+	)
 	private void cut() {
 	}
 

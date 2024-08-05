@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,15 +25,15 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("test")
-	public ApiResponse<?> getStoresByName() {
+	public ResponseModel<?> getStoresByName() {
 		userService.createTestUser();
-		return ApiResponse.success("테스트 유저 생성");
+		return ResponseModel.success("테스트 유저 생성");
 	}
 
 	@GetMapping("")
-	public ApiResponse<?> getUserId(
+	public ResponseModel<?> getUserId(
 		@Parameter(hidden = true) @UserId User user) {
-		return ApiResponse.success(user.getUserId());
+		return ResponseModel.success(user.getUserId());
 	}
 
 	@GetMapping("/me")
@@ -43,15 +43,16 @@ public class UserController {
 	}
 
 	@GetMapping("/nickname")
-	public ApiResponse<?> checkDuplicate(
+	public ResponseModel<?> checkDuplicate(
 		@RequestParam String nickname) {
-		return ApiResponse.success(userService.duplicateNickname(nickname));
+		return ResponseModel.success(userService.duplicateNickname(nickname));
 	}
 
 	@PutMapping("/nickname")
-	public ApiResponse<?> updateNickname(
+	public ResponseModel<?> updateNickname(
 		@Parameter(hidden = true) @UserId User user,
 		@RequestParam String nickname) {
-		return ApiResponse.success(userService.updateNickname(user, nickname));
+		userService.updateNickname(user, nickname);
+		return ResponseModel.success();
 	}
 }
