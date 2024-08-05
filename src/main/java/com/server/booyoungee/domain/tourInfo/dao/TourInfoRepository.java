@@ -18,4 +18,7 @@ public interface TourInfoRepository extends JpaRepository<TourInfo, String> {
 
 	@Query("SELECT t FROM TourInfo t WHERE t.contentTypeId = :type ORDER BY t.views DESC")
 	List<TourInfo> findAllByTypes(@Param("type") TourContentType type);
+
+	@Query("SELECT t FROM TourInfo t ORDER BY t.views DESC")
+	List<TourInfo> findTop10ByOrderByViewsDesc();
 }

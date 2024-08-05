@@ -50,6 +50,12 @@ public class FakeTourInfoRepository implements TourInfoRepository {
 	}
 
 	@Override
+	public List<TourInfo> findTop10ByOrderByViewsDesc() {
+		return null;
+	}
+
+
+	@Override
 	public List<TourInfo> findAllById(Iterable<String> strings) {
 		return null;
 	}

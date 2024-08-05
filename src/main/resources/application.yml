@@ -17,6 +17,18 @@ spring:
       enabled: false
     import-check:
       enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: your_redis_password  # Add this if your Redis server requires a password
+      timeout: 60000  # Connection timeout in milliseconds
+      lettuce:
+        pool:
+          max-active: 8  # Maximum number of connections
+          max-idle: 8  # Maximum number of idle connections
+          min-idle: 0  # Minimum number of idle connections
+
 
 server:
   port: 8282
