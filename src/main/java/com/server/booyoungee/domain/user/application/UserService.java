@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.user.application;
 
+import com.server.booyoungee.domain.user.dto.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.user.dao.UserRepository;
@@ -39,10 +40,11 @@ public class UserService {
 			.orElseThrow(NotFoundUserException::new);
 	}
 
-	public void updateNickname(User user, String nickname) {
+	public String updateNickname(User user, String nickname) {
 		String validatedNickname = duplicateNickname(nickname);
 		user.updateName(validatedNickname);
 		userRepository.save(user);
+    return validatedNickname;
 	}
 
 	public String duplicateNickname(String nickname) {
@@ -52,4 +54,12 @@ public class UserService {
 			return nickname;
 		}
 	}
+
+    public Object getUser(User user) {
+		UserResponseDto dto = UserResponseDto.builder()
+				.userId(user.getUserId())
+				.nickname(user.getName())
+				.build();
+		return dto;
+    }
 }

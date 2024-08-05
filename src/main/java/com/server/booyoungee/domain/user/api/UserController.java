@@ -36,6 +36,12 @@ public class UserController {
 		return ResponseModel.success(user.getUserId());
 	}
 
+	@GetMapping("/me")
+	public ApiResponse<?> getUser(
+		@Parameter(hidden = true) @UserId User user) {
+		return ApiResponse.success(userService.getUser(user));
+	}
+
 	@GetMapping("/nickname")
 	public ResponseModel<?> checkDuplicate(
 		@RequestParam String nickname) {
@@ -47,6 +53,6 @@ public class UserController {
 		@Parameter(hidden = true) @UserId User user,
 		@RequestParam String nickname) {
 		userService.updateNickname(user, nickname);
-		return ResponseModel.success("");
+		return ResponseModel.success();
 	}
 }
