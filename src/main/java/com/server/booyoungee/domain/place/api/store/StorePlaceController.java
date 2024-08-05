@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
 import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
@@ -62,8 +63,9 @@ public class StorePlaceController {
 		@ApiResponse(responseCode = "404", description = "식당 정보를 찾을 수 없습니다.")
 	})
 	@Operation(summary = "식당 상세 정보 조회")
-	public ResponseModel<?> getStoreDetails(@RequestParam Long storeId) throws IOException {
-		return ResponseModel.success(storePlaceService.getStoreById(storeId));
+	public ResponseModel<SearchDetailDto> getStoreDetails(@RequestParam Long storeId) throws IOException {
+		SearchDetailDto response = storePlaceService.getStoreById(storeId);
+		return ResponseModel.success(response);
 	}
 
 	@PostMapping("/reset/viewCount")
