@@ -12,9 +12,10 @@ import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
 import com.server.booyoungee.domain.place.domain.moviePlace.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
+import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.global.common.PageableResponse;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.handler.ExcelSheetHandler;
 
 import jakarta.transaction.Transactional;
@@ -59,7 +60,7 @@ public class MoviePlaceService {
 
 	public MoviePlaceResponse getMoviePlace(Long id) {
 		MoviePlace moviePlace = moviePlaceRepository.findById(id)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR));
+			.orElseThrow(NotFoundMoviePlaceException::new);
 		moviePlace.increaseViewCount();
 		moviePlaceRepository.save(moviePlace);
 		return MoviePlaceResponse.from(moviePlace);

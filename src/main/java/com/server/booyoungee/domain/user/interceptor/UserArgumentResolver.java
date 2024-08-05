@@ -11,7 +11,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +38,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 		WebDataBinderFactory binderFactory) {
 		final Principal principal = webRequest.getUserPrincipal();
 		if (principal == null) {
-			throw new CustomException(ErrorCode.EMPTY_PRINCIPAL);
+			throw new CustomException(GlobalExceptionCode.EMPTY_PRINCIPAL);
 		}
 		Long userId = Long.valueOf(principal.getName());
 		return userService.findByUser(userId);

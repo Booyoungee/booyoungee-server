@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -48,13 +48,13 @@ public class UserService {
 			userRepository.save(user);
 		} catch (Exception e) {
 			// Handle any other exceptions that might occur
-			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
+			throw new CustomException(GlobalExceptionCode.DUPLICATE_ERROR);
 		}
 	}
 
 	public String duplicateNickname(String nickname) {
 		if (userRepository.existsByName(nickname)) {
-			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
+			throw new CustomException(GlobalExceptionCode.DUPLICATE_ERROR);
 		} else {
 			return nickname;
 		}

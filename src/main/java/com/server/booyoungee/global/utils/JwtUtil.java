@@ -11,7 +11,7 @@ import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -59,13 +59,13 @@ public class JwtUtil implements InitializingBean {
 				.parseClaimsJws(token)
 				.getBody();
 		} catch (MalformedJwtException ex) {
-			throw new CustomException(ErrorCode.INVALID_JWT);
+			throw new CustomException(GlobalExceptionCode.INVALID_JWT);
 		} catch (ExpiredJwtException ex) {
-			throw new CustomException(ErrorCode.EXPIRED_JWT);
+			throw new CustomException(GlobalExceptionCode.EXPIRED_JWT);
 		} catch (UnsupportedJwtException ex) {
-			throw new CustomException(ErrorCode.UNSUPPORTED_JWT);
+			throw new CustomException(GlobalExceptionCode.UNSUPPORTED_JWT);
 		} catch (IllegalArgumentException ex) {
-			throw new CustomException(ErrorCode.JWT_IS_EMPTY);
+			throw new CustomException(GlobalExceptionCode.JWT_IS_EMPTY);
 		}
 	}
 

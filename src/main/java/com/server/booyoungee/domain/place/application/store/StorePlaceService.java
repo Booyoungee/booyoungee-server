@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,10 @@ import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
+import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.global.common.PageableResponse;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class StorePlaceService {
 	@Transactional
 	public Object getStoreById(Long storeId) throws IOException {
 		StorePlace store = storePlaceRepository.findByStoreId(storeId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR));
+			.orElseThrow(NotFoundStorePlaceException::new);
 		store.increaseViewCount();
 		storePlaceRepository.save(store);
 		return placeSearchService.searchByKeywordDetailsAddtypeOption(store.getName(), "store");

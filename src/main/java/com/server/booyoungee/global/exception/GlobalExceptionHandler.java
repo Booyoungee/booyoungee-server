@@ -56,13 +56,13 @@ public class GlobalExceptionHandler {
 	})
 	protected ResponseEntity<ApiResponse<?>> handleException(Exception exception) {
 
-		ErrorCode errorCode = determineResponseStatus(exception);
+		GlobalExceptionCode errorCode = determineResponseStatus(exception);
 
 		return ResponseEntity.status(errorCode.getHttpStatus())
 			.body(ApiResponse.error(exception.getMessage()));
 	}
 
-	private ErrorCode determineResponseStatus(Exception exception) {
+	private GlobalExceptionCode determineResponseStatus(Exception exception) {
 		if (exception instanceof ArrayIndexOutOfBoundsException
 			|| exception instanceof DateTimeParseException
 			|| exception instanceof FileNotFoundException
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
 			|| exception instanceof NullPointerException
 			|| exception instanceof ParseException
 			|| exception instanceof SecurityException) {
-			return ErrorCode.INTERNAL_SERVER_ERROR;
+			return GlobalExceptionCode.INTERNAL_SERVER_ERROR;
 		} else if (exception instanceof ClassCastException
 			|| exception instanceof ConcurrentModificationException
 			|| exception instanceof HttpMessageNotReadableException
@@ -84,12 +84,12 @@ public class GlobalExceptionHandler {
 			|| exception instanceof IllegalStateException
 			|| exception instanceof IOException
 			|| exception instanceof HttpClientErrorException.BadRequest) {
-			return ErrorCode.BAD_REQUEST_ERROR;
+			return GlobalExceptionCode.BAD_REQUEST_ERROR;
 		} else if (exception instanceof NoSuchElementException
 			|| exception instanceof UnsupportedOperationException) {
-			return ErrorCode.NOT_FOUND_ERROR;
+			return GlobalExceptionCode.NOT_FOUND_ERROR;
 		} else {
-			return ErrorCode.INTERNAL_SERVER_ERROR;
+			return GlobalExceptionCode.INTERNAL_SERVER_ERROR;
 		}
 	}
 }
