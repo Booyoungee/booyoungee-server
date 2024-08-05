@@ -17,7 +17,7 @@ import com.server.booyoungee.domain.stamp.domain.PlaceType;
 import com.server.booyoungee.domain.stamp.dto.StampRequestDto;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,63 +33,63 @@ public class StampController {
 
 	@Operation(summary = "스탬프 생성 요청 (본인 위치, 장소 위치)")
 	@PostMapping("")
-	public ApiResponse<?> createStamp(
+	public ResponseModel<?> createStamp(
 		@Parameter(hidden = true) @UserId User user,
 		@RequestBody StampRequestDto dto) {
 
 		stampService.createStamp(user, dto);
-		return ApiResponse.success("");
+		return ResponseModel.success("");
 
 	}
 
 	@Operation(summary = "본인 스탬프 조회")
 	@GetMapping("")
-	public ApiResponse<?> getStamp(
+	public ResponseModel<?> getStamp(
 		@Parameter(hidden = true) @UserId User user) throws IOException {
-		return ApiResponse.success(stampService.getStamp(user));
+		return ResponseModel.success(stampService.getStamp(user));
 	}
 
 	@Operation(summary = "스탬프 상세 조회")
 	@GetMapping("/details/{stampId}")
-	public ApiResponse<?> getStamp(
+	public ResponseModel<?> getStamp(
 		@PathVariable Long stampId,
 		@Parameter(hidden = true) @UserId User user) throws IOException {
-		return ApiResponse.success(stampService.getStamp(user, stampId));
+		return ResponseModel.success(stampService.getStamp(user, stampId));
 	}
 
 	@Operation(summary = "특정 장소 스탬프 수 조회")
 	@GetMapping("/count")
-	public ApiResponse<?> getCountStampByPlaceId(
+	public ResponseModel<?> getCountStampByPlaceId(
 		@RequestParam String id) {
-		return ApiResponse.success(stampService.getStampCountByPlaceId(id));
+		return ResponseModel.success(stampService.getStampCountByPlaceId(id));
 	}
 
 	@Operation(summary = "장소 별 스탬프 수 조회")
 	@GetMapping("/place-stamp-counts")
-	public ApiResponse<?> getPlaceStampCounts(
+	public ResponseModel<?> getPlaceStampCounts(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
 		try {
-			return ApiResponse.success(stampService.getPlaceStampCounts(pageable));
+			return ResponseModel.success(stampService.getPlaceStampCounts(pageable));
 		} catch (IOException e) {
-			return ApiResponse.error("Failed to retrieve place stamp counts");
+			return ResponseModel.error("Failed to retrieve place stamp counts");
 		}
 	}
 
 	@Operation(summary = "장소 별 스탬프 수 조회")
 	@GetMapping("/place-stamp-counts/type")
-	public ApiResponse<?> getPlaceStampCountsByType(
+	public ResponseModel<?> getPlaceStampCountsByType(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size,
 		@RequestParam PlaceType type
 	) {
 		Pageable pageable = PageRequest.of(page, size);
 		try {
-			return ApiResponse.success(stampService.getPlaceStampCounts(pageable, type.getKey()));
+			return ResponseModel.success(stampService.getPlaceStampCounts(pageable, type.getKey()));
 		} catch (IOException e) {
-			return ApiResponse.error("Failed to retrieve place stamp counts");
+			return ResponseModel.error("Failed to retrieve place stamp counts");
 		}
 	}
 }

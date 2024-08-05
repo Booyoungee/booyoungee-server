@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,27 +22,27 @@ public class PlaceSearchController {
 	private final PlaceSearchService placeSearchService;
 
 	@GetMapping("/keyword")
-	public ApiResponse<?> searchByKeyword(
+	public ResponseModel<?> searchByKeyword(
 		@RequestParam String query,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		return ApiResponse.success(placeSearchService.searchByKeyword(query, page, size));
+		return ResponseModel.success(placeSearchService.searchByKeyword(query, page, size));
 	}
 
 	@GetMapping("/keyword/radius")
-	public ApiResponse<?> searchByKeyword(
+	public ResponseModel<?> searchByKeyword(
 		@RequestParam String query,
 		@RequestParam(defaultValue = "-9999") double x,
 		@RequestParam(defaultValue = "-9999") double y,
 		@RequestParam(defaultValue = "20000") int radius,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		return ApiResponse.success(placeSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size));
+		return ResponseModel.success(placeSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size));
 	}
 
 	@GetMapping("/details")
-	public ApiResponse<?> searchByKeyword(
+	public ResponseModel<?> searchByKeyword(
 		@RequestParam String query) throws IOException {
-		return ApiResponse.success(placeSearchService.searchByKeywordDetails(query));
+		return ResponseModel.success(placeSearchService.searchByKeywordDetails(query));
 	}
 }

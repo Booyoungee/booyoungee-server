@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.response.MovieDetailsDto;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +22,17 @@ public class MovieController {
 	private final TmdbApiService tmdbApiService;
 
 	@GetMapping("")
-	public ApiResponse<?> getMovie(
+	public ResponseModel<?> getMovie(
 		@RequestParam String title
 	) {
 		MovieDetailsDto movie = tmdbApiService.getMovie(title);
-		return ApiResponse.success(movie);
+		return ResponseModel.success(movie);
 	}
 
 	@PostMapping("")
-	public ApiResponse<?> saveMovieImages(@RequestParam String title) {
+	public ResponseModel<?> saveMovieImages(@RequestParam String title) {
 		tmdbApiService.saveMovie(title);
-		return ApiResponse.success(true);
+		return ResponseModel.success(true);
 	}
 
 }

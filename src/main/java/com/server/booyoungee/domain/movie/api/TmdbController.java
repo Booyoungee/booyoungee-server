@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.movie.dto.response.TmdbResponseDto;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +22,19 @@ public class TmdbController {
 	private final TmdbApiService tmdbApiService;
 
 	@GetMapping("/title")
-	public ApiResponse<?> getMovieStills(
+	public ResponseModel<?> getMovieStills(
 		@RequestParam String title
 	) {
 		TmdbResponseDto movie = tmdbApiService.searchMoviePosterList(title);
-		return ApiResponse.success(movie);
+		return ResponseModel.success(movie);
 
 	}
 
 	@GetMapping("/images")
-	public ApiResponse<?> getMovieImages(
+	public ResponseModel<?> getMovieImages(
 		@RequestParam String id
 	) {
 		MovieImagesDto movieImages = tmdbApiService.searchMovieImages(id);
-		return ApiResponse.success(movieImages);
+		return ResponseModel.success(movieImages);
 	}
 }
