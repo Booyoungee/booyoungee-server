@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.kakaoMap.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "KakaoAddress", description = "카카오 지도 관련 api / 담당자 : 이영학")
 public class KakaoAddressController {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
-
+	@Hidden
 	@GetMapping("/search/address")
 	public ApiResponse<?> searchAddress(
-		@RequestParam String query,
+		@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size
 	) {
@@ -50,8 +51,7 @@ public class KakaoAddressController {
 	}
 
 	@GetMapping("/search/keyword")
-	public ApiResponse<?> searchByKeyword(
-		@RequestParam String query,
+	public ApiResponse<?> searchByKeyword(@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "-9999.0") double x,
 		@RequestParam(defaultValue = "-9999.0") double y,
 		@RequestParam(defaultValue = "20000") int radius,

@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.kakaoMap.api;
 
 import java.io.IOException;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,26 +21,26 @@ import lombok.RequiredArgsConstructor;
 public class PlaceSearchController {
 
 	private final PlaceSearchService placeSearchService;
-
+	@Hidden
 	@GetMapping("/keyword")
 	public ApiResponse<?> searchByKeyword(
-		@RequestParam String query,
+			@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
 		return ApiResponse.success(placeSearchService.searchByKeyword(query, page, size));
 	}
-
+	@Hidden
 	@GetMapping("/keyword/radius")
 	public ApiResponse<?> searchByKeyword(
-		@RequestParam String query,
+			@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "-9999") double x,
 		@RequestParam(defaultValue = "-9999") double y,
-		@RequestParam(defaultValue = "20000") int radius,
+		@RequestParam(defaultValue = "2000") int radius,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size) {
 		return ApiResponse.success(placeSearchService.searchByKeywordWithRadius(query, x, y, radius, page, size));
 	}
-
+	@Hidden
 	@GetMapping("/details")
 	public ApiResponse<?> searchByKeyword(
 		@RequestParam String query) throws IOException {
