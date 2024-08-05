@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.user.application;
 
+import com.server.booyoungee.domain.user.dto.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.user.dao.UserRepository;
@@ -37,7 +38,7 @@ public class UserService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 	}
 
-	public void updateNickname(User user, String nickname) {
+	public String updateNickname(User user, String nickname) {
 		try {
 			// Check if the nickname already exists
 			String validatedNickname = duplicateNickname(nickname);
@@ -46,6 +47,7 @@ public class UserService {
 			user.updateName(validatedNickname);
 			// Save the updated user entity to the repository
 			userRepository.save(user);
+			return validatedNickname;
 		} catch (Exception e) {
 			// Handle any other exceptions that might occur
 			throw new CustomException(ErrorCode.DUPLICATE_ERROR);
@@ -59,4 +61,12 @@ public class UserService {
 			return nickname;
 		}
 	}
+
+    public Object getUser(User user) {
+		UserResponseDto dto = UserResponseDto.builder()
+				.userId(user.getUserId())
+				.nickname(user.getName())
+				.build();
+		return dto;
+    }
 }
