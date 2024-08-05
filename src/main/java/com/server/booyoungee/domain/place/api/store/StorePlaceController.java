@@ -57,6 +57,7 @@ public class StorePlaceController {
 		return ResponseModel.success(response);
 	}
 
+	// TODO: IO 에러 로그 제거 해야함
 	@GetMapping("/details")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "식당 상세 정보 조회 성공"),
