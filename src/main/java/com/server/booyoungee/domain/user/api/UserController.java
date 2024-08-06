@@ -37,9 +37,9 @@ public class UserController {
 	}
 
 	@GetMapping("/me")
-	public ApiResponse<?> getUser(
+	public ResponseModel<?> getUser(
 		@Parameter(hidden = true) @UserId User user) {
-		return ApiResponse.success(userService.getUser(user));
+		return ResponseModel.success(userService.getUser(user));
 	}
 
 	@GetMapping("/nickname")
@@ -52,7 +52,6 @@ public class UserController {
 	public ResponseModel<?> updateNickname(
 		@Parameter(hidden = true) @UserId User user,
 		@RequestParam String nickname) {
-		userService.updateNickname(user, nickname);
-		return ResponseModel.success();
+		return ResponseModel.success(userService.updateNickname(user, nickname));
 	}
 }
