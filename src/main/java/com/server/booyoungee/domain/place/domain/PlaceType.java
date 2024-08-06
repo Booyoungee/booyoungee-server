@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.stamp.domain;
+package com.server.booyoungee.domain.place.domain;
 
 public enum PlaceType {
 	movie("movie"),

@@ -17,8 +17,6 @@ import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageRespo
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.global.common.PageableResponse;
-import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +56,14 @@ public class StorePlaceService {
 		store.increaseViewCount();
 		storePlaceRepository.save(store);
 		return placeSearchService.searchByKeywordDetailsAddtypeOption(store.getName(), "store");
+	}
+
+	public StorePlaceResponse getStore(Long storeId) throws IOException {
+		StorePlace store = storePlaceRepository.findByStoreId(storeId)
+			.orElseThrow(NotFoundStorePlaceException::new);
+		store.increaseViewCount();
+		storePlaceRepository.save(store);
+		return StorePlaceResponse.from(store);
 	}
 
 	public void restoreViews() {

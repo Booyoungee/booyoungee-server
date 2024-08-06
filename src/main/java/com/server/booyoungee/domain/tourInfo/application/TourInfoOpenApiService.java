@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
@@ -247,4 +248,25 @@ public class TourInfoOpenApiService {
 	public String getTitle(String stampId) throws IOException {
 		return getCommonInfoByContentId(stampId).get(0).title();
 	}
+
+	public List<TourInfoBookMarkDto> findByContentId(String contentId) throws IOException {
+		String requestUrl = baseUrl
+			+ "/detailCommon1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&contentId=" + contentId
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&defaultYN=" + "Y"
+			+ "&firstImageYN=" + "N"
+			+ "&areacodeYN=" + "N"
+			+ "&catcodeYN=" + "N"
+			+ "&addrinfoYN=" + "N"
+			+ "&mapinfoYN=" + "Y"
+			+ "&overviewYN=" + "N"
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDto[].class));
+	}
+
 }
