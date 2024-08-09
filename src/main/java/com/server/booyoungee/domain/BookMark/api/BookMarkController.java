@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.BookMark.api;
 
 import java.io.IOException;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,15 @@ public class BookMarkController {
 		@Parameter PlaceType type) throws IOException {
 		bookMarkService.addBookMark(user, placeId, type);
 		return ResponseModel.success("북마크가 생성되었습니다.");
+	}
+
+	@DeleteMapping("")
+	ResponseModel<?> deleteBookMark(
+		@Parameter(hidden = true) @UserId User user,
+		@Parameter Long bookMarkId
+	) {
+		bookMarkService.deleteBookMark(user, bookMarkId);
+		return ResponseModel.success("북마크가 삭제되었습니다.");
 	}
 
 	@GetMapping("/test")

@@ -31,11 +31,11 @@ public class BookMark {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long bookMark;
+	private Long bookMarkId;
 
 	@ManyToOne
 	@JoinColumn(name = "userId", nullable = false)
-	private User user;
+	private User userId;
 	@Column(nullable = false)
 	private Long placeId;
 	@Column(nullable = false)

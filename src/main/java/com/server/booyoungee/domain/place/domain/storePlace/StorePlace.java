@@ -27,4 +27,7 @@ public class StorePlace extends Place {
 	private String tel;
 
 	private String mainBusiness;
+
+	private String mapX;
+	private String maxY;
 }

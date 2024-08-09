@@ -3,13 +3,19 @@ package com.server.booyoungee.domain.BookMark.dao;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.server.booyoungee.domain.BookMark.domain.BookMark;
 import com.server.booyoungee.domain.user.domain.User;
 
-@Repository
 public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
 
-	List<BookMark> findAllByUser(User user);
+	@Query("SELECT bm FROM BookMark bm WHERE bm.userId = :user")
+	List<BookMark> findAllByUser(@Param("user") User user);
+
+	boolean existsByUserIdAndPlaceId(User userId, Long placeId);
+
+	BookMark findByBookMarkIdAndUserId(Long BookMarkId, User userId);
 }
+
