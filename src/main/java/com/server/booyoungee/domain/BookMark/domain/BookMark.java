@@ -5,6 +5,8 @@ import com.server.booyoungee.domain.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,5 +41,6 @@ public class BookMark {
 	@Column(nullable = false)
 	private Long placeId;
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private PlaceType type;
 }

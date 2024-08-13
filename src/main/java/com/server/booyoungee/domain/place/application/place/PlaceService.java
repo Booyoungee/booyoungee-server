@@ -29,6 +29,7 @@ public class PlaceService {
 	public TourInfoBookMarkDto getPlace(Long placeId, PlaceType type) throws IOException, NotFoundException {
 
 		TourInfoBookMarkDto dto;
+		System.out.println(type);
 
 		if (type.getKey().equals("movie")) {
 

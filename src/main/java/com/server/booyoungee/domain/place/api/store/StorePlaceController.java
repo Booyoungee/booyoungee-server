@@ -15,6 +15,7 @@ import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListRespo
 import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.global.common.ResponseModel;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -46,7 +47,6 @@ public class StorePlaceController {
 		return ResponseModel.success(response);
 	}
 
-
 	@GetMapping("")
 	@Operation(summary = "식당 가장 많이 조회한 순")
 	public ResponseModel<StorePlacePageResponse<StorePlace>> getStoresList(
@@ -75,4 +75,12 @@ public class StorePlaceController {
 		storePlaceService.restoreViews();
 		return ResponseModel.success("view count를 초기화 하였습니다.");
 	}
+
+	@Hidden
+	@PostMapping("update")
+	public ResponseModel<?> update() {
+		storePlaceService.updateXY();
+		return ResponseModel.success("update");
+	}
+
 }

@@ -55,7 +55,7 @@ public record StorePlaceResponse(
 			storePlace.getTel(),
 			storePlace.getMainBusiness(),
 			storePlace.getMapX(),
-			storePlace.getMaxY(),
+			storePlace.getMapY(),
 			PlaceType.STORE
 		);
 	}
