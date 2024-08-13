@@ -16,9 +16,9 @@ public enum PlaceType {
 	}
 
 	public static PlaceType getKey(String key) {
-		if (store.getKey() == key)
+		if (store.getKey().equals(key))
 			return store;
-		else if (movie.getKey() == key)
+		else if (movie.equals(key))
 			return movie;
 		else
 			return tour;

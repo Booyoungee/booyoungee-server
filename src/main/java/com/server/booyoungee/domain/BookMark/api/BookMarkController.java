@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.BookMark.application.BookMarkService;
@@ -40,11 +41,10 @@ public class BookMarkController {
 	@PostMapping("")
 	ResponseModel<?> addBookMark(
 		@Parameter(hidden = true) @UserId User user,
-		@Parameter Long placeId,
-		@Parameter String type) throws IOException {
-		PlaceType placeType = PlaceType.getKey(type);
+		@RequestParam Long placeId,
+		@RequestParam PlaceType type) throws IOException {
 
-		bookMarkService.addBookMark(user, placeId, placeType);
+		bookMarkService.addBookMark(user, placeId, type);
 		return ResponseModel.success("북마크가 생성되었습니다.");
 	}
 

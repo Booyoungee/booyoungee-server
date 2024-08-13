@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.dto.response;
+package com.server.booyoungee.domain.tourInfo.dto.response.bookmark;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,7 +13,9 @@ public record TourInfoBookMarkDto(
 	@JsonProperty("mapy") String mapy,
 	@JsonProperty("title") String title,
 
-	@JsonProperty("placeType") String placeType
+	@JsonProperty("placeType") String placeType,
+
+	String placeId
 ) {
 	public TourInfoBookMarkDto {
 		if (placeType == null || placeType.isBlank()) {

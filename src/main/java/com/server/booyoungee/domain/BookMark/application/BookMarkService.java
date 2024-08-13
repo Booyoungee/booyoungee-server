@@ -1,6 +1,7 @@
 package com.server.booyoungee.domain.BookMark.application;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,8 @@ import com.server.booyoungee.domain.BookMark.dao.BookMarkRepository;
 import com.server.booyoungee.domain.BookMark.domain.BookMark;
 import com.server.booyoungee.domain.place.application.place.PlaceService;
 import com.server.booyoungee.domain.place.domain.PlaceType;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDto;
+import com.server.booyoungee.domain.place.dto.response.PlaceDetailsDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDto;
 import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
@@ -39,9 +41,14 @@ public class BookMarkService {
 
 	}
 
-	public Object getMyBookMarkDetails(User user) {
+	public Object getMyBookMarkDetails(User user) throws IOException {
 		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
-		return bookMarkList;
+		List<PlaceDetailsDto> dto = new ArrayList<>();
+		for (BookMark bookMark : bookMarkList) {
+			dto.add(placeService.getDetails(bookMark.getPlaceId(), bookMark.getType()));
+		}
+
+		return dto;
 	}
 
 	public void addBookMark(User user, Long placeId, PlaceType type) {
@@ -50,6 +57,11 @@ public class BookMarkService {
 		} catch (Exception e) {
 
 		}
+		System.out.println("id: " + placeId + "user: " + user.getUserId() + "type: " + type);
+		if (user == null || placeId == null || type == null) {
+			throw new NotFoundException("Movie place with ID " + placeId + " not found.");
+		}
+
 		BookMark bookMark = BookMark.builder()
 			.userId(user)
 			.placeId(placeId)
