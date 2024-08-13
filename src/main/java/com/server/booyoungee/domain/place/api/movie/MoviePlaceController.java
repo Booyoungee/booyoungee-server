@@ -58,7 +58,7 @@ public class MoviePlaceController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		MoviePlacePageResponse<MoviePlace> response = moviePlaceService
-			.getMoviePlacesByKeyword(keyword, page, size);
+			.getMoviePlacesByMovieNameKeyword(keyword, page, size);
 		return ResponseModel.success(response);
 	}
 
@@ -70,7 +70,7 @@ public class MoviePlaceController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		MoviePlacePageResponse<MoviePlace> response = moviePlaceService
-			.getMoviePlacesByMovieNameKeyword(keyword, page, size);
+			.getMoviePlacesByKeyword(keyword, page, size);
 		return ResponseModel.success(response);
 	}
 }
