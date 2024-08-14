@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/bookmark")
+@RequestMapping("/api/v1/bookmark")
 @RequiredArgsConstructor
 @Tag(name = "BookMark", description = "북마크 api / 담당자 : 이영학")
 public class BookMarkController {
@@ -37,6 +37,7 @@ public class BookMarkController {
 		@Parameter(hidden = true) @UserId User user) throws IOException {
 		return ResponseModel.success(bookMarkService.getBookMarks(user));
 	}
+	@Hidden
 	@Operation(summary = "마이페이지에서 북마크 조회")
 	@GetMapping("/me")
 	ResponseModel<List<PlaceDetailsDto>> getMyBookMarkDetails(

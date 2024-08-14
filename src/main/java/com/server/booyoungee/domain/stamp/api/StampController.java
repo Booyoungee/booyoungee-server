@@ -1,7 +1,10 @@
 package com.server.booyoungee.domain.stamp.api;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.server.booyoungee.domain.stamp.dto.StampResponseDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/stamp")
+@RequestMapping("/api/v1/stamp")
 @RequiredArgsConstructor
 @Tag(name = "Stamp", description = "스탬프 관련 api / 담당자 : 이영학")
 public class StampController {
@@ -44,26 +47,26 @@ public class StampController {
 
 	@Operation(summary = "본인 스탬프 조회")
 	@GetMapping("")
-	public ResponseModel<?> getStamp(
+	public ResponseModel<List<StampResponseDto>> getStamp(
 		@Parameter(hidden = true) @UserId User user) throws IOException {
 		return ResponseModel.success(stampService.getStamp(user));
 	}
 
 	@Operation(summary = "스탬프 상세 조회")
 	@GetMapping("/details/{stampId}")
-	public ResponseModel<?> getStamp(
+	public ResponseModel<StampResponseDto> getStamp(
 		@PathVariable Long stampId,
 		@Parameter(hidden = true) @UserId User user) throws IOException {
 		return ResponseModel.success(stampService.getStamp(user, stampId));
 	}
-
+	@Hidden
 	@Operation(summary = "특정 장소 스탬프 수 조회")
 	@GetMapping("/count")
 	public ResponseModel<?> getCountStampByPlaceId(
 		@RequestParam String id) {
 		return ResponseModel.success(stampService.getStampCountByPlaceId(id));
 	}
-
+	@Hidden
 	@Operation(summary = "장소 별 스탬프 수 조회")
 	@GetMapping("/place-stamp-counts")
 	public ResponseModel<?> getPlaceStampCounts(
@@ -77,7 +80,7 @@ public class StampController {
 			return ResponseModel.error("Failed to retrieve place stamp counts");
 		}
 	}
-
+	@Hidden
 	@Operation(summary = "장소 별 스탬프 수 조회")
 	@GetMapping("/place-stamp-counts/type")
 	public ResponseModel<?> getPlaceStampCountsByType(

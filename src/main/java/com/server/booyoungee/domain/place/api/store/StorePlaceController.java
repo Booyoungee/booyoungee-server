@@ -23,9 +23,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/storePlace")
+@RequestMapping("/api/v1/storePlace")
 @RequiredArgsConstructor
-@Tag(name = "StorePlace", description = "지역 상생 식당 api / 관리자 : 이영학")
+@Tag(name = "StorePlace", description = "지역 상생 식당 api / 관리자 : 이영학,이한음")
 public class StorePlaceController {
 	private final StorePlaceService storePlaceService;
 
