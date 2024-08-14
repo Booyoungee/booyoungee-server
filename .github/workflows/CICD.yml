@@ -37,6 +37,14 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
 
-      - name: Deploy to production (optional)
-        run: |
-          docker run -d -p 80:8282 ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+            docker stop booyoungee || true
+            docker rm booyoungee || true
+            docker run -d -p 8282:8282 --name booyoungee ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
