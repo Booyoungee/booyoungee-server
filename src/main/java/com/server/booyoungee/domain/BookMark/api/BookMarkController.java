@@ -1,7 +1,12 @@
 package com.server.booyoungee.domain.BookMark.api;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.server.booyoungee.domain.place.dto.response.PlaceDetailsDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,47 +27,40 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/bookmark")
 @RequiredArgsConstructor
+@Tag(name = "BookMark", description = "북마크 api / 담당자 : 이영학")
 public class BookMarkController {
 
 	private final BookMarkService bookMarkService;
-
+	@Operation(summary = "메인화면에서 북마크 조회")
 	@GetMapping("")
-	public ResponseModel<?> getBookMarks(
+	public ResponseModel<List<TourInfoBookMarkDto>> getBookMarks(
 		@Parameter(hidden = true) @UserId User user) throws IOException {
 		return ResponseModel.success(bookMarkService.getBookMarks(user));
 	}
-
+	@Operation(summary = "마이페이지에서 북마크 조회")
 	@GetMapping("/me")
-	ResponseModel<?> getMyBookMarkDetails(
+	ResponseModel<List<PlaceDetailsDto>> getMyBookMarkDetails(
 		@Parameter(hidden = true) @UserId User user) throws IOException {
 		return ResponseModel.success(bookMarkService.getMyBookMarkDetails(user));
 	}
-
+	@Operation(summary ="북마크 등록")
 	@PostMapping("")
-	ResponseModel<?> addBookMark(
+	ResponseModel<String> addBookMark(
 		@Parameter(hidden = true) @UserId User user,
 		@RequestParam Long placeId,
 		@RequestParam PlaceType type) throws IOException {
 
 		bookMarkService.addBookMark(user, placeId, type);
-		return ResponseModel.success("북마크가 생성되었습니다.");
+		return ResponseModel.success("북마크가 등록되었습니다.");
 	}
-
+	@Operation(summary ="북마크 삭제")
 	@DeleteMapping("")
-	ResponseModel<?> deleteBookMark(
+	ResponseModel<String> deleteBookMark(
 		@Parameter(hidden = true) @UserId User user,
 		@Parameter Long bookMarkId
 	) {
 		bookMarkService.deleteBookMark(user, bookMarkId);
 		return ResponseModel.success("북마크가 삭제되었습니다.");
-	}
-
-	@Hidden
-	@GetMapping("/test")
-	ResponseModel<?> getMyBookMarkDetails(@Parameter Long placeId,
-		@Parameter PlaceType type) throws IOException {
-
-		return ResponseModel.success(bookMarkService.getPlace(placeId, type));
 	}
 
 }
