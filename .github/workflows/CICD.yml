@@ -45,8 +45,10 @@ jobs:
           password: ${{ secrets.NCP_PASSWORD }}
           port: ${{ secrets.NCP_PORT }}
           script: |
-            sudo docker compose -f /root/docker-compose.yml pull
-            sudo docker compose -f /root/docker-compose.yml up -d
+            docker pull ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+            docker stop booyoungee || true
+            docker rm booyoungee || true
+            docker run -d -p 8282:8282 --name booyoungee ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
            
             
         
