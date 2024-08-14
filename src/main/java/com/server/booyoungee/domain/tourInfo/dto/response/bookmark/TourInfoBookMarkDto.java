@@ -15,7 +15,8 @@ public record TourInfoBookMarkDto(
 
 	@JsonProperty("placeType") String placeType,
 
-	String placeId
+	String placeId,
+	Long bookmarkId
 ) {
 	public TourInfoBookMarkDto {
 		if (placeType == null || placeType.isBlank()) {

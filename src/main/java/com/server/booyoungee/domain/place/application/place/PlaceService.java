@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
+import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -36,7 +38,7 @@ public class PlaceService {
 
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
-	public TourInfoBookMarkDto getPlace(Long placeId, PlaceType type) throws IOException, NotFoundException {
+	public TourInfoBookMarkDto getPlace(Long id,Long placeId, PlaceType type) throws IOException, NotFoundException {
 
 		TourInfoBookMarkDto dto;
 		System.out.println(type);
@@ -45,10 +47,10 @@ public class PlaceService {
 
 			MoviePlaceResponse movie = moviePlaceService.getMoviePlace(placeId);
 			if (movie == null) {
-				throw new NotFoundException("Movie place with ID " + placeId + " not found.");
+				throw new NotFoundMoviePlaceException();
 			}
 
-			dto = TourInfoBookMarkDto.builder()
+			dto = TourInfoBookMarkDto.builder().bookmarkId(id)
 				.placeId(placeId + "")
 				.title(movie.name())
 				.placeType("movie")
@@ -63,10 +65,10 @@ public class PlaceService {
 
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 			if (store == null) {
-				throw new NotFoundException("Store place with ID " + placeId + " not found.");
+				throw new NotFoundStorePlaceException();
 			}
 
-			dto = TourInfoBookMarkDto.builder()
+			dto = TourInfoBookMarkDto.builder().bookmarkId(id)
 				.placeId(placeId + "")
 				.title(store.name())
 				.placeType("store")
@@ -82,9 +84,35 @@ public class PlaceService {
 			if (tourInfo == null || tourInfo.isEmpty()) {
 				throw new NotFoundException("Tour place with ID " + placeId + " not found.");
 			}
-			return tourInfo.get(0);
+			TourInfoBookMarkDto tour = tourInfo.get(0);
+
+			dto = TourInfoBookMarkDto.builder().bookmarkId(id)
+					.placeId(placeId + "")
+					.title(tour.title())
+					.placeType("store")
+					.mapx(tour.mapx()) // Uncomment if mapX is available in store response
+					.mapy(tour.mapy()) // Uncomment if mapY is available in store response
+					.contentid(tour.contentid())
+					.build();
+			return dto;
 		}
 	}
+	public List<String> placeImageList(String name) throws IOException {
+		List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(name);
+		List<String> imageList = new ArrayList<>();
+		if (!images.isEmpty()) {
+			TourInfoImageDto image = images.get(0);
+
+			if (image.firstimage() != null && !image.firstimage().equals("")) {
+				imageList.add(image.firstimage());
+				if (image.firstimage2() != null && !image.firstimage2().equals("")) {
+					imageList.add(image.firstimage2());
+				}
+			}
+		}
+		return imageList;
+	}
+
 
 	public PlaceDetailsDto getDetails(Long placeId, PlaceType type) throws IOException {
 
@@ -111,23 +139,10 @@ public class PlaceService {
 			for (MovieImagesDto.BackDrops backdrop : backdrops) {
 				posterUrl.add(backdrop.getFilePath());
 			}
-
-			List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(moviePlace.name());
-			if (!images.isEmpty()) {
-				TourInfoImageDto image = images.get(0);
-
-				if (image.firstimage() != null && !image.firstimage().equals("")) {
-					imageList.add(image.firstimage());
-					if (image.firstimage2() != null && !image.firstimage2().equals("")) {
-						imageList.add(image.firstimage2());
-					}
-				}
-			}
-
 			dto = PlaceDetailsDto.builder()
 				.placeId(placeId + "")
 				.address(moviePlace.basicAddress())
-				.images(imageList)
+				.images(placeImageList(moviePlace.name()))
 				.name(moviePlace.name())
 				.type(type)
 				.images(imageList)
@@ -141,26 +156,13 @@ public class PlaceService {
 
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 
-			List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(store.name());
-			if (!images.isEmpty()) {
-				TourInfoImageDto image = images.get(0);
-
-				if (image.firstimage() != null && !image.firstimage().equals("")) {
-					imageList.add(image.firstimage());
-					if (image.firstimage2() != null && !image.firstimage2().equals("")) {
-						imageList.add(image.firstimage2());
-					}
-				}
-			}
-
 			// Handle case where no images are available, leaving imageList empty
-
 			dto = PlaceDetailsDto.builder()
 				.placeId(placeId + "")
 				.address(store.basicAddress())
 				.name(store.name())
 				.type(type)
-				.images(imageList)
+				.images(placeImageList(store.name()))
 				.build();
 
 			return dto;
