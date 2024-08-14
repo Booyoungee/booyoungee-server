@@ -31,7 +31,18 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -f Dockerfile.Backend ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }} .
+        run: docker build -f Dockerfile.Backend \
+          --build-arg DB_URL=${{ secrets.DB_URL }} \
+          --build-arg DB_USERNAME=${{ secrets.DB_USERNAME }} \
+          --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+          --build-arg KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} \
+          --build-arg KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \
+          --build-arg TOURINFO_URL=${{ secrets.TOURINFO_URL }} \
+          --build-arg TOURINFO_KEY=${{ secrets.TOURINFO_KEY }} \
+          --build-arg TOURINFO_FORMAT=${{ secrets.TOURINFO_FORMAT }} \
+          --build-arg TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} \
+          --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+          -t ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }} .
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
