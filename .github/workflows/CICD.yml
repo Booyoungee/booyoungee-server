@@ -48,7 +48,18 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
             docker stop booyoungee || true
             docker rm booyoungee || true
-            docker run -d -p 8282:8282 --name booyoungee ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+            docker run -d -p 8282:8282 --name booyoungee \
+            -e DB_URL=${{ secrets.DB_URL }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} \
+            -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \
+            -e TOURINFO_URL=${{ secrets.TOURINFO_URL }} \
+            -e TOURINFO_KEY=${{ secrets.TOURINFO_KEY }} \
+            -e TOURINFO_FORMAT=${{ secrets.TOURINFO_FORMAT }} \
+            -e TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} \
+            -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
            
             
         
