@@ -8,7 +8,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.server.booyoungee.domain.kakaoMap.application.KakaoAddressSearchService;
 import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
+import com.server.booyoungee.domain.kakaoMap.dto.KakaoAddressToCode;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.place.dao.store.StorePlaceRepository;
 import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
@@ -17,8 +19,6 @@ import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageRespo
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.global.common.PageableResponse;
-import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.GlobalExceptionCode;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class StorePlaceService {
 	private final StorePlaceRepository storePlaceRepository;
 	private final PlaceSearchService placeSearchService;
+	private final KakaoAddressSearchService kakaoAddressSearchService;
 
 	public StorePlaceListResponse getStoreByName(String name) {
 		List<StorePlace> stores = storePlaceRepository.findAllByName(name);
@@ -60,6 +61,14 @@ public class StorePlaceService {
 		return placeSearchService.searchByKeywordDetailsAddtypeOption(store.getName(), "store");
 	}
 
+	public StorePlaceResponse getStore(Long storeId) throws IOException {
+		StorePlace store = storePlaceRepository.findByStoreId(storeId)
+			.orElseThrow(NotFoundStorePlaceException::new);
+		store.increaseViewCount();
+		storePlaceRepository.save(store);
+		return StorePlaceResponse.from(store);
+	}
+
 	public void restoreViews() {
 		storePlaceRepository.resetViewsForAllStores();
 	}
@@ -68,5 +77,18 @@ public class StorePlaceService {
 		return stores.stream()
 			.map(StorePlaceResponse::from)
 			.collect(Collectors.toList());
+	}
+
+	public void updateXY() {
+		List<StorePlace> list = storePlaceRepository.findAll();
+		for (StorePlace store : list) {
+			KakaoAddressToCode dto = kakaoAddressSearchService.searchAddressXY(store.getName(), 1, 1);
+			String x = dto.getDocuments().get(0).getX();
+			String y = dto.getDocuments().get(0).getY();
+
+			store.updateMap(x, y);
+			storePlaceRepository.save(store);
+			System.out.println("update: " + store.getMapX() + "," + store.getMapY());
+		}
 	}
 }

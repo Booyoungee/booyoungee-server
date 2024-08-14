@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.stamp.application.StampService;
-import com.server.booyoungee.domain.stamp.domain.PlaceType;
 import com.server.booyoungee.domain.stamp.dto.StampRequestDto;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;

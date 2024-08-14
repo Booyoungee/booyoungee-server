@@ -104,8 +104,7 @@ public class TourInfoOpenApiController {
 	) throws IOException {
 		List<TourInfoDetailsResponseDto> jsonResult = tourInfoOpenApiService
 			.getCommonInfoByContentId(contentId);
-		tourInfoService.viewContent(contentId);
-
+		tourInfoService.viewContent(contentId, jsonResult.get(0).contenttypeid());
 		return ResponseModel.success(jsonResult);
 	}
 

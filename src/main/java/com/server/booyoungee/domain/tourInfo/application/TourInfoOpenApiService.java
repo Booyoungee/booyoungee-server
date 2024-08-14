@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,9 +21,12 @@ import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeRespon
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDetailDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,6 +77,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
+		// jsonResult가 null이거나 빈 경우 처리
+		if (jsonResult == null || !jsonResult.isArray() || jsonResult.size() == 0) {
+			return Collections.emptyList();
+		}
 		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
 	}
 
@@ -247,4 +255,66 @@ public class TourInfoOpenApiService {
 	public String getTitle(String stampId) throws IOException {
 		return getCommonInfoByContentId(stampId).get(0).title();
 	}
+
+	public List<TourInfoBookMarkDto> findByContentId(String contentId) throws IOException {
+		String requestUrl = baseUrl
+			+ "/detailCommon1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&contentId=" + contentId
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&defaultYN=" + "Y"
+			+ "&firstImageYN=" + "N"
+			+ "&areacodeYN=" + "N"
+			+ "&catcodeYN=" + "N"
+			+ "&addrinfoYN=" + "N"
+			+ "&mapinfoYN=" + "Y"
+			+ "&overviewYN=" + "N"
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDto[].class));
+	}
+
+	public List<TourInfoBookMarkDetailDto> findByTourInfoDetail(String contentId) throws IOException {
+		String requestUrl = baseUrl
+			+ "/detailCommon1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&contentId=" + contentId
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&defaultYN=" + "Y"
+			+ "&firstImageYN=" + "Y"
+			+ "&areacodeYN=" + "N"
+			+ "&catcodeYN=" + "N"
+			+ "&addrinfoYN=" + "Y"
+			+ "&mapinfoYN=" + "N"
+			+ "&overviewYN=" + "N"
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDetailDto[].class));
+	}
+
+	public List<TourInfoImageDto> getTourInfoImage(String keyword) throws
+		IOException {
+		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+		String requestUrl = baseUrl
+			+ "/searchKeyword1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&numOfRows=" + 1
+			+ "&pageNo=" + 0
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&keyword=" + encodedKeyword
+			+ "&areaCode=" + "6" // 부산 지역코드 : 6
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		if (jsonResult == null || !jsonResult.isArray() || jsonResult.size() == 0) {
+			return Collections.emptyList();
+		}
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoImageDto[].class));
+	}
+
 }

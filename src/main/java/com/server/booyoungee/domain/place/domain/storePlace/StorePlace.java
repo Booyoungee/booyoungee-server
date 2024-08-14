@@ -27,4 +27,12 @@ public class StorePlace extends Place {
 	private String tel;
 
 	private String mainBusiness;
+
+	private String mapX;
+	private String mapY;
+
+	public void updateMap(String mapX, String maxY) {
+		this.mapX = mapX;
+		this.mapY = maxY;
+	}
 }
