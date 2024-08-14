@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.kakaoMap.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,7 +14,7 @@ import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
+@Hidden
 @RestController
 @RequestMapping("/api/kakaoAddress")
 @RequiredArgsConstructor
@@ -22,7 +23,6 @@ public class KakaoAddressController {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 
 	@GetMapping("/search/address")
-
 	public ResponseModel<?> searchAddress(
 		@RequestParam(required = false) String query,
 		@RequestParam(defaultValue = "1") int page,

@@ -256,6 +256,9 @@ public class TourInfoOpenApiService {
 		return getCommonInfoByContentId(stampId).get(0).title();
 	}
 
+
+	//북마크에서 사용합니다.
+
 	public List<TourInfoBookMarkDto> findByContentId(String contentId) throws IOException {
 		String requestUrl = baseUrl
 			+ "/detailCommon1"
