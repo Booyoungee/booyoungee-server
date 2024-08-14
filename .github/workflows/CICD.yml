@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "TC-45" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "TC-45" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
