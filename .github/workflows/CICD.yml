@@ -39,4 +39,4 @@ jobs:
 
       - name: Deploy to production (optional)
         run: |
-          docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+          docker run -d -p 80:8282 ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
