@@ -21,12 +21,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Load environment variables from .env file
-        run: |
-          set -a
-          source .env
-          set +a
-
       - name: Build with Gradle
         run: ./gradlew clean build
 
