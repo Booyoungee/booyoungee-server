@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class KakaoTokenResponse {
-	private String accessToken;
+	private String access_token;
 	private String token_type;
-	private String refreshToken;
+	private String refresh_token;
 	private Integer expires_in;
 	private String scope;
 	private Integer refresh_token_expires_in;

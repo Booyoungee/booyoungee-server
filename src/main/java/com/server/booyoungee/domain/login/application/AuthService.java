@@ -1,5 +1,7 @@
 package com.server.booyoungee.domain.login.application;
 
+import static com.server.booyoungee.domain.login.exception.LoginExceptionCode.*;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
 import com.server.booyoungee.domain.login.dto.SocialInfoDto;
+import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
@@ -21,7 +24,7 @@ import com.server.booyoungee.domain.login.exception.ConflictUserException;
 import com.server.booyoungee.domain.login.exception.NotFoundUserInfoException;
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
-import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
+import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 import com.server.booyoungee.global.utils.JwtUtil;
 
@@ -39,7 +42,7 @@ public class AuthService {
 	private final RestTemplate restTemplate;
 
 	@Transactional
-	public JwtTokenResponse login(KakaoTokenResponse providerToken, LoginRequestDto request) throws IOException {
+	public JwtTokenResponse login(KakaoLoginRequestDto providerToken, LoginRequestDto request) throws IOException {
 		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.getAccessToken());
 		User user = loadOrCreateUser(socialInfo);
 		String refreshToken = providerToken.getRefreshToken();
@@ -53,7 +56,7 @@ public class AuthService {
 		if (request.provider().toString().equals(Provider.KAKAO.toString())) {
 			return kakaoLoginService.getInfo(providerToken);
 		} else {
-			throw new NotFoundUserInfoException();
+			throw new CustomException(NOT_FOUND_USER_INFO);
 		}
 	}
 

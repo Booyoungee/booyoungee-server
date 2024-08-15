@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.login.application.AuthService;
 import com.server.booyoungee.domain.login.application.KakaoLoginService;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
+import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
@@ -46,8 +47,9 @@ public class AuthController {
 	@Value("${kakao.redirect.url}")
 	private String redirectUri;// Replace with your actual redirect URI
 
-	@GetMapping("")
-	public ResponseModel<?> kakaoLogin(@RequestBody KakaoTokenResponse accessToken) throws IOException {
+	@Operation(summary = "카카오 로그인", description = "엑세스 토큰과 리프레시 토큰을 전달 받으면 jwt 토큰을 발급합니다.")
+	@PostMapping("")
+	public ResponseModel<?> kakaoLogin(@RequestBody KakaoLoginRequestDto accessToken) throws IOException {
 		try {
 			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
 			JwtTokenResponse tokens = authService.login(accessToken, request);
@@ -57,7 +59,8 @@ public class AuthController {
 		}
 	}
 
-	@GetMapping("/signup")
+	@Operation(summary = "회원가입", description = "엑세스 토큰과 리프레시 토큰을 , 닉네임을 전달받으면 jwt 토큰과 닉네임을 발급합니다.")
+	@PostMapping("/signup")
 	public ResponseModel<?> signUp(@RequestBody SignUpRequestDto token) throws IOException {
 		try {
 			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
@@ -81,12 +84,24 @@ public class AuthController {
 		return ResponseModel.success("로그아웃에 성공하였습니다.");
 	}
 
+	@Operation(summary = "jwt 토큰 갱신", description = "리프레시 토큰을 전달받으면 새로운 jwt 엑세스 토큰을 발급합니다.")
+	@PostMapping("/refresh-jwt-token")
+	public ResponseModel<?> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
+		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
+		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
+		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.builder()
+			.accessToken(response.getAccess_token())
+			.refreshToken(response.getRefresh_token())
+			.build();
+		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
+		return ResponseModel.success((tokens));
+	}
+
+	@Operation(summary = "카카오 토큰 갱신", description = "리프레시 토큰을 전달받으면 새로운 카카오 엑세스 토큰을 발급합니다.")
 	@PostMapping("/refresh-kakao-token")
 	public ResponseModel<?> refreshKakaoToken(@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
-		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		JwtTokenResponse tokens = authService.login(response, request);
-		return ResponseModel.success((tokens));
+		return ResponseModel.success(response);
 	}
 
 	@Operation(summary = "REST API 카카오 로그인")
@@ -109,15 +124,19 @@ public class AuthController {
 		response.sendRedirect(kakaoAuthUrl);
 	}
 
-	@Operation(summary = "REST API 카카오 로그인")
 	@Hidden
+	@Operation(summary = "REST API 카카오 로그인")
 	@GetMapping("/callback")
 	public ResponseModel<?> kakaoCallback(@RequestParam String code) throws IOException {
 		try {
 			System.out.println("callback start");
 			KakaoTokenResponse accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
 			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
-			JwtTokenResponse tokens = authService.login(accessToken, request);
+			KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.builder()
+				.accessToken(accessToken.getAccess_token())
+				.refreshToken(accessToken.getRefresh_token())
+				.build();
+			JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
 			return ResponseModel.success(tokens);
 		} catch (Exception e) {
 			return ResponseModel.error(e.getMessage());
