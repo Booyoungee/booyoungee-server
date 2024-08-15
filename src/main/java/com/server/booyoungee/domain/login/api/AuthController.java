@@ -33,7 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/oauth")
+@RequestMapping("/api/v1/oauth")
 @RequiredArgsConstructor
 @Tag(name = "Auth", description = "카카오 로그인 api / 담당자 : 이영학")
 public class AuthController {
@@ -77,6 +77,8 @@ public class AuthController {
 		}
 	}
 
+	@Hidden
+	@Operation(summary = "로그아웃", description = "로그아웃을 수행합니다.")
 	@PostMapping("/logout")
 	public ResponseModel<?> logout() {
 		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
@@ -97,6 +99,7 @@ public class AuthController {
 		return ResponseModel.success((tokens));
 	}
 
+	@Hidden
 	@Operation(summary = "카카오 토큰 갱신", description = "리프레시 토큰을 전달받으면 새로운 카카오 엑세스 토큰을 발급합니다.")
 	@PostMapping("/refresh-kakao-token")
 	public ResponseModel<?> refreshKakaoToken(@RequestParam String refreshToken) throws IOException {
