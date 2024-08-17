@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
-import com.server.booyoungee.domain.place.domain.moviePlace.MoviePlace;
+import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.global.common.ResponseModel;

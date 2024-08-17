@@ -13,7 +13,7 @@ import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoAddressToCode;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.place.dao.store.StorePlaceRepository;
-import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
+import com.server.booyoungee.domain.place.domain.store.StorePlace;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;

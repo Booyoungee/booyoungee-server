@@ -1,11 +1,11 @@
-package com.server.booyoungee.domain.tourInfo.dto.response.bookmark;
+package com.server.booyoungee.domain.tourInfo.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 
 @Builder
-public record TourInfoBookMarkDetailDto(
+public record TourInfoBookMarkDetailsResponse(
 	@JsonProperty("contentid") String contentid,
 	@JsonProperty("firstimage") String firstimage,
 	@JsonProperty("firstimage2") String firstimage2,
@@ -19,6 +19,5 @@ public record TourInfoBookMarkDetailDto(
 	String placeId
 
 ) {
-
 }
 

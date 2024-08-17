@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.place.domain.storePlace;
+package com.server.booyoungee.domain.place.domain.movie;
 
 import com.server.booyoungee.domain.place.domain.Place;
 
@@ -14,25 +14,23 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Entity
 @SuperBuilder
-@Table(name = "store_place")
-@DiscriminatorValue("STORE")
+@Table(name = "movie_place")
+@DiscriminatorValue("MOVIE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StorePlace extends Place {
+public class MoviePlace extends Place {
 
 	@Column(nullable = false)
-	private Long storeId;
+	private String movieName;
 
-	private String detailAddress;
+	private String movieCode;
 
-	private String tel;
+	private String description;
 
-	private String mainBusiness;
-
+	@Column(nullable = false)
 	private String mapX;
+
+	@Column(nullable = false)
 	private String mapY;
 
-	public void updateMap(String mapX, String maxY) {
-		this.mapX = mapX;
-		this.mapY = maxY;
-	}
+	private String productionYear;
 }

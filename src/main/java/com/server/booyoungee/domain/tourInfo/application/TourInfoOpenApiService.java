@@ -25,8 +25,8 @@ import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDetailDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDetailsResponse;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.tourInfo.exception.ListParsingErrorException;
 import com.server.booyoungee.domain.tourInfo.exception.OpenApiCallErrorException;
 
@@ -192,7 +192,7 @@ public class TourInfoOpenApiService {
 		return toList(jsonResult, TourInfoAreaCodeResponseDto[].class);
 	}
 
-	public List<TourInfoBookMarkDto> findByContentId(String contentId) {
+	public List<TourInfoBookMarkResponse> findByContentId(String contentId) {
 		String requestUrl = baseUrl
 			+ "/detailCommon1"
 			+ "?ServiceKey=" + serviceKey
@@ -209,10 +209,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return toList(jsonResult, TourInfoBookMarkDto[].class);
+		return toList(jsonResult, TourInfoBookMarkResponse[].class);
 	}
 
-	public List<TourInfoBookMarkDetailDto> findByTourInfoDetail(String contentId) {
+	public List<TourInfoBookMarkDetailsResponse> findByTourInfoDetail(String contentId) {
 		String requestUrl = baseUrl
 			+ "/detailCommon1"
 			+ "?ServiceKey=" + serviceKey
@@ -229,7 +229,7 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return toList(jsonResult, TourInfoBookMarkDetailDto[].class);
+		return toList(jsonResult, TourInfoBookMarkDetailsResponse[].class);
 	}
 
 	public List<TourInfoImageDto> getTourInfoImage(String keyword) {

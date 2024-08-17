@@ -1,11 +1,11 @@
-package com.server.booyoungee.domain.tourInfo.dto.response.bookmark;
+package com.server.booyoungee.domain.tourInfo.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 
 @Builder
-public record TourInfoBookMarkDto(
+public record TourInfoBookMarkResponse(
 
 	@JsonProperty("contentid") String contentid,
 	@JsonProperty("contenttypeid") String contenttypeid,
@@ -18,7 +18,7 @@ public record TourInfoBookMarkDto(
 	String placeId,
 	Long bookmarkId
 ) {
-	public TourInfoBookMarkDto {
+	public TourInfoBookMarkResponse {
 		if (placeType == null || placeType.isBlank()) {
 			placeType = "tour";
 		}
