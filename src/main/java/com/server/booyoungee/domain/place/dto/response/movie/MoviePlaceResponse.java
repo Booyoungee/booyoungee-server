@@ -2,7 +2,7 @@ package com.server.booyoungee.domain.place.dto.response.movie;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
-import com.server.booyoungee.domain.place.domain.moviePlace.MoviePlace;
+import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.global.common.PlaceType;
 
 import io.swagger.v3.oas.annotations.media.Schema;

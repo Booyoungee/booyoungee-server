@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.server.booyoungee.domain.place.domain.storePlace.StorePlace;
+import com.server.booyoungee.domain.place.domain.store.StorePlace;
 
 import jakarta.transaction.Transactional;
 

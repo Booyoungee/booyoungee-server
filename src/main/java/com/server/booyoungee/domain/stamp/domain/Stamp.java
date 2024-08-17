@@ -37,7 +37,7 @@ public class Stamp {
 	private Long stampId;
 
 	@ManyToOne
-	@JoinColumn(name = "userId", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Column(nullable = false)
@@ -49,7 +49,7 @@ public class Stamp {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 
-	@Column(nullable = true)
+	@Column()
 	private String type;
 
 	@PrePersist

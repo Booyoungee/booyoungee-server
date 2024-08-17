@@ -9,13 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
-import com.server.booyoungee.domain.place.domain.moviePlace.MoviePlace;
+import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.global.common.PageableResponse;
-import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.handler.ExcelSheetHandler;
 
 import jakarta.transaction.Transactional;

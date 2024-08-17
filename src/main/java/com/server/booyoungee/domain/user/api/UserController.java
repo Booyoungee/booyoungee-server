@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.dto.response.UserResponse;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
 
@@ -34,9 +35,11 @@ public class UserController {
 
 	@Operation(summary = "유저 정보 조회")
 	@GetMapping("/me")
-	public ResponseModel<?> getUser(
-		@Parameter(hidden = true) @UserId User user) {
-		return ResponseModel.success(userService.getUser(user));
+	public ResponseModel<UserResponse> getUser(
+		@Parameter(hidden = true) @UserId User user
+	) {
+		UserResponse response = UserResponse.of(user.getUserId(), user.getName());
+		return ResponseModel.success(response);
 	}
 
 	@Operation(summary = "닉네임 중복 확인")

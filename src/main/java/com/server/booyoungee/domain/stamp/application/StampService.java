@@ -1,8 +1,6 @@
 package com.server.booyoungee.domain.stamp.application;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +9,10 @@ import org.springframework.stereotype.Service;
 import com.server.booyoungee.domain.stamp.dao.StampRepository;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
 import com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto;
-import com.server.booyoungee.domain.stamp.dto.StampRequestDto;
 import com.server.booyoungee.domain.stamp.dto.StampResponseDto;
+import com.server.booyoungee.domain.stamp.dto.request.StampRequest;
+import com.server.booyoungee.domain.stamp.dto.response.StampResponse;
+import com.server.booyoungee.domain.stamp.dto.response.StampResponseList;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.utils.LocationUtils;
@@ -26,23 +26,23 @@ public class StampService {
 
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
-	public void createStamp(User user, StampRequestDto dto) {
-		double userX = dto.getUserX();
-		double userY = dto.getUserY();
-		double x = dto.getX();
-		double y = dto.getY();
+	public void createStamp(User user, StampRequest dto) {
+		double userX = dto.userX();
+		double userY = dto.userY();
+		double x = dto.x();
+		double y = dto.y();
 		double distance = LocationUtils.calculateDistance(userY, userX, y, x);
 
 		if (distance <= 50) {
-			if (!isExistStamp(user, dto.getPlaceId())) {
+			if (!isExistStamp(user, dto.placeId())) {
 				Stamp stamp = Stamp.builder()
 					.user(user)
-					.placeId(dto.getPlaceId())
-					.type(dto.getType())
+					.placeId(dto.placeId())
+					.type(dto.type())
 					.build();
 				stampRepository.save(stamp);
 			} else {
-				throw new IllegalArgumentException("이미 존재하늩 스탬프입니다.");
+				throw new IllegalArgumentException("이미 존재하는 스탬프입니다.");
 			}
 
 		} else {
@@ -54,58 +54,27 @@ public class StampService {
 		return stampRepository.existsByUserAndPlaceId(user, placeId);
 	}
 
-	@SuppressWarnings("checkstyle:RegexpMultiline")
-	public List<StampResponseDto> getStamp(User user) throws IOException {
-		return stampRepository.findAllByUser(user).stream()
+	public StampResponseList getStamp(User user) {
+		List<Stamp> stamps = stampRepository.findAllByUser(user);
+		List<StampResponse> stampResponses = stamps.stream()
 			.map(stamp -> {
-				String placeName = null;
-				try {
-					getPlaceName(stamp.getType(), stamp.getPlaceId());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				return StampResponseDto.builder()
-					.stampId(stamp.getStampId())
-					.createdAt(stamp.getCreatedAt())
-					.updatedAt(stamp.getUpdatedAt())
-					.placeId(stamp.getPlaceId())
-					.type(stamp.getType())
-					.placeName(placeName)
-					.build();
+				String placeName = getPlaceName(stamp.getType(), stamp.getPlaceId());
+				return StampResponse.of(stamp, placeName);
 			})
-			.collect(Collectors.toList());
+			.toList();
+		return StampResponseList.from(stampResponses);
 	}
 
-	public StampResponseDto getStamp(User user, Long stampId) {
+	public StampResponse getStamp(User user, Long stampId) {
 		Stamp stamp = stampRepository.findByUserAndStampId(user, stampId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 스탬프가 존재 하지 않습니다."));
-		;
-		String placeName = null;
-		try {
-			placeName = getPlaceName(stamp.getType(), stamp.getPlaceId());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return StampResponseDto.builder()
-			.stampId(stamp.getStampId())
-			.createdAt(stamp.getCreatedAt())
-			.updatedAt(stamp.getUpdatedAt())
-			.placeId(stamp.getPlaceId())
-			.type(stamp.getType())
-			.placeName(placeName)
-			.build();
+		String placeName = getPlaceName(stamp.getType(), stamp.getPlaceId());
+		return StampResponse.of(stamp, placeName);
 	}
 
-	public String getPlaceName(String type, String placeId) throws IOException {
-		String name = null;
-		if (type == "movie") {
-
-		} else if (type == "100") {
-
-		} else {
-			name = tourInfoOpenApiService.getTitle(placeId);
-		}
-		return name;
+	public String getPlaceName(String type, String placeId) {
+		// TODO: 타입에 대한 검사 로직 필요한지 검토
+		return tourInfoOpenApiService.getTitle(placeId);
 	}
 
 	public List<Stamp> getStampByPlaceId(String placeId) {
@@ -117,12 +86,13 @@ public class StampService {
 		return getStampByPlaceId(placeId).size();
 	}
 
-	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable) throws IOException {
+	// TODO : 페이징 처리 제거 검토
+	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable) {
 		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCounts(pageable);
 		return stampToStampResponseDto(placeStampCounts);
 	}
 
-	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable, String type) throws IOException {
+	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable, String type) {
 		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCountsByType(type, pageable);
 		return stampToStampResponseDto(placeStampCounts);
 	}
@@ -137,7 +107,7 @@ public class StampService {
 					.type(dto.getType())
 					.count(dto.getCount())
 					.build();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				throw new RuntimeException("Failed to get place name", e);
 			}
 		});
