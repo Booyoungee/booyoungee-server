@@ -1,14 +1,12 @@
 package com.server.booyoungee.domain.user.application;
 
-import com.server.booyoungee.domain.user.dto.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.dto.response.UserResponse;
 import com.server.booyoungee.domain.user.exception.DuplicateNicknameException;
 import com.server.booyoungee.domain.user.exception.NotFoundUserException;
-import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -55,11 +53,7 @@ public class UserService {
 		}
 	}
 
-    public Object getUser(User user) {
-		UserResponseDto dto = UserResponseDto.builder()
-				.userId(user.getUserId())
-				.nickname(user.getName())
-				.build();
-		return dto;
+    public UserResponse getUser(User user) {
+		return UserResponse.of(user.getUserId(), user.getName());
     }
 }
