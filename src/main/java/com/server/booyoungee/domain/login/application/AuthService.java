@@ -31,7 +31,6 @@ import com.server.booyoungee.global.utils.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-@SuppressWarnings("checkstyle:RegexpMultiline")
 @Service
 @RequiredArgsConstructor
 public class AuthService {

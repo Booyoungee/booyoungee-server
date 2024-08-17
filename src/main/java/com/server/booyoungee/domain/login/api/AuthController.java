@@ -47,9 +47,11 @@ public class AuthController {
 	@Value("${kakao.redirect.url}")
 	private String redirectUri;// Replace with your actual redirect URI
 
-	@Operation(summary = "카카오 로그인", description = "엑세스 토큰과 리프레시 토큰을 전달 받으면 jwt 토큰을 발급합니다.")
+	@Operation(summary = "카카오 로그인",
+		description = "엑세스 토큰과 리프레시 토큰을 전달 받으면 JWT 토큰을 발급합니다.")
 	@PostMapping("")
-	public ResponseModel<?> kakaoLogin(@RequestBody KakaoLoginRequestDto accessToken) throws IOException {
+	public ResponseModel<?> kakaoLogin(
+		@RequestBody KakaoLoginRequestDto accessToken) throws IOException {
 		try {
 			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
 			JwtTokenResponse tokens = authService.login(accessToken, request);
@@ -59,7 +61,8 @@ public class AuthController {
 		}
 	}
 
-	@Operation(summary = "회원가입", description = "엑세스 토큰과 리프레시 토큰을 , 닉네임을 전달받으면 jwt 토큰과 닉네임을 발급합니다.")
+	@Operation(summary = "회원가입",
+		description = "엑세스 토큰과 리프레시 토큰을 , 닉네임을 전달받으면 jwt 토큰과 닉네임을 발급합니다.")
 	@PostMapping("/signup")
 	public ResponseModel<?> signUp(@RequestBody SignUpRequestDto token) throws IOException {
 		try {
@@ -81,12 +84,14 @@ public class AuthController {
 	@Operation(summary = "로그아웃", description = "로그아웃을 수행합니다.")
 	@PostMapping("/logout")
 	public ResponseModel<?> logout() {
-		UserAuthentication authentication = (UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
+		UserAuthentication authentication =
+			(UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
 		authService.logout(authentication);
 		return ResponseModel.success("로그아웃에 성공하였습니다.");
 	}
 
-	@Operation(summary = "jwt 토큰 갱신", description = "리프레시 토큰을 전달받으면 새로운 jwt 엑세스 토큰을 발급합니다.")
+	@Operation(summary = "jwt 토큰 갱신",
+		description = "리프레시 토큰을 전달받으면 새로운 jwt 엑세스 토큰을 발급합니다.")
 	@PostMapping("/refresh-jwt-token")
 	public ResponseModel<?> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
@@ -100,9 +105,11 @@ public class AuthController {
 	}
 
 	@Hidden
-	@Operation(summary = "카카오 토큰 갱신", description = "리프레시 토큰을 전달받으면 새로운 카카오 엑세스 토큰을 발급합니다.")
+	@Operation(summary = "카카오 토큰 갱신",
+		description = "리프레시 토큰을 전달받으면 새로운 카카오 엑세스 토큰을 발급합니다.")
 	@PostMapping("/refresh-kakao-token")
-	public ResponseModel<?> refreshKakaoToken(@RequestParam String refreshToken) throws IOException {
+	public ResponseModel<?> refreshKakaoToken(
+		@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
 		return ResponseModel.success(response);
 	}
