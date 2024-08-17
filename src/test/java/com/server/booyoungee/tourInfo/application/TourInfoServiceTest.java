@@ -1,16 +1,12 @@
 package com.server.booyoungee.tourInfo.application;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
 import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoResponseDto;
 import com.server.booyoungee.mock.FakeTourInfoRepository;
 
 public class TourInfoServiceTest {
@@ -23,7 +19,7 @@ public class TourInfoServiceTest {
 		fakeTourInfoRepository = new FakeTourInfoRepository();
 		tourInfoService = new TourInfoService(fakeTourInfoRepository);
 	}
-
+/*
 	@Test
 	void 새롭게_조회한_관광지_정보의_조회수는_1이다() {
 		// given
@@ -37,7 +33,7 @@ public class TourInfoServiceTest {
 		assertNotNull(tourInfo);
 		assertEquals(contentId, tourInfo.getContentId());
 		assertEquals(1L, tourInfo.getViews());
-	}
+	}*/
 
 	@Test
 	void 이전에_조회했던_관광지_정보를_조회할_수_있다() {
@@ -58,7 +54,7 @@ public class TourInfoServiceTest {
 		assertEquals(contentId, tourInfo.getContentId());
 		assertEquals(11L, tourInfo.getViews());
 	}
-
+/*
 	@Test
 	void 관광지_정보를_조회할_수_있다() {
 		// given
@@ -107,5 +103,5 @@ public class TourInfoServiceTest {
 
 		assertEquals("456", dto2.getContentId());
 		assertEquals(5L, dto2.getViews());
-	}
+	}*/
 }

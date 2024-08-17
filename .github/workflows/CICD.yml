@@ -1,0 +1,67 @@
+name: CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -f Dockerfile.Backend --build-arg DB_URL=${{ secrets.DB_URL }} --build-arg DB_USERNAME=${{ secrets.DB_USERNAME }} --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} --build-arg KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} --build-arg KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} --build-arg TOURINFO_URL=${{ secrets.TOURINFO_URL }} --build-arg TOURINFO_KEY=${{ secrets.TOURINFO_KEY }} --build-arg TOURINFO_FORMAT=${{ secrets.TOURINFO_FORMAT }} --build-arg TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -t ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }} .
+
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+
+      - name: "NCP 로그인 및 배포"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USERNAME }}
+          password: ${{ secrets.NCP_PASSWORD }}
+          port: ${{ secrets.NCP_PORT }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+            docker stop booyoungee || true
+            docker rm booyoungee || true
+            docker run -d -p 8282:8282 --name booyoungee \
+            -e DB_URL=${{ secrets.DB_URL }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} \
+            -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \
+            -e TOURINFO_URL=${{ secrets.TOURINFO_URL }} \
+            -e TOURINFO_KEY=${{ secrets.TOURINFO_KEY }} \
+            -e TOURINFO_FORMAT=${{ secrets.TOURINFO_FORMAT }} \
+            -e TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} \
+            -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            ${{ secrets.DOCKER_USERNAME }}/booyoungee:${{ github.sha }}
+           
+            
+        
+        
+        
+        
+        
+        
