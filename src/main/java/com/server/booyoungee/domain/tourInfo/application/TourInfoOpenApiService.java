@@ -44,8 +44,7 @@ public class TourInfoOpenApiService {
 	@Value("${tourInfo.format}")
 	private String _type;
 
-	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY,
-		String radius) throws IOException {
+	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) {
 		String requestUrl = baseUrl
 			+ "/locationBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -59,11 +58,10 @@ public class TourInfoOpenApiService {
 			+ "&radius=" + radius;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
+		return toList(jsonResult, TourInfoCommonResponseDto[].class);
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) throws
-		IOException {
+	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
 		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		String requestUrl = baseUrl
 			+ "/searchKeyword1"
@@ -77,15 +75,13 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		// jsonResult가 null이거나 빈 경우 처리
-		if (jsonResult == null || !jsonResult.isArray() || jsonResult.size() == 0) {
+		if (jsonResult == null || !jsonResult.isArray() || jsonResult.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
+		return toList(jsonResult, TourInfoCommonResponseDto[].class);
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate,
-		String eventEndDate) throws IOException {
+	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate, String eventEndDate) {
 		String requestUrl = baseUrl
 			+ "/searchFestival1"
 			+ "?ServiceKey=" + serviceKey
@@ -99,10 +95,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
+		return toList(jsonResult, TourInfoCommonResponseDto[].class);
 	}
 
-	public List<TourInfoStayResponseDto> getTourInfoByStay(int numOfRows, int pageNo) throws IOException {
+	public List<TourInfoStayResponseDto> getTourInfoByStay(int numOfRows, int pageNo) {
 		String requestUrl = baseUrl
 			+ "/searchStay1"
 			+ "?ServiceKey=" + serviceKey
@@ -114,10 +110,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoStayResponseDto[].class));
+		return toList(jsonResult, TourInfoStayResponseDto[].class);
 	}
 
-	public List<TourInfoAreaResponseDto> getTourInfoByAreaCode(int numOfRows, int pageNo) throws IOException {
+	public List<TourInfoAreaResponseDto> getTourInfoByAreaCode(int numOfRows, int pageNo) {
 		String requestUrl = baseUrl
 			+ "/areaBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -129,10 +125,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoAreaResponseDto[].class));
+		return toList(jsonResult, TourInfoAreaResponseDto[].class);
 	}
 
-	public List<TourInfoDetailsResponseDto> getCommonInfoByContentId(String contentId) throws IOException {
+	public List<TourInfoDetailsResponseDto> getCommonInfoByContentId(String contentId){
 		String requestUrl = baseUrl
 			+ "/detailCommon1"
 			+ "?ServiceKey=" + serviceKey
@@ -149,11 +145,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoDetailsResponseDto[].class));
+		return toList(jsonResult, TourInfoDetailsResponseDto[].class);
 	}
 
-	public List<TourInfoIntroResponseDto> getIntroInfoByContentId(String contentId, String contentTypeId) throws
-		IOException {
+	public List<TourInfoIntroResponseDto> getIntroInfoByContentId(String contentId, String contentTypeId) {
 		String requestUrl = baseUrl
 			+ "/detailIntro1"
 			+ "?ServiceKey=" + serviceKey
@@ -164,10 +159,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoIntroResponseDto[].class));
+		return toList(jsonResult, TourInfoIntroResponseDto[].class);
 	}
 
-	public List<TourInfoImageResponseDto> getImageInfoByContentId(String contentId) throws IOException {
+	public List<TourInfoImageResponseDto> getImageInfoByContentId(String contentId) {
 		String requestUrl = baseUrl
 			+ "/detailImage1"
 			+ "?ServiceKey=" + serviceKey
@@ -179,10 +174,10 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoImageResponseDto[].class));
+		return toList(jsonResult, TourInfoImageResponseDto[].class);
 	}
 
-	public List<TourInfoAreaCodeResponseDto> getAreaCode() throws IOException {
+	public List<TourInfoAreaCodeResponseDto> getAreaCode() {
 		String requestUrl = baseUrl
 			+ "/areaCode1"
 			+ "?ServiceKey=" + serviceKey
@@ -192,14 +187,74 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoAreaCodeResponseDto[].class));
+		return toList(jsonResult, TourInfoAreaCodeResponseDto[].class);
 	}
 
-	public JsonNode getTourInfo(String url) throws IOException {
-		HttpURLConnection urlConnection = null;
-		InputStream stream = null;
+	public List<TourInfoBookMarkResponse> findByContentId(String contentId) {
+		String requestUrl = baseUrl
+			+ "/detailCommon1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&contentId=" + contentId
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&defaultYN=" + "Y"
+			+ "&firstImageYN=" + "N"
+			+ "&areacodeYN=" + "N"
+			+ "&catcodeYN=" + "N"
+			+ "&addrinfoYN=" + "N"
+			+ "&mapinfoYN=" + "Y"
+			+ "&overviewYN=" + "N"
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return toList(jsonResult, TourInfoBookMarkResponse[].class);
+	}
+
+	public List<TourInfoBookMarkDetailsResponse> findByTourInfoDetail(String contentId) {
+		String requestUrl = baseUrl
+			+ "/detailCommon1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&contentId=" + contentId
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&defaultYN=" + "Y"
+			+ "&firstImageYN=" + "Y"
+			+ "&areacodeYN=" + "N"
+			+ "&catcodeYN=" + "N"
+			+ "&addrinfoYN=" + "Y"
+			+ "&mapinfoYN=" + "N"
+			+ "&overviewYN=" + "N"
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		return toList(jsonResult, TourInfoBookMarkDetailsResponse[].class);
+	}
+
+	public List<TourInfoImageDto> getTourInfoImage(String keyword) {
+		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+		String requestUrl = baseUrl
+			+ "/searchKeyword1"
+			+ "?ServiceKey=" + serviceKey
+			+ "&numOfRows=" + 1
+			+ "&pageNo=" + 0
+			+ "&MobileOS=AND"
+			+ "&MobileApp=booyoungee"
+			+ "&keyword=" + encodedKeyword
+			+ "&areaCode=" + "6" // 부산 지역코드 : 6
+			+ "&_type=" + _type;
+
+		JsonNode jsonResult = getTourInfo(requestUrl);
+		if (jsonResult == null || !jsonResult.isArray() || jsonResult.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return toList(jsonResult, TourInfoImageDto[].class);
+	}
+
+	public JsonNode getTourInfo(String url) {
+		HttpURLConnection urlConnection;
+		InputStream stream;
 		String result;
-		JsonNode jsonResult = null;
+		JsonNode jsonResult;
 
 		try {
 			URL requestUrl = new URL(url);
@@ -211,18 +266,29 @@ public class TourInfoOpenApiService {
 			JsonNode rootNode = objectMapper.readTree(result);
 			jsonResult = rootNode.path("response").path("body").path("items").path("item");
 
-		} catch (IOException e) {
-			throw e;
-		} finally {
 			if (stream != null) {
 				stream.close();
 			}
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			throw new OpenApiCallErrorException();
 		}
 		return jsonResult;
 	}
+
+	public String getTitle(String stampId) {
+		return getCommonInfoByContentId(stampId).get(0).title();
+	}
+
+	private <T> List<T> toList(JsonNode jsonResult, Class<T[]> clazz) {
+		try {
+			T[] array = objectMapper.treeToValue(jsonResult, clazz);
+			return Arrays.asList(array);
+		} catch (Exception e) {
+			throw new ListParsingErrorException();
+		}
+	}
+
 
 	private InputStream getNetworkConnection(HttpURLConnection urlConnection) throws IOException {
 		urlConnection.setConnectTimeout(3000);
@@ -251,73 +317,4 @@ public class TourInfoOpenApiService {
 
 		return result.toString();
 	}
-
-	public String getTitle(String stampId) throws IOException {
-		return getCommonInfoByContentId(stampId).get(0).title();
-	}
-
-
-	//북마크에서 사용합니다.
-
-	public List<TourInfoBookMarkDto> findByContentId(String contentId) throws IOException {
-		String requestUrl = baseUrl
-			+ "/detailCommon1"
-			+ "?ServiceKey=" + serviceKey
-			+ "&contentId=" + contentId
-			+ "&MobileOS=AND"
-			+ "&MobileApp=booyoungee"
-			+ "&defaultYN=" + "Y"
-			+ "&firstImageYN=" + "N"
-			+ "&areacodeYN=" + "N"
-			+ "&catcodeYN=" + "N"
-			+ "&addrinfoYN=" + "N"
-			+ "&mapinfoYN=" + "Y"
-			+ "&overviewYN=" + "N"
-			+ "&_type=" + _type;
-
-		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDto[].class));
-	}
-
-	public List<TourInfoBookMarkDetailDto> findByTourInfoDetail(String contentId) throws IOException {
-		String requestUrl = baseUrl
-			+ "/detailCommon1"
-			+ "?ServiceKey=" + serviceKey
-			+ "&contentId=" + contentId
-			+ "&MobileOS=AND"
-			+ "&MobileApp=booyoungee"
-			+ "&defaultYN=" + "Y"
-			+ "&firstImageYN=" + "Y"
-			+ "&areacodeYN=" + "N"
-			+ "&catcodeYN=" + "N"
-			+ "&addrinfoYN=" + "Y"
-			+ "&mapinfoYN=" + "N"
-			+ "&overviewYN=" + "N"
-			+ "&_type=" + _type;
-
-		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDetailDto[].class)); // 배열로 처리
-	}
-
-	public List<TourInfoImageDto> getTourInfoImage(String keyword) throws
-		IOException {
-		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-		String requestUrl = baseUrl
-			+ "/searchKeyword1"
-			+ "?ServiceKey=" + serviceKey
-			+ "&numOfRows=" + 1
-			+ "&pageNo=" + 0
-			+ "&MobileOS=AND"
-			+ "&MobileApp=booyoungee"
-			+ "&keyword=" + encodedKeyword
-			+ "&areaCode=" + "6" // 부산 지역코드 : 6
-			+ "&_type=" + _type;
-
-		JsonNode jsonResult = getTourInfo(requestUrl);
-		if (jsonResult == null || !jsonResult.isArray() || jsonResult.size() == 0) {
-			return Collections.emptyList();
-		}
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoImageDto[].class));
-	}
-
 }

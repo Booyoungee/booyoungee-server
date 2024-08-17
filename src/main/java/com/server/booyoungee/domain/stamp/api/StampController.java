@@ -1,10 +1,5 @@
 package com.server.booyoungee.domain.stamp.api;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.server.booyoungee.domain.stamp.dto.StampResponseDto;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.stamp.application.StampService;
-import com.server.booyoungee.domain.stamp.dto.StampRequestDto;
+import com.server.booyoungee.domain.stamp.dto.request.StampRequest;
+import com.server.booyoungee.domain.stamp.dto.response.StampResponse;
+import com.server.booyoungee.domain.stamp.dto.response.StampResponseList;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,28 +34,31 @@ public class StampController {
 
 	@Operation(summary = "스탬프 생성 요청 (본인 위치, 장소 위치)")
 	@PostMapping("")
-	public ResponseModel<?> createStamp(
+	public ResponseModel<Boolean> createStamp(
 		@Parameter(hidden = true) @UserId User user,
-		@RequestBody StampRequestDto dto) {
-
+		@RequestBody StampRequest dto
+	) {
 		stampService.createStamp(user, dto);
-		return ResponseModel.success("");
-
+		return ResponseModel.success(true);
 	}
 
 	@Operation(summary = "본인 스탬프 조회")
 	@GetMapping("")
-	public ResponseModel<List<StampResponseDto>> getStamp(
-		@Parameter(hidden = true) @UserId User user) throws IOException {
-		return ResponseModel.success(stampService.getStamp(user));
+	public ResponseModel<StampResponseList> getStamp(
+		@Parameter(hidden = true) @UserId User user
+	) {
+		StampResponseList stampResponseList = stampService.getStamp(user);
+		return ResponseModel.success(stampResponseList);
 	}
 
 	@Operation(summary = "스탬프 상세 조회")
 	@GetMapping("/details/{stampId}")
-	public ResponseModel<StampResponseDto> getStamp(
+	public ResponseModel<StampResponse> getStamp(
 		@PathVariable Long stampId,
-		@Parameter(hidden = true) @UserId User user) throws IOException {
-		return ResponseModel.success(stampService.getStamp(user, stampId));
+		@Parameter(hidden = true) @UserId User user
+	) {
+		StampResponse response = stampService.getStamp(user, stampId);
+		return ResponseModel.success(response);
 	}
 	@Hidden
 	@Operation(summary = "특정 장소 스탬프 수 조회")
@@ -74,11 +75,7 @@ public class StampController {
 		@RequestParam(defaultValue = "10") int size
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		try {
-			return ResponseModel.success(stampService.getPlaceStampCounts(pageable));
-		} catch (IOException e) {
-			return ResponseModel.error("Failed to retrieve place stamp counts");
-		}
+		return ResponseModel.success(stampService.getPlaceStampCounts(pageable));
 	}
 	@Hidden
 	@Operation(summary = "장소 별 스탬프 수 조회")
@@ -89,10 +86,6 @@ public class StampController {
 		@RequestParam PlaceType type
 	) {
 		Pageable pageable = PageRequest.of(page, size);
-		try {
-			return ResponseModel.success(stampService.getPlaceStampCounts(pageable, type.getKey()));
-		} catch (IOException e) {
-			return ResponseModel.error("Failed to retrieve place stamp counts");
-		}
+		return ResponseModel.success(stampService.getPlaceStampCounts(pageable, type.getKey()));
 	}
 }

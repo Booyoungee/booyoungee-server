@@ -33,7 +33,7 @@ public class User {
 	@Column(nullable = false)
 	private String serialId;
 
-	@Column(nullable = true)
+	@Column
 	private String refreshToken;
 
 	@Column(nullable = false)
