@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.BookMark.api;
+package com.server.booyoungee.domain.bookmark.api;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.BookMark.application.BookMarkService;
+import com.server.booyoungee.domain.bookmark.application.BookMarkService;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;

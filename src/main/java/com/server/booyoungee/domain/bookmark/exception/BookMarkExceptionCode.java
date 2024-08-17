@@ -1,6 +1,5 @@
-package com.server.booyoungee.domain.BookMark.exception;
+package com.server.booyoungee.domain.bookmark.exception;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 

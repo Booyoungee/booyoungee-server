@@ -1,19 +1,19 @@
-package com.server.booyoungee.domain.BookMark.application;
+package com.server.booyoungee.domain.bookmark.application;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.server.booyoungee.domain.BookMark.exception.DuplicateBookMarkException;
-import com.server.booyoungee.domain.BookMark.exception.NotFoundBookMarkException;
+import com.server.booyoungee.domain.bookmark.exception.DuplicateBookMarkException;
+import com.server.booyoungee.domain.bookmark.exception.NotFoundBookMarkException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import com.server.booyoungee.domain.BookMark.dao.BookMarkRepository;
-import com.server.booyoungee.domain.BookMark.domain.BookMark;
+import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
+import com.server.booyoungee.domain.bookmark.domain.BookMark;
 import com.server.booyoungee.domain.place.application.place.PlaceService;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsDto;
@@ -22,8 +22,6 @@ import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.server.booyoungee.domain.BookMark.exception.BookMarkExceptionCode.NOT_FOUND_BOOKMARK;
-
 @Service
 @RequiredArgsConstructor
 public class BookMarkService {
@@ -31,7 +29,7 @@ public class BookMarkService {
 	private final BookMarkRepository bookMarkRepository;
 	private final PlaceService placeService;
 
-	public List<TourInfoBookMarkDto> getBookMarks(User user) throws IOException {
+	public List<TourInfoBookMarkDto> getBookMarks(User user) {
 		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
 		List<TourInfoBookMarkDto> dto = bookMarkList.stream()
 			.map(bookMark -> {
@@ -53,7 +51,6 @@ public class BookMarkService {
 		for (BookMark bookMark : bookMarkList) {
 			dto.add(placeService.getDetails(bookMark.getPlaceId(), bookMark.getType()));
 		}
-
 		return dto;
 	}
 

@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.BookMark.domain;
+package com.server.booyoungee.domain.bookmark.domain;
 
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.user.domain.User;
@@ -38,8 +38,10 @@ public class BookMark {
 	@ManyToOne
 	@JoinColumn(name = "userId", nullable = false)
 	private User userId;
+
 	@Column(nullable = false)
 	private Long placeId;
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private PlaceType type;
