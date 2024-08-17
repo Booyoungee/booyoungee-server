@@ -8,7 +8,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +29,6 @@ public class CustomJwtAuthenticationEntryPoint implements AuthenticationEntryPoi
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.getWriter().println(objectMapper.writeValueAsString(ApiResponse.error("UNAUTHORIZED_ERROR")));
+		response.getWriter().println(objectMapper.writeValueAsString(ResponseModel.error("UNAUTHORIZED_ERROR")));
 	}
 }

@@ -17,7 +17,7 @@ import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsRespons
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
-import com.server.booyoungee.global.common.ApiResponse;
+import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +33,7 @@ public class TourInfoOpenApiController {
 
 	@GetMapping("/location")
 	@Operation(summary = "국문 관광정보 Open API 위치기반 검색 (mapY : 129, mapX : 35, radius : 20000(20km))")
-	public ApiResponse<?> getOpenApiInfoByLocation(
+	public ResponseModel<?> getOpenApiInfoByLocation(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String mapX,
@@ -43,12 +43,12 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponseDto> jsonResult = tourInfoOpenApiService
 			.getTourInfoByLocation(numOfRows, pageNo, mapX, mapY, radius);
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/keyword")
 	@Operation(summary = "국문 관광정보 Open API 부산 키워드 전체 검색")
-	public ApiResponse<?> getOpenApiInfoByKeyword(
+	public ResponseModel<?> getOpenApiInfoByKeyword(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String keyword
@@ -56,12 +56,12 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponseDto> jsonResult = tourInfoOpenApiService
 			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/festival")
 	@Operation(summary = "국문 관광정보 Open API 부산 행사 정보 검색")
-	public ApiResponse<?> getOpenApiInfoByFestival(
+	public ResponseModel<?> getOpenApiInfoByFestival(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo,
 		@RequestParam String eventStartDate,
@@ -70,19 +70,19 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponseDto> jsonResult = tourInfoOpenApiService.getTourInfoByFestival(
 			numOfRows, pageNo, eventStartDate, eventEndDate);
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/stay")
 	@Operation(summary = "국문 관광정보 Open API 부산 숙박 정보 검색")
-	public ApiResponse<?> getOpenApiInfoByStay(
+	public ResponseModel<?> getOpenApiInfoByStay(
 		@RequestParam(defaultValue = "10") int numOfRows,
 		@RequestParam(defaultValue = "0") int pageNo
 	) throws IOException {
 		List<TourInfoStayResponseDto> jsonResult = tourInfoOpenApiService
 			.getTourInfoByStay(numOfRows, pageNo);
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/info")
@@ -99,19 +99,18 @@ public class TourInfoOpenApiController {
 
 	@GetMapping("/detail/common")
 	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 공통 정보 조회 (ex. contentId : 2786391)")
-	public ApiResponse<?> getOpenApiCommonInfoByContentId(
+	public ResponseModel<?> getOpenApiCommonInfoByContentId(
 		@RequestParam String contentId
 	) throws IOException {
 		List<TourInfoDetailsResponseDto> jsonResult = tourInfoOpenApiService
 			.getCommonInfoByContentId(contentId);
-		tourInfoService.viewContent(contentId);
-
-		return ApiResponse.success(jsonResult);
+		tourInfoService.viewContent(contentId, jsonResult.get(0).contenttypeid());
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/detail/intro")
 	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 소개 정보 조회 (ex. contentId : 2786391, contentTypeId : 15)")
-	public ApiResponse<?> getOpenApiIntroInfoByContentId(
+	public ResponseModel<?> getOpenApiIntroInfoByContentId(
 		@RequestParam String contentId,
 		@RequestParam String contentTypeId
 	) throws IOException {
@@ -119,27 +118,27 @@ public class TourInfoOpenApiController {
 			.getIntroInfoByContentId(contentId, contentTypeId);
 		tourInfoService.viewContent(contentId);
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/detail/image")
 	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 이미지 정보 조회 (ex. contentId : 2786391)")
-	public ApiResponse<?> getOpenApiImageByContentId(
+	public ResponseModel<?> getOpenApiImageByContentId(
 		@RequestParam String contentId
 	) throws IOException {
 		List<TourInfoImageResponseDto> jsonResult = tourInfoOpenApiService
 			.getImageInfoByContentId(contentId);
 		tourInfoService.viewContent(contentId);
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 	@GetMapping("/areaCode")
 	@Operation(summary = "국문 관광정보 Open API 부산 지역 코드 조회")
-	public ApiResponse<?> getOpenApiAreaCode() throws IOException {
+	public ResponseModel<?> getOpenApiAreaCode() throws IOException {
 		Object jsonResult = tourInfoOpenApiService.getAreaCode();
 
-		return ApiResponse.success(jsonResult);
+		return ResponseModel.success(jsonResult);
 	}
 
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ApiResponse<T> {
+public class ResponseModel<T> {
 
 	private static final String SUCCESS_STATUS = "success";
 	private static final String ERROR_STATUS = "error";
@@ -18,15 +18,15 @@ public class ApiResponse<T> {
 	private String message;
 
 
-	public static <T> ApiResponse<T> success(T data) {
-		return new ApiResponse<>(SUCCESS_STATUS, data);
+	public static <T> ResponseModel<T> success(T data) {
+		return new ResponseModel<>(SUCCESS_STATUS, data);
 	}
 
-	public static ApiResponse<?> error(String message) {
-		return new ApiResponse<>(ERROR_STATUS, null, message);
+	public static ResponseModel<?> error(String message) {
+		return new ResponseModel<>(ERROR_STATUS, null, message);
 	}
 
-	private ApiResponse(String status, T data) {
+	private ResponseModel(String status, T data) {
 		this.status = status;
 		this.data = data;
 		this.message = "true";

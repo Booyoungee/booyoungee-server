@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.server.booyoungee.domain.kakaoMap.dto.KakaoAddressToCode;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoApiResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoTransCoordResponseDto;
@@ -49,6 +50,22 @@ public class KakaoAddressSearchService {
 			+ "&analyze_type=similar";
 
 		return callKakaoApi(url, KakaoApiResponseDto.class);
+	}
+
+	public KakaoAddressToCode searchAddressXY(String query, int page, int size) {
+		//String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+		{
+			String location = "";
+
+			String url = baseUrl
+				+ "/search/keyword.json"
+				+ "?query=" + query
+				+ location
+				+ "&page=" + page
+				+ "&size=" + size
+				+ "&analyze_type=similar";
+			return callKakaoApi(url, KakaoAddressToCode.class);
+		}
 	}
 
 	public KakaoApiResponseDto coordToRegionCode(double x, double y) {

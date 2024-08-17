@@ -15,10 +15,11 @@ import com.server.booyoungee.domain.login.domain.enums.Provider;
 import com.server.booyoungee.domain.login.dto.SocialInfoDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
+import com.server.booyoungee.domain.login.exception.NotFoundUserInfoException;
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.ErrorCode;
+import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 import com.server.booyoungee.global.utils.JwtUtil;
@@ -50,7 +51,7 @@ public class AuthService {
 		if (request.provider().toString().equals(Provider.KAKAO.toString())) {
 			return kakaoLoginService.getInfo(providerToken);
 		} else {
-			throw new CustomException(ErrorCode.NULL_POINT_ERROR);
+			throw new NotFoundUserInfoException();
 		}
 	}
 
