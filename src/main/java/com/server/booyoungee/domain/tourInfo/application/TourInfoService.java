@@ -1,7 +1,9 @@
 package com.server.booyoungee.domain.tourInfo.application;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.tourInfo.dao.TourInfoRepository;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TourInfoService {
 	private final TourInfoRepository tourInfoRepository;
+	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	public void viewContent(String contentId) {
 		TourInfo tourInfo = findById(contentId);
@@ -90,5 +93,23 @@ public class TourInfoService {
 				.description(tourInfo.getContentTypeId().getDescription())
 				.build())
 			.toList();
+	}
+
+	public List<TourInfoResponseDto> getTop10TourInfo() {
+		List<TourInfoResponseDto> top10tourInfo = tourInfoRepository.top10tourInfo(PageRequest.of(0, 10)).stream()
+			.map(tourInfo -> {
+				try {
+					return TourInfoResponseDto.builder()
+						.contentId(tourInfo.getContentId())
+						.views(tourInfo.getViews())
+						.description(tourInfo.getContentTypeId().getDescription())
+						.title(tourInfoOpenApiService.findByTourInfoDetail(tourInfo.getContentId()).get(0).title())
+						.build();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			})
+			.toList();
+		return top10tourInfo;
 	}
 }

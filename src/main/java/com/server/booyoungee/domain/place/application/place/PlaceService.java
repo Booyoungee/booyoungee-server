@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
-import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -13,12 +11,15 @@ import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
+import com.server.booyoungee.domain.place.dao.PlaceRepository;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.moviePlace.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsDto;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
+import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
+import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDetailDto;
@@ -38,7 +39,9 @@ public class PlaceService {
 
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
-	public TourInfoBookMarkDto getPlace(Long id,Long placeId, PlaceType type) throws IOException, NotFoundException {
+	private final PlaceRepository placeRepository;
+
+	public TourInfoBookMarkDto getPlace(Long id, Long placeId, PlaceType type) throws IOException, NotFoundException {
 
 		TourInfoBookMarkDto dto;
 		System.out.println(type);
@@ -87,16 +90,17 @@ public class PlaceService {
 			TourInfoBookMarkDto tour = tourInfo.get(0);
 
 			dto = TourInfoBookMarkDto.builder().bookmarkId(id)
-					.placeId(placeId + "")
-					.title(tour.title())
-					.placeType("store")
-					.mapx(tour.mapx()) // Uncomment if mapX is available in store response
-					.mapy(tour.mapy()) // Uncomment if mapY is available in store response
-					.contentid(tour.contentid())
-					.build();
+				.placeId(placeId + "")
+				.title(tour.title())
+				.placeType("store")
+				.mapx(tour.mapx()) // Uncomment if mapX is available in store response
+				.mapy(tour.mapy()) // Uncomment if mapY is available in store response
+				.contentid(tour.contentid())
+				.build();
 			return dto;
 		}
 	}
+
 	public List<String> placeImageList(String name) throws IOException {
 		List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(name);
 		List<String> imageList = new ArrayList<>();
@@ -112,7 +116,6 @@ public class PlaceService {
 		}
 		return imageList;
 	}
-
 
 	public PlaceDetailsDto getDetails(Long placeId, PlaceType type) throws IOException {
 

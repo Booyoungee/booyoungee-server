@@ -3,6 +3,7 @@ package com.server.booyoungee.domain.place.dao.store;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -31,4 +32,7 @@ public interface StorePlaceRepository extends JpaRepository<StorePlace, Long> {
 	@Transactional
 	@Query("UPDATE StorePlace s SET s.viewCount = 0")
 	void resetViewsForAllStores();
+
+	@Query("SELECT s FROM StorePlace s where s.viewCount>0 ORDER BY s.viewCount DESC")
+	List<StorePlace> top10StorePlace(PageRequest of);
 }

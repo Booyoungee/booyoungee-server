@@ -9,7 +9,10 @@ public record TourInfoResponseDto(
 	@JsonProperty("contentId") String contentId,
 	@JsonProperty("views") Long views,
 	@JsonProperty("description") String description,
-	@JsonProperty("placeType") String placeType
+	@JsonProperty("placeType") String placeType,
+
+	String title
+
 ) {
 	public TourInfoResponseDto {
 		if (description == null || description.isBlank()) {

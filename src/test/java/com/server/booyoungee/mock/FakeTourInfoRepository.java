@@ -54,6 +54,10 @@ public class FakeTourInfoRepository implements TourInfoRepository {
 		return null;
 	}
 
+	@Override
+	public List<TourInfo> top10tourInfo(Pageable pageable) {
+		return null;
+	}
 
 	@Override
 	public List<TourInfo> findAllById(Iterable<String> strings) {

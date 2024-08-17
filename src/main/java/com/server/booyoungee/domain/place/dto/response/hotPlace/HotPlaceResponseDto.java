@@ -1,26 +1,24 @@
 package com.server.booyoungee.domain.place.dto.response.hotPlace;
 
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Builder;
-import lombok.Data;
+
 ;
 
-import java.time.LocalDateTime;
-@Data
-@AllArgsConstructor
 @Builder
-public class HotPlaceResponseDto {
+public record HotPlaceResponseDto(
 
-    @Column(nullable = false)
-    private Long placeId;
+	Long placeId,
 
-    @Column(nullable = false)
-    private String type;
+	String type,
 
-    @Column(nullable = false)
-    private String name;
+	String name,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+	LocalDateTime updatedAt,
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+	int viewCount) {
+
 }

@@ -293,7 +293,7 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDetailDto[].class));
+		return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoBookMarkDetailDto[].class)); // 배열로 처리
 	}
 
 	public List<TourInfoImageDto> getTourInfoImage(String keyword) throws

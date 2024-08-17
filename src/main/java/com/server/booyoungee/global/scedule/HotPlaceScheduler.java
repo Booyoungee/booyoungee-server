@@ -1,13 +1,9 @@
 package com.server.booyoungee.global.scedule;
 
-import java.util.List;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.server.booyoungee.domain.tourInfo.dao.TourInfoRepository;
-import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
-import com.server.booyoungee.global.redis.application.RedisService;
+import com.server.booyoungee.domain.place.application.hotPlace.HotPlaceService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,13 +11,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HotPlaceScheduler {
 
-	private final TourInfoRepository tourInfoRepository;
-	private final RedisService redisService;
+	private final HotPlaceService hotPlaceService;
 
 	@Scheduled(fixedRate = 10800000) // 3 hours in milliseconds
-	public void updateHotPlacesInRedis() {
-		List<TourInfo> top10TourInfos = tourInfoRepository.findTop10ByOrderByViewsDesc();
+	public void updateHotPlaces() {
+		hotPlaceService.saveHotPlace();
+	}
 
-		//  redisService.saveHotPlaces(hotPlaces);
+	@Scheduled(fixedRate = 10800000 * 8)//24 hours in milliseconds
+	public void updateViewCount() {
+		//updateViewCount
 	}
 }

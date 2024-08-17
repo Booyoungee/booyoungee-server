@@ -91,4 +91,8 @@ public class StorePlaceService {
 			System.out.println("update: " + store.getMapX() + "," + store.getMapY());
 		}
 	}
+
+	public List<StorePlace> Top10StorePlaces() {
+		return storePlaceRepository.top10StorePlace(PageRequest.of(0, 10));
+	}
 }
