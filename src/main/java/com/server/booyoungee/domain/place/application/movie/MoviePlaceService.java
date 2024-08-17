@@ -14,8 +14,6 @@ import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageRespo
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.global.common.PageableResponse;
-import com.server.booyoungee.global.exception.CustomException;
-import com.server.booyoungee.global.exception.GlobalExceptionCode;
 import com.server.booyoungee.global.handler.ExcelSheetHandler;
 
 import jakarta.transaction.Transactional;
@@ -79,7 +77,8 @@ public class MoviePlaceService {
 	public MoviePlacePageResponse<MoviePlace> getMoviePlacesByMovieNameKeyword(String keyword, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Long totalElements = moviePlaceRepository.countByMovieNameContaining(keyword);
-		List<MoviePlace> moviePlaces = moviePlaceRepository.findAllByMovieNameContainingOrderByViewCount(keyword, pageable);
+		List<MoviePlace> moviePlaces = moviePlaceRepository.findAllByMovieNameContainingOrderByViewCount(keyword,
+			pageable);
 		List<MoviePlaceResponse> moviePlaceList = moviePlaces.stream()
 			.map(MoviePlaceResponse::from)
 			.collect(java.util.stream.Collectors.toList());
@@ -94,5 +93,11 @@ public class MoviePlaceService {
 			.map(MoviePlaceResponse::from)
 			.collect(java.util.stream.Collectors.toList());
 		return MoviePlacePageResponse.of(moviePlaceList, PageableResponse.of(pageable, totalElements));
+	}
+
+	//viewCount가 0보다 큰 영화장소를 조회하여 viewCount를 기준으로 내림차순 정렬하여 상위 10개를 조회
+	public List<MoviePlace> Top10MoviePlaces() {
+		return moviePlaceRepository.top10MoviePlace(PageRequest.of(0, 10));
+
 	}
 }

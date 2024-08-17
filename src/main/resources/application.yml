@@ -17,6 +17,18 @@ spring:
       enabled: false
     import-check:
       enabled: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
 
 server:
   port: 8282
