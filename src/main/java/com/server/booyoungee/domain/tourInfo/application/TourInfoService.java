@@ -1,6 +1,5 @@
 package com.server.booyoungee.domain.tourInfo.application;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -98,16 +97,12 @@ public class TourInfoService {
 	public List<TourInfoResponseDto> getTop10TourInfo() {
 		List<TourInfoResponseDto> top10tourInfo = tourInfoRepository.top10tourInfo(PageRequest.of(0, 10)).stream()
 			.map(tourInfo -> {
-				try {
-					return TourInfoResponseDto.builder()
-						.contentId(tourInfo.getContentId())
-						.views(tourInfo.getViews())
-						.description(tourInfo.getContentTypeId().getDescription())
-						.title(tourInfoOpenApiService.findByTourInfoDetail(tourInfo.getContentId()).get(0).title())
-						.build();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
+				return TourInfoResponseDto.builder()
+					.contentId(tourInfo.getContentId())
+					.views(tourInfo.getViews())
+					.description(tourInfo.getContentTypeId().getDescription())
+					.title(tourInfoOpenApiService.findByTourInfoDetail(tourInfo.getContentId()).get(0).title())
+					.build();
 			})
 			.toList();
 		return top10tourInfo;

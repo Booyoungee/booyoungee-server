@@ -19,14 +19,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDetailsResponse;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDetailDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.bookmark.TourInfoBookMarkDto;
+import com.server.booyoungee.domain.tourInfo.exception.ListParsingErrorException;
+import com.server.booyoungee.domain.tourInfo.exception.OpenApiCallErrorException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +46,8 @@ public class TourInfoOpenApiService {
 	@Value("${tourInfo.format}")
 	private String _type;
 
-	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) {
+	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY,
+		String radius) {
 		String requestUrl = baseUrl
 			+ "/locationBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -81,7 +84,8 @@ public class TourInfoOpenApiService {
 		return toList(jsonResult, TourInfoCommonResponseDto[].class);
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate, String eventEndDate) {
+	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate,
+		String eventEndDate) {
 		String requestUrl = baseUrl
 			+ "/searchFestival1"
 			+ "?ServiceKey=" + serviceKey
@@ -128,7 +132,7 @@ public class TourInfoOpenApiService {
 		return toList(jsonResult, TourInfoAreaResponseDto[].class);
 	}
 
-	public List<TourInfoDetailsResponseDto> getCommonInfoByContentId(String contentId){
+	public List<TourInfoDetailsResponseDto> getCommonInfoByContentId(String contentId) {
 		String requestUrl = baseUrl
 			+ "/detailCommon1"
 			+ "?ServiceKey=" + serviceKey
@@ -288,7 +292,6 @@ public class TourInfoOpenApiService {
 			throw new ListParsingErrorException();
 		}
 	}
-
 
 	private InputStream getNetworkConnection(HttpURLConnection urlConnection) throws IOException {
 		urlConnection.setConnectTimeout(3000);
