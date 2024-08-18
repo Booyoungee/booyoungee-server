@@ -100,12 +100,12 @@ public class StampService {
 	public Page<StampResponseDto> stampToStampResponseDto(Page<PlaceStampCountDto> placeStampCounts) {
 		return placeStampCounts.map(dto -> {
 			try {
-				String placeName = getPlaceName(dto.getType(), dto.getPlaceId());
+				String placeName = getPlaceName(dto.type(), dto.placeId());
 				return StampResponseDto.builder()
-					.placeId(dto.getPlaceId())
+					.placeId(dto.placeId())
 					.placeName(placeName)
-					.type(dto.getType())
-					.count(dto.getCount())
+					.type(dto.type())
+					.count(dto.count())
 					.build();
 			} catch (Exception e) {
 				throw new RuntimeException("Failed to get place name", e);

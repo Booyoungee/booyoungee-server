@@ -23,5 +23,17 @@ public record TourInfoBookMarkResponse(
 			placeType = "tour";
 		}
 	}
+
+	public static TourInfoBookMarkResponse fromPlace(String placeId, String title, String mapx, String mapy,
+		String contentid, String placeType) {
+		return TourInfoBookMarkResponse.builder()
+			.placeId(placeId)
+			.title(title)
+			.placeType(placeType)
+			.mapx(mapx)
+			.mapy(mapy)
+			.contentid(contentid)
+			.build();
+	}
 }
 
