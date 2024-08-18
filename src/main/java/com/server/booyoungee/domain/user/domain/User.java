@@ -1,14 +1,22 @@
 package com.server.booyoungee.domain.user.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.stamp.domain.Stamp;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -51,6 +59,12 @@ public class User {
 
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
+
+	@OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<BookMark> bookMarks = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Stamp> stamps = new ArrayList<>();
 
 	@PrePersist
 	protected void onCreate() {

@@ -5,22 +5,19 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
 
-@Data
-@Getter
 @Builder
-public class StampResponseDto {
+public record StampResponseDto(
 
-	private Long stampId;
+	Long stampId,
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-	private LocalDateTime createdAt;
+	LocalDateTime createdAt,
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-	private LocalDateTime updatedAt;
-	private String placeId;
-	private String placeName;
-	private String type;
-	private long count;
+	LocalDateTime updatedAt,
+	String placeId,
+	String placeName,
+	String type,
+	long count
+) {
 
 }
