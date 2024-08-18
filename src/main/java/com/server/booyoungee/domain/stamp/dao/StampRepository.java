@@ -27,23 +27,29 @@ public interface StampRepository extends JpaRepository<Stamp, Long> {
 
 	List<Stamp> findByPlaceId(String placeId);
 
-	@Query("SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type) " +
-		"FROM Stamp s " +
-		"GROUP BY s.placeId, s.type " +
-		"ORDER BY COUNT(s) DESC")
+	@Query(
+		"SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type, s.createdAt, s.updatedAt) "
+			+
+			"FROM Stamp s " +
+			"GROUP BY s.placeId, s.type, s.createdAt, s.updatedAt " +
+			"ORDER BY COUNT(s) DESC")
 	List<PlaceStampCountDto> findPlaceStampCounts();
 
-	@Query("SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type) " +
-		"FROM Stamp s " +
-		"GROUP BY s.placeId, s.type " +
-		"ORDER BY COUNT(s) DESC")
+	@Query(
+		"SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type, s.createdAt, s.updatedAt) "
+			+
+			"FROM Stamp s " +
+			"GROUP BY s.placeId, s.type, s.createdAt, s.updatedAt " +
+			"ORDER BY COUNT(s) DESC")
 	Page<PlaceStampCountDto> findPlaceStampCounts(Pageable pageable);
 
-	@Query("SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type) " +
-		"FROM Stamp s " +
-		"WHERE s.type = :type " +
-		"GROUP BY s.placeId, s.type " +
-		"ORDER BY COUNT(s) DESC")
+	@Query(
+		"SELECT new com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto(s.placeId, COUNT(s), s.type, s.createdAt, s.updatedAt) "
+			+
+			"FROM Stamp s " +
+			"WHERE s.type = :type " +
+			"GROUP BY s.placeId, s.type, s.createdAt, s.updatedAt " +
+			"ORDER BY COUNT(s) DESC")
 	Page<PlaceStampCountDto> findPlaceStampCountsByType(@Param("type") String type, Pageable pageable);
 
 }

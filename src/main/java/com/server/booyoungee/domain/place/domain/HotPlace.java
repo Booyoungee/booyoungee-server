@@ -58,4 +58,28 @@ public class HotPlace {
 		updatedAt = LocalDateTime.now();
 	}
 
+	public static HotPlace from(Long placeId, String type, String name, int viewCount) {
+		return HotPlace.builder()
+			.placeId(placeId)
+			.type(type)
+			.name(name)
+			.viewCount(viewCount)
+			.isHotPlace(true)
+			.build();
+	}
+
+	// Builder 패턴 사용을 위해 추가된 빌더 메서드
+
+	public static HotPlace of(
+		Long placeId, String type, String name, int viewCount, boolean isHotPlace
+	) {
+		return HotPlace.builder()
+			.placeId(placeId)
+			.type(type)
+			.name(name)
+			.viewCount(viewCount)
+			.isHotPlace(isHotPlace)
+			.build();
+	}
+
 }
