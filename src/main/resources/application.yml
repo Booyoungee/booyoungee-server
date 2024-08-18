@@ -19,8 +19,8 @@ spring:
       enabled: false
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
       timeout: 10000ms
       lettuce:
         pool:
