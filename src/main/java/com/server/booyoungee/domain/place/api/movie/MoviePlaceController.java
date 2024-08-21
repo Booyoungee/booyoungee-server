@@ -78,12 +78,14 @@ public class MoviePlaceController {
 	}
 
 	@GetMapping("/nearby")
-	public ResponseModel<MoviePlacePageResponse<MoviePlace>>getPlacesNearby(
-		@RequestParam Double mapX,
-		@RequestParam Double mapY,
-		@RequestParam Double radius) {
+	public ResponseModel<MoviePlacePageResponse<MoviePlace>>getMoviePlacesNearby(
+		@RequestParam String mapX,
+		@RequestParam String mapY,
+		@RequestParam String radius,
+		@RequestParam(defaultValue = "0") int page,
+	    @RequestParam(defaultValue = "10") int size) {
 
-		MoviePlacePageResponse<MoviePlace> nearbyPlaces = moviePlaceService.findPlacesNearby(mapX, mapY, radius);
+		MoviePlacePageResponse<MoviePlace> nearbyPlaces = moviePlaceService.findPlacesNearby(mapX, mapY, radius,page,size);
 		return ResponseModel.success(nearbyPlaces);
 	}
 }

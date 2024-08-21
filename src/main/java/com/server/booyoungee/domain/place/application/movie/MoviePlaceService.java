@@ -101,10 +101,13 @@ public class MoviePlaceService {
 
 	}
 
-	public MoviePlacePageResponse<MoviePlace> findPlacesNearby(Double longtitude, Double latitude, Double radius) {
-		Pageable pageable = PageRequest.of(0, 10);
-		Long totalElements = moviePlaceRepository.countNearbyMoviePlaces(latitude, longtitude, radius);
-		List<MoviePlace> moviePlaces = moviePlaceRepository.findNearbyMoviePlaces(latitude, longtitude, radius,pageable);
+	public MoviePlacePageResponse<MoviePlace> findPlacesNearby(String mapX, String mapY, String radius, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		double longtitude = Double.parseDouble(mapX);
+		double latitude = Double.parseDouble(mapY);
+		double rad = Double.parseDouble(radius);
+		Long totalElements = moviePlaceRepository.countNearbyMoviePlaces(latitude, longtitude, rad);
+		List<MoviePlace> moviePlaces = moviePlaceRepository.findNearbyMoviePlaces(latitude, longtitude, rad,pageable);
 
 		List<MoviePlaceResponse> moviePlaceList = moviePlaces.stream()
 				.map(MoviePlaceResponse::from)
