@@ -50,7 +50,7 @@ public class PlaceService {
 			if (movie == null) {
 				throw new NotFoundMoviePlaceException();
 			}
-			return TourInfoBookMarkResponse.fromPlace(id, movie.id(), movie.name(), movie.mapX(), movie.mapY(),
+			return TourInfoBookMarkResponse.of(id, movie.id(), movie.name(), movie.mapX(), movie.mapY(),
 				"", "movie", null);
 
 		} else if (type.getKey().equals("store")) {
@@ -58,12 +58,12 @@ public class PlaceService {
 			if (store == null) {
 				throw new NotFoundStorePlaceException();
 			}
-			return TourInfoBookMarkResponse.fromPlace(id, store.id(), store.name(), store.mapX(), store.mapY(),
+			return TourInfoBookMarkResponse.of(id, store.id(), store.name(), store.mapX(), store.mapY(),
 				"", "store", null);
 
 		} else {
 			TourInfoDetailsResponseDto tourInfo = placeService.getTour(placeId);
-			return TourInfoBookMarkResponse.fromPlace(id, placeId, tourInfo.title(), tourInfo.mapx(),
+			return TourInfoBookMarkResponse.of(id, placeId, tourInfo.title(), tourInfo.mapx(),
 				tourInfo.mapy(), tourInfo.contentid(), "tour", tourInfo.contenttypeid());
 		}
 	}
