@@ -3,6 +3,7 @@ package com.server.booyoungee.domain.place.application;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -11,12 +12,15 @@ import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
+import com.server.booyoungee.domain.place.dao.PlaceRepository;
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
+import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
@@ -29,13 +33,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class PlaceService {
-
+	private final PlaceRepository placeRepository;
 	private final MoviePlaceService moviePlaceService;
-
 	private final StorePlaceService storePlaceService;
-
 	private final TmdbApiService movieService;
-
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	public TourInfoBookMarkResponse getPlace(Long id,Long placeId, PlaceType type) throws IOException, NotFoundException {
@@ -164,6 +165,11 @@ public class PlaceService {
 			return dto;
 		}
 
+	}
+
+	public Place getByPlaceId(Long placeId) {
+		return placeRepository.findById(placeId)
+			.orElseThrow(NotFoundPlaceException::new);
 	}
 
 }

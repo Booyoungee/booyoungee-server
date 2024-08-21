@@ -2,7 +2,10 @@ package com.server.booyoungee.domain.review.comment.domain;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.server.booyoungee.domain.place.domain.Place;
+import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.common.BaseTimeEntity;
@@ -40,6 +43,7 @@ public class Comment extends BaseTimeEntity {
 	@Embedded
 	private Stars stars;
 
+	@ColumnDefault("0")
 	private int accuseCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -49,4 +53,13 @@ public class Comment extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "place_id")
 	private Place place;
+
+	public static Comment of(User user, Place place, String content, int stars) {
+		return Comment.builder()
+			.content(content)
+			.stars(Stars.of(stars))
+			.writer(user)
+			.place(place)
+			.build();
+	}
 }
