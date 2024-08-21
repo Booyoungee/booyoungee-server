@@ -12,6 +12,8 @@ import com.server.booyoungee.domain.review.comment.domain.Comment;
 import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentListResponse;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
+import com.server.booyoungee.domain.review.comment.exception.NotFoundCommentException;
+import com.server.booyoungee.domain.review.comment.exception.UserNotWriterOfCommentException;
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.domain.user.domain.User;
 
@@ -42,5 +44,25 @@ public class CommentService {
 	public CommentListResponse getMyReviewList(Long userId) {
 		List<Comment> comments = commentRepository.findAllByWriterUserId(userId);
 		return CommentListResponse.from(comments);
+	}
+	
+	@Transactional
+	public CommentPersistResponse deleteReview(Long userId, Long commentId) {
+		User user = userService.findByUser(userId);
+		Comment comment = getComment(commentId);
+		validateReviewWriter(comment, user);
+		commentRepository.deleteById(commentId);
+		return CommentPersistResponse.from(comment);
+	}
+
+	private Comment getComment(Long commentId) {
+		return commentRepository.findById(commentId).
+			orElseThrow(NotFoundCommentException::new);
+	}
+
+	private void validateReviewWriter(Comment comment, User user) {
+		if (!comment.getWriter().equals(user)) {
+			throw new UserNotWriterOfCommentException();
+		}
 	}
 }

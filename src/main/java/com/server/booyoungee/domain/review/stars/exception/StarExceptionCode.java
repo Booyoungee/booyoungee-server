@@ -23,5 +23,4 @@ public enum StarExceptionCode implements ExceptionCode {
 	public String getCode() {
 		return this.name();
 	}
-
 }

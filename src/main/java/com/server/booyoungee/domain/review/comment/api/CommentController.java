@@ -3,6 +3,7 @@ package com.server.booyoungee.domain.review.comment.api;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import com.server.booyoungee.domain.review.comment.application.CommentService;
 import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentListResponse;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
+import com.server.booyoungee.domain.review.comment.exception.UserNotWriterOfCommentException;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
@@ -103,6 +105,38 @@ public class CommentController {
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
+	}
+
+	@Operation(summary = "리뷰 코멘트 삭제", description = "리뷰 코멘트를 삭제합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "리뷰 코멘트 삭제 성공",
+			content = @Content(schema = @Schema(implementation = CommentPersistResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "USER_NOT_WRITER_OF_COMMENT",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_COMMENT",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
+	@DeleteMapping("/{commentId}")
+	public ResponseModel<CommentPersistResponse> deleteReview(
+		@UserId Long userId,
+		@Parameter(
+			description = "리뷰 코멘트 ID",
+			example = "1",
+			required = true
+		)
+		@PathVariable(name = "commentId") Long commentId
+	) {
+		CommentPersistResponse response = commentService.deleteReview(userId, commentId);
+		return ResponseModel.success(response);
 	}
 
 }
