@@ -35,10 +35,10 @@ public record StorePlaceResponse(
 	@Schema(description = "주요 메뉴", example = "치킨", requiredMode = REQUIRED)
 	String mainBusiness,
 	@Schema(description = "위도", example = "35.0686809", requiredMode = REQUIRED)
-	String mapX,
+	String mapY,
 
 	@Schema(description = "경도", example = "129.0650146", requiredMode = REQUIRED)
-	String mapY,
+	String mapX,
 
 	@Schema(description = "장소 타입", example = "STORE", requiredMode = REQUIRED)
 	PlaceType placeType

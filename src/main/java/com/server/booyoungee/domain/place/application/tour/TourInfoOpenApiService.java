@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.application;
+package com.server.booyoungee.domain.place.application.tour;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,18 +17,18 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaCodeResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDetailsResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
-import com.server.booyoungee.domain.tourInfo.exception.ListParsingErrorException;
-import com.server.booyoungee.domain.tourInfo.exception.OpenApiCallErrorException;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaCodeResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkDetailsResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoIntroResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoStayResponseDto;
+import com.server.booyoungee.domain.place.exception.tour.ListParsingErrorException;
+import com.server.booyoungee.domain.place.exception.tour.OpenApiCallErrorException;
 
 import lombok.RequiredArgsConstructor;
 

@@ -17,7 +17,7 @@ import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;

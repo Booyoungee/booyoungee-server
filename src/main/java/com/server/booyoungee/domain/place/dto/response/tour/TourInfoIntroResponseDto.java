@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.dto.response;
+package com.server.booyoungee.domain.place.dto.response.tour;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.application;
+package com.server.booyoungee.domain.place.application.tour;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.server.booyoungee.domain.tourInfo.dao.TourInfoRepository;
 import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
 import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 
 import lombok.RequiredArgsConstructor;
 

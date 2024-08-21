@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.bookmark.application.BookMarkService;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;

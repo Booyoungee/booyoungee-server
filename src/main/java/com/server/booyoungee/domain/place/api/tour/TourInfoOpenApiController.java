@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.api;
+package com.server.booyoungee.domain.place.api.tour;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoAreaResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoDetailsResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoIntroResponseDto;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoStayResponseDto;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoService;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoIntroResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoStayResponseDto;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,8 +98,8 @@ public class TourInfoOpenApiController {
 	}
 
 	@GetMapping("/detail/common")
-	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 공통 정보 조회 (ex. contentId : 2786391)")
-	public ResponseModel<?> getOpenApiCommonInfoByContentId(
+	@Operation(summary = "국문 관광정보 Open API 콘텐츠 ID 기반 상세 정보 조회 (ex. contentId : 2786391)")
+	public ResponseModel<List<TourInfoDetailsResponseDto>> getOpenApiCommonInfoByContentId(
 		@RequestParam String contentId
 	) throws IOException {
 		List<TourInfoDetailsResponseDto> jsonResult = tourInfoOpenApiService

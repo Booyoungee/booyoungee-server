@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -23,10 +26,6 @@ import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDetailsResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,23 +47,19 @@ public class PlaceService {
 			if (movie == null) {
 				throw new NotFoundMoviePlaceException();
 			}
-			return TourInfoBookMarkResponse.fromPlace(movie.id().toString(), movie.name(), movie.mapX(), movie.mapY(),
-				"", "movie");
+			return TourInfoBookMarkResponse.fromPlace(id,movie.id().toString(), movie.name(), movie.mapX(), movie.mapY(),
+				"", "movie",null);
 
 		} else if (type.getKey().equals("store")) {
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 			if (store == null) {
 				throw new NotFoundStorePlaceException();
 			}
-			return TourInfoBookMarkResponse.fromPlace(store.id().toString(), store.name(), store.mapX(), store.mapY(),
-				"", "store");
+			return TourInfoBookMarkResponse.fromPlace(id,store.id().toString(), store.name(), store.mapX(), store.mapY(),
+				"", "store",null);
 
 		} else {
-			List<TourInfoBookMarkResponse> tourInfoList = tourInfoOpenApiService.findByContentId(placeId.toString());
-			if (tourInfoList == null || tourInfoList.isEmpty()) {
-				throw new NotFoundException("Tour place with ID " + placeId + " not found.");
-			}
-			TourInfoBookMarkResponse tourInfo = tourInfoList.get(0);
+			List<TourInfoDetailsResponseDto>  tour = tp
 			return TourInfoBookMarkResponse.fromPlace(tourInfo.placeId(), tourInfo.title(), tourInfo.mapx(),
 				tourInfo.mapy(), tourInfo.contentid(), "tour");
 		}
