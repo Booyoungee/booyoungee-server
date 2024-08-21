@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class StorePlaceService {
 	private final StorePlaceRepository storePlaceRepository;
 	private final PlaceSearchService placeSearchService;
 	private final KakaoAddressSearchService kakaoAddressSearchService;
+
 
 	public StorePlaceListResponse getStoreByName(String name) {
 		List<StorePlace> stores = storePlaceRepository.findAllByName(name);
@@ -94,5 +96,9 @@ public class StorePlaceService {
 
 	public List<StorePlace> Top10StorePlaces() {
 		return storePlaceRepository.top10StorePlace(PageRequest.of(0, 10));
+	}
+
+	public List<StorePlace> findNearbyStorePlaces(double longitude,double latitude, double radius) {
+		return storePlaceRepository.findNearbyStorePlaces(latitude, longitude, radius);
 	}
 }

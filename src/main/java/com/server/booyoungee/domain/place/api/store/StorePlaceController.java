@@ -1,7 +1,11 @@
 package com.server.booyoungee.domain.place.api.store;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,6 +85,16 @@ public class StorePlaceController {
 	public ResponseModel<?> update() {
 		storePlaceService.updateXY();
 		return ResponseModel.success("update");
+	}
+	@Hidden
+	@GetMapping("/nearby")
+	public ResponseEntity<List<StorePlace>> getPlacesNearby(
+			@RequestParam Double mapX,
+			@RequestParam Double mapY,
+			@RequestParam Double radius) {
+
+		List<StorePlace>nearbyPlaces = storePlaceService.findNearbyStorePlaces(mapX, mapY, radius);
+		return ResponseEntity.ok(nearbyPlaces);
 	}
 
 }

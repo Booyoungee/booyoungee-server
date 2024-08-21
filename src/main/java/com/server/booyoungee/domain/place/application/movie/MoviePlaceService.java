@@ -101,8 +101,8 @@ public class MoviePlaceService {
 
 	}
 
-	public List<MoviePlace> findPlacesNearby(Double mapX, Double mapY, Double radius) {
+	public List<MoviePlace> findPlacesNearby(Double longtitude, Double latitude, Double radius) {
 
-		return moviePlaceRepository.findPlacesNearby(mapX, mapY, radius);
+		return moviePlaceRepository.findNearbyMoviePlaces(latitude, longtitude, radius);
 	}
 }

@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.place.dao.movie;
 
 import java.util.List;
 
+import com.server.booyoungee.domain.place.domain.store.StorePlace;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,10 +28,17 @@ public interface MoviePlaceRepository extends JpaRepository<MoviePlace, Long> {
 	@Query("SELECT s FROM MoviePlace s where s.viewCount>0 ORDER BY s.viewCount DESC")
 	List<MoviePlace> top10MoviePlace(Pageable pageable);
 
-	@Query("SELECT m FROM MoviePlace m WHERE " +
-		"SQRT(POWER((CAST(m.mapX AS double) - :mapX), 2) + POWER((CAST(m.mapY AS double) - :mapY), 2)) <= :radius")
-	List<MoviePlace> findPlacesNearby(@Param("mapX") double mapX, @Param("mapY") double mapY,
-		@Param("radius") double radius);
+
+	@Query("SELECT sp FROM MoviePlace sp " +
+			"WHERE ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
+			"Point(:longitude, :latitude)) <= :radius " +
+			"ORDER BY ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
+			"Point(:longitude, :latitude))")
+	List<MoviePlace> findNearbyMoviePlaces(
+			@Param("latitude") double latitude,
+			@Param("longitude") double longitude,
+			@Param("radius") double radius);
+
 
 	// TODO : QueryDsl로 변경
 }
