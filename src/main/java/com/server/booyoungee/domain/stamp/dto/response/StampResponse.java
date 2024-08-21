@@ -1,7 +1,7 @@
 package com.server.booyoungee.domain.stamp.dto.response;
 
-import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.*;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
 import java.time.LocalDateTime;
 
@@ -37,7 +37,7 @@ public record StampResponse(
 	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss.SSS")
 	LocalDateTime updatedAt
 ) {
-	public static StampResponse of (Stamp stamp, String placeName) {
+	public static StampResponse of(Stamp stamp, String placeName) {
 		return StampResponse.builder()
 			.stampId(stamp.getStampId())
 			.placeId(stamp.getPlaceId())
@@ -48,4 +48,5 @@ public record StampResponse(
 			.updatedAt(stamp.getUpdatedAt())
 			.build();
 	}
+
 }

@@ -24,9 +24,9 @@ import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDetailsResponse;
 import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
+import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,65 +39,37 @@ public class PlaceService {
 	private final TmdbApiService movieService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
-	public TourInfoBookMarkResponse getPlace(Long id,Long placeId, PlaceType type) throws IOException, NotFoundException {
-
-		TourInfoBookMarkResponse dto;
-		System.out.println(type);
+	public TourInfoBookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
+		IOException,
+		NotFoundException {
 
 		if (type.getKey().equals("movie")) {
-
 			MoviePlaceResponse movie = moviePlaceService.getMoviePlace(placeId);
 			if (movie == null) {
 				throw new NotFoundMoviePlaceException();
 			}
-
-			dto = TourInfoBookMarkResponse.builder().bookmarkId(id)
-				.placeId(placeId + "")
-				.title(movie.name())
-				.placeType("movie")
-				.mapx(movie.mapX())
-				.mapy(movie.mapY())
-				.contentid(movie.id().toString())
-				.build();
-
-			return dto;
+			return TourInfoBookMarkResponse.fromPlace(movie.id().toString(), movie.name(), movie.mapX(), movie.mapY(),
+				"", "movie");
 
 		} else if (type.getKey().equals("store")) {
-
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 			if (store == null) {
 				throw new NotFoundStorePlaceException();
 			}
-
-			dto = TourInfoBookMarkResponse.builder().bookmarkId(id)
-				.placeId(placeId + "")
-				.title(store.name())
-				.placeType("store")
-				.mapx(store.mapX()) // Uncomment if mapX is available in store response
-				.mapy(store.mapY()) // Uncomment if mapY is available in store response
-				.contentid(store.id().toString())
-				.build();
-
-			return dto;
+			return TourInfoBookMarkResponse.fromPlace(store.id().toString(), store.name(), store.mapX(), store.mapY(),
+				"", "store");
 
 		} else {
-			List<TourInfoBookMarkResponse> tourInfo = tourInfoOpenApiService.findByContentId(placeId.toString());
-			if (tourInfo == null || tourInfo.isEmpty()) {
+			List<TourInfoBookMarkResponse> tourInfoList = tourInfoOpenApiService.findByContentId(placeId.toString());
+			if (tourInfoList == null || tourInfoList.isEmpty()) {
 				throw new NotFoundException("Tour place with ID " + placeId + " not found.");
 			}
-			TourInfoBookMarkResponse tour = tourInfo.get(0);
-
-			dto = TourInfoBookMarkResponse.builder().bookmarkId(id)
-					.placeId(placeId + "")
-					.title(tour.title())
-					.placeType("store")
-					.mapx(tour.mapx()) // Uncomment if mapX is available in store response
-					.mapy(tour.mapy()) // Uncomment if mapY is available in store response
-					.contentid(tour.contentid())
-					.build();
-			return dto;
+			TourInfoBookMarkResponse tourInfo = tourInfoList.get(0);
+			return TourInfoBookMarkResponse.fromPlace(tourInfo.placeId(), tourInfo.title(), tourInfo.mapx(),
+				tourInfo.mapy(), tourInfo.contentid(), "tour");
 		}
 	}
+
 	public List<String> placeImageList(String name) throws IOException {
 		List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(name);
 		List<String> imageList = new ArrayList<>();
@@ -113,7 +85,6 @@ public class PlaceService {
 		}
 		return imageList;
 	}
-
 
 	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type) throws IOException {
 
@@ -140,14 +111,16 @@ public class PlaceService {
 			for (MovieImagesDto.BackDrops backdrop : backdrops) {
 				posterUrl.add(backdrop.getFilePath());
 			}
-			dto = PlaceDetailsResponse.of(placeId + "", moviePlace.name(), moviePlace.basicAddress(), placeImageList(moviePlace.name()), type, movieList, posterUrl);
+			dto = PlaceDetailsResponse.of(placeId + "", moviePlace.name(), moviePlace.basicAddress(),
+				placeImageList(moviePlace.name()), type, movieList, posterUrl);
 
 			return dto;
 
 		} else if (type.getKey().equals("store")) {
 
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
-			dto = PlaceDetailsResponse.of(placeId + "", store.name(), store.basicAddress(), imageList, type, null, null);
+			dto = PlaceDetailsResponse.of(placeId + "", store.name(), store.basicAddress(), imageList, type, null,
+				null);
 
 			return dto;
 

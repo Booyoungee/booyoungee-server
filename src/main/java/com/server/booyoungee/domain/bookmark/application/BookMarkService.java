@@ -34,7 +34,7 @@ public class BookMarkService {
 		List<TourInfoBookMarkResponse> dto = bookMarkList.stream()
 			.map(bookMark -> {
 				try {
-					return getPlace(bookMark.getBookMarkId(),bookMark.getPlaceId(), bookMark.getType());
+					return getPlace(bookMark.getBookMarkId(), bookMark.getPlaceId(), bookMark.getType());
 				} catch (IOException e) {
 					throw new NotFoundBookMarkException();
 				}
@@ -46,7 +46,8 @@ public class BookMarkService {
 	}
 
 	public List<PlaceDetailsResponse> getMyBookMarkDetails(User user) throws IOException {
-		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
+
+		List<BookMark> bookMarkList = user.getBookMarks();
 		List<PlaceDetailsResponse> dto = new ArrayList<>();
 		for (BookMark bookMark : bookMarkList) {
 			dto.add(placeService.getDetails(bookMark.getPlaceId(), bookMark.getType()));
@@ -56,24 +57,20 @@ public class BookMarkService {
 
 	public void addBookMark(User user, Long placeId, PlaceType type) {
 		try {
-			TourInfoBookMarkResponse dto = placeService.getPlace(1L,placeId, type);
+			TourInfoBookMarkResponse dto = placeService.getPlace(1L, placeId, type);
 		} catch (Exception e) {
-			if(type.equals(PlaceType.movie))
-			{
+			if (type.equals(PlaceType.movie)) {
 				throw new NotFoundMoviePlaceException();
-			}else if(type.equals(PlaceType.store))
-			{
+			} else if (type.equals(PlaceType.store)) {
 				throw new NotFoundStorePlaceException();
-			}
-			else{
+			} else {
 				throw new NotFoundException("contentID : " + placeId + " not found.");
 			}
 
 		}
-		if(bookMarkRepository.existsByUserIdAndPlaceIdAndType(user, placeId,type)){
+		if (bookMarkRepository.existsByUserIdAndPlaceIdAndType(user, placeId, type)) {
 			throw new DuplicateBookMarkException();
 		}
-
 
 		BookMark bookMark = BookMark.builder()
 			.userId(user)
@@ -83,8 +80,8 @@ public class BookMarkService {
 		bookMarkRepository.save(bookMark);
 	}
 
-	public TourInfoBookMarkResponse getPlace(Long id,Long placeId, PlaceType type) throws IOException {
-		return placeService.getPlace(id,placeId, type);
+	public TourInfoBookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws IOException {
+		return placeService.getPlace(id, placeId, type);
 	}
 
 	public void deleteBookMark(User user, Long bookMarkId) {
