@@ -15,7 +15,7 @@ public record TourInfoBookMarkResponse(
 
 	@JsonProperty("placeType") String placeType,
 
-	String placeId,
+	Long placeId,
 	Long bookmarkId
 ) {
 	public TourInfoBookMarkResponse {
@@ -24,8 +24,8 @@ public record TourInfoBookMarkResponse(
 		}
 	}
 
-	public static TourInfoBookMarkResponse fromPlace(Long id,String placeId, String title, String mapx, String mapy,
-		String contentid, String placeType,String contenttypeid) {
+	public static TourInfoBookMarkResponse fromPlace(Long id, Long placeId, String title, String mapx, String mapy,
+		String contentid, String placeType, String contenttypeid) {
 		return TourInfoBookMarkResponse.builder()
 			.bookmarkId(id)
 			.placeId(placeId)
