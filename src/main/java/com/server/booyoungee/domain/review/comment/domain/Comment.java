@@ -1,23 +1,27 @@
 package com.server.booyoungee.domain.review.comment.domain;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-import org.hibernate.annotations.ColumnDefault;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.server.booyoungee.domain.place.domain.Place;
-import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
+import com.server.booyoungee.domain.review.accuse.domain.Accuse;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.common.BaseTimeEntity;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,16 +47,20 @@ public class Comment extends BaseTimeEntity {
 	@Embedded
 	private Stars stars;
 
-	@ColumnDefault("0")
-	private int accuseCount;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "user_id")
 	private User writer;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "place_id")
 	private Place place;
+
+	@ElementCollection(fetch = LAZY)
+	@CollectionTable(
+		name = "accuse",
+		joinColumns = @JoinColumn(name = "comment_id")
+	)
+	private List<Accuse> accuseList = new ArrayList<>();
 
 	public static Comment of(User user, Place place, String content, int stars) {
 		return Comment.builder()
@@ -61,5 +69,10 @@ public class Comment extends BaseTimeEntity {
 			.writer(user)
 			.place(place)
 			.build();
+	}
+
+	public void accuseReview(User user) {
+		Accuse accuse = new Accuse(user.getUserId());
+		accuseList.add(accuse);
 	}
 }
