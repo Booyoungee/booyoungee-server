@@ -10,6 +10,7 @@ import org.webjars.NotFoundException;
 
 import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
 import com.server.booyoungee.domain.bookmark.exception.DuplicateBookMarkException;
 import com.server.booyoungee.domain.bookmark.exception.NotFoundBookMarkException;
 import com.server.booyoungee.domain.place.application.PlaceService;
@@ -55,7 +56,7 @@ public class BookMarkService {
 		return dto;
 	}
 
-	public void addBookMark(User user, Long placeId, PlaceType type) {
+	public BookMarkPersistResponse addBookMark(User user, Long placeId, PlaceType type) {
 		try {
 			TourInfoBookMarkResponse dto = placeService.getPlace(1L, placeId, type);
 		} catch (Exception e) {
@@ -78,18 +79,20 @@ public class BookMarkService {
 			.type(type)
 			.build();
 		bookMarkRepository.save(bookMark);
+		return BookMarkPersistResponse.from(bookMark);
 	}
 
 	public TourInfoBookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws IOException {
 		return placeService.getPlace(id, placeId, type);
 	}
 
-	public void deleteBookMark(User user, Long bookMarkId) {
+	public BookMarkPersistResponse deleteBookMark(User user, Long bookMarkId) {
 		BookMark bookMark = bookMarkRepository.findByBookMarkIdAndUserId(bookMarkId, user);
 		if (bookMark == null) {
 			throw new NotFoundBookMarkException();
 		}
 		bookMarkRepository.delete(bookMark);
+		return BookMarkPersistResponse.from(bookMark);
 	}
 
 	public boolean isMarked(User user, Long placeId) {
