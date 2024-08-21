@@ -14,7 +14,6 @@ import com.server.booyoungee.domain.review.comment.dto.response.CommentListRespo
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
 import com.server.booyoungee.domain.review.comment.exception.NotFoundCommentException;
 import com.server.booyoungee.domain.review.comment.exception.UserNotWriterOfCommentException;
-import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
@@ -23,32 +22,37 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentService {
 	private final CommentRepository commentRepository;
-	private final UserService userService;
 	private final PlaceService placeService;
 
 	@Transactional
-	public CommentPersistResponse saveReview(Long userId, CommentRequest request) {
-		User user = userService.findByUser(userId);
+	public CommentPersistResponse saveReview(User user, CommentRequest request) {
 		Place place = placeService.getByPlaceId(request.placeId());
-
 		Comment comment = Comment.of(user, place, request.content(), request.stars());
 		commentRepository.save(comment);
 		return CommentPersistResponse.from(comment);
 	}
 
+	@Transactional
+	public CommentPersistResponse accuseReview(User user, Long commentId) {
+		Comment comment = getComment(commentId);
+		comment.accuseReview(user);
+		return CommentPersistResponse.from(comment);
+	}
+
+	@Transactional
 	public CommentListResponse getReviewList(Long placeId) {
 		List<Comment> comments = commentRepository.findAllByPlaceId(placeId);
 		return CommentListResponse.from(comments);
 	}
 
-	public CommentListResponse getMyReviewList(Long userId) {
-		List<Comment> comments = commentRepository.findAllByWriterUserId(userId);
+	@Transactional
+	public CommentListResponse getMyReviewList(User user) {
+		List<Comment> comments = commentRepository.findAllByWriter(user);
 		return CommentListResponse.from(comments);
 	}
 	
 	@Transactional
-	public CommentPersistResponse deleteReview(Long userId, Long commentId) {
-		User user = userService.findByUser(userId);
+	public CommentPersistResponse deleteReview(User user, Long commentId) {
 		Comment comment = getComment(commentId);
 		validateReviewWriter(comment, user);
 		commentRepository.deleteById(commentId);
@@ -61,7 +65,7 @@ public class CommentService {
 	}
 
 	private void validateReviewWriter(Comment comment, User user) {
-		if (!comment.getWriter().equals(user)) {
+		if (!comment.getWriter().getUserId().equals(user.getUserId())) {
 			throw new UserNotWriterOfCommentException();
 		}
 	}

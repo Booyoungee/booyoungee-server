@@ -16,7 +16,7 @@ import com.server.booyoungee.domain.review.comment.application.CommentService;
 import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentListResponse;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
-import com.server.booyoungee.domain.review.comment.exception.UserNotWriterOfCommentException;
+import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
@@ -52,17 +52,45 @@ public class CommentController {
 		),
 		@ApiResponse(
 			responseCode = "404",
-			description = "NOT_FOUND_USER / NOT_FOUND_PLACE",
+			description = "NOT_FOUND_PLACE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 	})
 	@ResponseStatus(CREATED)
 	@PostMapping
 	public ResponseModel<CommentPersistResponse> saveReview(
-		@UserId Long userId,
+		@UserId User user,
 		@Valid @RequestBody CommentRequest request
 	) {
-		CommentPersistResponse response = commentService.saveReview(userId, request);
+		CommentPersistResponse response = commentService.saveReview(user, request);
+		return ResponseModel.success(CREATED, response);
+	}
+
+	@Operation(summary = "리뷰 코멘트 신고하기", description = "리뷰 코멘트를 신고합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "리뷰 코멘트 신고 성공",
+			content = @Content(schema = @Schema(implementation = CommentPersistResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_COMMENT",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
+	@ResponseStatus(CREATED)
+	@PostMapping("/{commentId}/accuse")
+	public ResponseModel<CommentPersistResponse> accuseReview(
+		@UserId User user,
+		@Parameter(
+			description = "리뷰 코멘트 ID",
+			example = "1",
+			required = true
+		)
+		@PathVariable(name = "commentId") Long commentId
+	) {
+		CommentPersistResponse response = commentService.accuseReview(user, commentId);
 		return ResponseModel.success(CREATED, response);
 	}
 
@@ -99,9 +127,9 @@ public class CommentController {
 	})
 	@GetMapping("/my")
 	public ResponseModel<CommentListResponse> getMyReviewList(
-		@UserId Long userId
+		@UserId User user
 	) {
-		CommentListResponse response = commentService.getMyReviewList(userId);
+		CommentListResponse response = commentService.getMyReviewList(user);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
@@ -127,7 +155,7 @@ public class CommentController {
 	})
 	@DeleteMapping("/{commentId}")
 	public ResponseModel<CommentPersistResponse> deleteReview(
-		@UserId Long userId,
+		@UserId User user,
 		@Parameter(
 			description = "리뷰 코멘트 ID",
 			example = "1",
@@ -135,7 +163,7 @@ public class CommentController {
 		)
 		@PathVariable(name = "commentId") Long commentId
 	) {
-		CommentPersistResponse response = commentService.deleteReview(userId, commentId);
+		CommentPersistResponse response = commentService.deleteReview(user, commentId);
 		return ResponseModel.success(response);
 	}
 
