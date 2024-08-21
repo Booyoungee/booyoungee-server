@@ -49,6 +49,11 @@ public class BookMarkController {
 			responseCode = "200",
 			description = "북마크 조회 성공",
 			content = @Content(schema = @Schema(implementation = BookMarkResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
 	@GetMapping("")
@@ -125,9 +130,13 @@ public class BookMarkController {
 			responseCode = "404",
 			description = "NOT_FOUND_BOOKMARK",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		)
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
 	})
-
 	@DeleteMapping("")
 	ResponseModel<BookMarkPersistResponse> deleteBookMark(
 		@Parameter(hidden = true) @UserId User user,
