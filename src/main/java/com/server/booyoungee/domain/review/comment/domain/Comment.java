@@ -2,8 +2,10 @@ package com.server.booyoungee.domain.review.comment.domain;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.global.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -26,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "comment")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -43,4 +45,8 @@ public class Comment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User writer;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "place_id")
+	private Place place;
 }

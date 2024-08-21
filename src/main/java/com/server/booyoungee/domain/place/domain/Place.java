@@ -1,6 +1,11 @@
 package com.server.booyoungee.domain.place.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.ColumnDefault;
+
+import com.server.booyoungee.domain.review.comment.domain.Comment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -10,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,6 +45,9 @@ public class Place {
 
 	@ColumnDefault("0")
 	private int viewCount;
+
+	@OneToMany(mappedBy = "place")
+	private List<Comment> comments = new ArrayList<>();
 
 	public void increaseViewCount() {
 		this.viewCount++;

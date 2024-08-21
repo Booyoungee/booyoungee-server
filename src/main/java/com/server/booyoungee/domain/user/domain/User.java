@@ -1,6 +1,10 @@
 package com.server.booyoungee.domain.user.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.server.booyoungee.domain.review.comment.domain.Comment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -51,6 +56,9 @@ public class User {
 
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
+
+	@OneToMany(mappedBy = "writer")
+	List<Comment> comments = new ArrayList<>();
 
 	@PrePersist
 	protected void onCreate() {
