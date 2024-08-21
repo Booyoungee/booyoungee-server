@@ -78,12 +78,12 @@ public class MoviePlaceController {
 	}
 
 	@GetMapping("/nearby")
-	public ResponseEntity<List<MoviePlace>> getPlacesNearby(
+	public ResponseModel<MoviePlacePageResponse<MoviePlace>>getPlacesNearby(
 		@RequestParam Double mapX,
 		@RequestParam Double mapY,
 		@RequestParam Double radius) {
 
-		List<MoviePlace> nearbyPlaces = moviePlaceService.findPlacesNearby(mapX, mapY, radius);
-		return ResponseEntity.ok(nearbyPlaces);
+		MoviePlacePageResponse<MoviePlace> nearbyPlaces = moviePlaceService.findPlacesNearby(mapX, mapY, radius);
+		return ResponseModel.success(nearbyPlaces);
 	}
 }

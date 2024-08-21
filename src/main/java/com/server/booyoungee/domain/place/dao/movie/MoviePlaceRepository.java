@@ -37,7 +37,16 @@ public interface MoviePlaceRepository extends JpaRepository<MoviePlace, Long> {
 	List<MoviePlace> findNearbyMoviePlaces(
 			@Param("latitude") double latitude,
 			@Param("longitude") double longitude,
-			@Param("radius") double radius);
+			@Param("radius") double radius,
+			Pageable pageable);
+
+	@Query("SELECT COUNT(sp) FROM MoviePlace sp " +
+			"WHERE ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
+			"Point(:longitude, :latitude)) <= :radius")
+	long countNearbyMoviePlaces(@Param("latitude") double latitude,
+								@Param("longitude") double longitude,
+								@Param("radius") double radius);
+
 
 
 	// TODO : QueryDsl로 변경
