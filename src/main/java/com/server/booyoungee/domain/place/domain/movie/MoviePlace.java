@@ -2,10 +2,7 @@ package com.server.booyoungee.domain.place.domain.movie;
 
 import com.server.booyoungee.domain.place.domain.Place;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +11,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Entity
 @SuperBuilder
-@Table(name = "movie_place")
+@Table(name = "movie_place",indexes = {
+	@Index(name = "idx_movie_place_map", columnList = "mapX, mapY")
+})
 @DiscriminatorValue("MOVIE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MoviePlace extends Place {
