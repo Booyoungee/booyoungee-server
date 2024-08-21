@@ -76,7 +76,7 @@ public class MoviePlaceController {
 			.getMoviePlacesByKeyword(keyword, page, size);
 		return ResponseModel.success(response);
 	}
-
+	@Operation(summary = "내 주변  촬영지 조회")
 	@GetMapping("/nearby")
 	public ResponseModel<MoviePlacePageResponse<MoviePlace>>getMoviePlacesNearby(
 		@RequestParam String mapX,
