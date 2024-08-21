@@ -1,11 +1,11 @@
-package com.server.booyoungee.domain.tourInfo.dto.response;
+package com.server.booyoungee.domain.place.dto.response.tour;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 
 @Builder
-public record TourInfoCommonResponseDto(
+public record TourInfoAreaResponseDto(
 	@JsonProperty("addr1") String addr1,
 	@JsonProperty("addr2") String addr2,
 	@JsonProperty("areacode") String areacode,
@@ -16,7 +16,6 @@ public record TourInfoCommonResponseDto(
 	@JsonProperty("contentid") String contentid,
 	@JsonProperty("contenttypeid") String contenttypeid,
 	@JsonProperty("createdtime") String createdtime,
-	@JsonProperty("dist") String dist,
 	@JsonProperty("firstimage") String firstimage,
 	@JsonProperty("firstimage2") String firstimage2,
 	@JsonProperty("cpyrhtDivCd") String cpyrhtDivCd,
@@ -30,7 +29,7 @@ public record TourInfoCommonResponseDto(
 	@JsonProperty("zipcode") String zipcode,
 	@JsonProperty("placeType") String placeType
 ) {
-	public TourInfoCommonResponseDto {
+	public TourInfoAreaResponseDto {
 		if (placeType == null || placeType.isBlank()) {
 			placeType = "tour";
 		}

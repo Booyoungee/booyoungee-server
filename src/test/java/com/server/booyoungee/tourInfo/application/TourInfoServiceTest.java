@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoService;
 import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
 import com.server.booyoungee.mock.FakeTourInfoRepository;
 

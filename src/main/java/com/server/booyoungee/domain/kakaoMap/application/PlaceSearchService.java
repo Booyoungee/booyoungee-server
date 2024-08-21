@@ -16,9 +16,9 @@ import com.server.booyoungee.domain.kakaoMap.dto.KakaoKeywordResponseDto;
 import com.server.booyoungee.domain.kakaoMap.dto.KeywordSearchDto;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchListResponseDto;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoCommonResponseDto;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoService;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponseDto;
 
 import lombok.RequiredArgsConstructor;
 

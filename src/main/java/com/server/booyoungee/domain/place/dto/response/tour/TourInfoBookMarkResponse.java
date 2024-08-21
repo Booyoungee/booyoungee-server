@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.dto.response;
+package com.server.booyoungee.domain.place.dto.response.tour;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,7 +15,7 @@ public record TourInfoBookMarkResponse(
 
 	@JsonProperty("placeType") String placeType,
 
-	String placeId,
+	Long placeId,
 	Long bookmarkId
 ) {
 	public TourInfoBookMarkResponse {
@@ -24,15 +24,17 @@ public record TourInfoBookMarkResponse(
 		}
 	}
 
-	public static TourInfoBookMarkResponse fromPlace(String placeId, String title, String mapx, String mapy,
-		String contentid, String placeType) {
+	public static TourInfoBookMarkResponse of(Long id, Long placeId, String title, String mapx, String mapy,
+		String contentid, String placeType, String contenttypeid) {
 		return TourInfoBookMarkResponse.builder()
+			.bookmarkId(id)
 			.placeId(placeId)
 			.title(title)
 			.placeType(placeType)
 			.mapx(mapx)
 			.mapy(mapy)
 			.contentid(contentid)
+			.contenttypeid(contenttypeid)
 			.build();
 	}
 }

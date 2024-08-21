@@ -14,8 +14,8 @@ import com.server.booyoungee.domain.place.domain.HotPlace;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.domain.store.StorePlace;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceResponseDto;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoResponseDto;
+import com.server.booyoungee.domain.place.application.tour.TourInfoService;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -1,16 +1,20 @@
-package com.server.booyoungee.domain.tourInfo.api;
+package com.server.booyoungee.domain.place.api.tour;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourPlaceResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.tourInfo.application.TourInfoService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoService;
 import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,22 +26,22 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/tourInfo")
 @Tag(name = "TourInfoApi", description = "관광 정보 조회 api / 담당자 : 이한음")
 public class TourInfoController {
-	private final TourInfoService tourInfoService;
+	private final TourPlaceService tourInfoService;
 
 	@GetMapping("/{contentId}")
 	@Operation(summary = "관광 정보 조회")
 	public ResponseModel<?> getTourInfo(
 		@PathVariable String contentId
-	) {
-		tourInfoService.viewContent(contentId);
-		TourInfoResponseDto tourInfo = tourInfoService.getTourInfo(contentId);
+	) throws IOException {
+		//tourInfoService.viewContent(contentId);
+		TourInfoDetailsResponseDto tourInfo = tourInfoService.getTour(Long.valueOf(contentId));
 		return ResponseModel.success(tourInfo);
 	}
 
 	@GetMapping("")
 	@Operation(summary = "관광 정보 목록 조회")
 	public ResponseModel<?> getTourInfoList() {
-		List<TourInfoResponseDto> tourInfoList = tourInfoService.getTourInfoList();
+		List<TourPlaceResponseDto> tourInfoList = tourInfoService.getTourInfoList();
 		return ResponseModel.success(tourInfoList);
 	}
 
@@ -55,7 +59,7 @@ public class TourInfoController {
 			+ "- RESTAURANT: (음식점)"
 	)
 	public ResponseModel<?> getTourInfoListByType(@RequestParam TourContentType contentId) {
-		List<TourInfoResponseDto> tourInfoList = tourInfoService.getTourInfoListByType(contentId);
+		List<TourPlaceResponseDto> tourInfoList = tourInfoService.getTourInfoListByType(contentId);
 		return ResponseModel.success(tourInfoList);
 	}
 }

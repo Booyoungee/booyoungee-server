@@ -13,7 +13,7 @@ import com.server.booyoungee.domain.stamp.dto.StampResponseDto;
 import com.server.booyoungee.domain.stamp.dto.request.StampRequest;
 import com.server.booyoungee.domain.stamp.dto.response.StampResponse;
 import com.server.booyoungee.domain.stamp.dto.response.StampResponseList;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.utils.LocationUtils;
 

@@ -3,7 +3,6 @@ package com.server.booyoungee.domain.place.application;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -12,6 +11,8 @@ import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
+import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
 import com.server.booyoungee.domain.place.dao.PlaceRepository;
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
@@ -20,19 +21,20 @@ import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkDetailsResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
-import com.server.booyoungee.domain.tourInfo.application.TourInfoOpenApiService;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkDetailsResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoBookMarkResponse;
-import com.server.booyoungee.domain.tourInfo.dto.response.TourInfoImageDto;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 public class PlaceService {
+	private final TourPlaceService placeService;
 	private final PlaceRepository placeRepository;
 	private final MoviePlaceService moviePlaceService;
 	private final StorePlaceService storePlaceService;
@@ -48,25 +50,21 @@ public class PlaceService {
 			if (movie == null) {
 				throw new NotFoundMoviePlaceException();
 			}
-			return TourInfoBookMarkResponse.fromPlace(movie.id().toString(), movie.name(), movie.mapX(), movie.mapY(),
-				"", "movie");
+			return TourInfoBookMarkResponse.of(id, movie.id(), movie.name(), movie.mapX(), movie.mapY(),
+				"", "movie", null);
 
 		} else if (type.getKey().equals("store")) {
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 			if (store == null) {
 				throw new NotFoundStorePlaceException();
 			}
-			return TourInfoBookMarkResponse.fromPlace(store.id().toString(), store.name(), store.mapX(), store.mapY(),
-				"", "store");
+			return TourInfoBookMarkResponse.of(id, store.id(), store.name(), store.mapX(), store.mapY(),
+				"", "store", null);
 
 		} else {
-			List<TourInfoBookMarkResponse> tourInfoList = tourInfoOpenApiService.findByContentId(placeId.toString());
-			if (tourInfoList == null || tourInfoList.isEmpty()) {
-				throw new NotFoundException("Tour place with ID " + placeId + " not found.");
-			}
-			TourInfoBookMarkResponse tourInfo = tourInfoList.get(0);
-			return TourInfoBookMarkResponse.fromPlace(tourInfo.placeId(), tourInfo.title(), tourInfo.mapx(),
-				tourInfo.mapy(), tourInfo.contentid(), "tour");
+			TourInfoDetailsResponseDto tourInfo = placeService.getTour(placeId);
+			return TourInfoBookMarkResponse.of(id, placeId, tourInfo.title(), tourInfo.mapx(),
+				tourInfo.mapy(), tourInfo.contentid(), "tour", tourInfo.contenttypeid());
 		}
 	}
 
