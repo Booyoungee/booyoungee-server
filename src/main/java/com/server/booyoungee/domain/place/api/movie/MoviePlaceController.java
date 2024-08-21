@@ -37,7 +37,7 @@ public class MoviePlaceController {
 	@GetMapping("/{movieLocationId}")
 	@Operation(summary = "영화 촬영지 조회")
 	public ResponseModel<MoviePlaceResponse> getMovieLocation(
-		@PathVariable Long movieLocationId
+		@PathVariable(name = "movieLocationId") Long movieLocationId
 	) {
 		MoviePlaceResponse response = moviePlaceService.getMoviePlace(movieLocationId);
 		return ResponseModel.success(response);

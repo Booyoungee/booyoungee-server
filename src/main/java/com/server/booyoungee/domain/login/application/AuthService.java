@@ -67,8 +67,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public JwtTokenResponse signup(SignUpRequestDto providerToken, String name, LoginRequestDto request) throws
-		IOException {
+	public JwtTokenResponse signup(SignUpRequestDto providerToken, String name, LoginRequestDto request)  {
 		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.getAccessToken());
 		User user = createUser(providerToken, name, socialInfo);
 		return generateTokensWithUpdateRefreshToken(user, providerToken.getAccessToken(), user.getRefreshToken());

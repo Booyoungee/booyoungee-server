@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.server.booyoungee.domain.review.comment.domain.Comment;
+
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
 
@@ -59,6 +61,9 @@ public class User {
 
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
+
+	@OneToMany(mappedBy = "writer")
+	List<Comment> comments = new ArrayList<>();
 
 	@OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<BookMark> bookMarks = new ArrayList<>();

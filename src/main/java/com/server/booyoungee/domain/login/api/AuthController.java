@@ -23,6 +23,8 @@ import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.login.dto.response.SignUpResponseDto;
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.global.common.ResponseModel;
+import com.server.booyoungee.global.exception.CustomException;
+import com.server.booyoungee.global.exception.ExceptionResponse;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
@@ -52,32 +54,24 @@ public class AuthController {
 	@PostMapping("")
 	public ResponseModel<?> kakaoLogin(
 		@RequestBody KakaoLoginRequestDto accessToken) throws IOException {
-		try {
-			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
-			JwtTokenResponse tokens = authService.login(accessToken, request);
-			return ResponseModel.success(tokens);
-		} catch (Exception e) {
-			return ResponseModel.error(e.getMessage());
-		}
+		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
+		JwtTokenResponse tokens = authService.login(accessToken, request);
+		return ResponseModel.success(tokens);
 	}
 
 	@Operation(summary = "회원가입",
 		description = "엑세스 토큰과 리프레시 토큰을 , 닉네임을 전달받으면 jwt 토큰과 닉네임을 발급합니다.")
 	@PostMapping("/signup")
-	public ResponseModel<?> signUp(@RequestBody SignUpRequestDto token) throws IOException {
-		try {
-			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-			String name = userService.duplicateNickname(token.getNickname());
-			JwtTokenResponse tokens = authService.signup(token, name, request);
-			SignUpResponseDto dto = SignUpResponseDto.builder()
-				.accessToken(tokens.accessToken())
-				.refreshToken(tokens.refreshToken())
-				.nickname(name)
-				.build();
-			return ResponseModel.success(dto);
-		} catch (Exception e) {
-			return ResponseModel.error(e.getMessage());
-		}
+	public ResponseModel<?> signUp(@RequestBody SignUpRequestDto token) {
+		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
+		String name = userService.duplicateNickname(token.getNickname());
+		JwtTokenResponse tokens = authService.signup(token, name, request);
+		SignUpResponseDto dto = SignUpResponseDto.builder()
+			.accessToken(tokens.accessToken())
+			.refreshToken(tokens.refreshToken())
+			.nickname(name)
+			.build();
+		return ResponseModel.success(dto);
 	}
 
 	@Hidden
@@ -138,19 +132,15 @@ public class AuthController {
 	@Operation(summary = "REST API 카카오 로그인")
 	@GetMapping("/callback")
 	public ResponseModel<?> kakaoCallback(@RequestParam String code) throws IOException {
-		try {
-			System.out.println("callback start");
-			KakaoTokenResponse accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
-			LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null); // Name can be null here
-			KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.builder()
-				.accessToken(accessToken.getAccess_token())
-				.refreshToken(accessToken.getRefresh_token())
-				.build();
-			JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
-			return ResponseModel.success(tokens);
-		} catch (Exception e) {
-			return ResponseModel.error(e.getMessage());
-		}
+		System.out.println("callback start");
+		KakaoTokenResponse accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
+		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
+		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.builder()
+			.accessToken(accessToken.getAccess_token())
+			.refreshToken(accessToken.getRefresh_token())
+			.build();
+		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
+		return ResponseModel.success(tokens);
 	}
 
 }
