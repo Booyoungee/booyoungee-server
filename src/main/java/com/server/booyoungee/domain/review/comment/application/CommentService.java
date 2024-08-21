@@ -1,5 +1,7 @@
 package com.server.booyoungee.domain.review.comment.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +10,7 @@ import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
+import com.server.booyoungee.domain.review.comment.dto.response.CommentListResponse;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.domain.user.domain.User;
@@ -29,5 +32,10 @@ public class CommentService {
 		Comment comment = Comment.of(user, place, request.content(), request.stars());
 		commentRepository.save(comment);
 		return CommentPersistResponse.from(comment);
+	}
+
+	public CommentListResponse getReviewList(Long placeId) {
+		List<Comment> comments = commentRepository.findAllByPlaceId(placeId);
+		return CommentListResponse.from(comments);
 	}
 }

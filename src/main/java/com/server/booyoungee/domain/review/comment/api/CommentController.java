@@ -1,7 +1,10 @@
 package com.server.booyoungee.domain.review.comment.api;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.review.comment.application.CommentService;
 import com.server.booyoungee.domain.review.comment.dto.request.CommentRequest;
+import com.server.booyoungee.domain.review.comment.dto.response.CommentListResponse;
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
@@ -34,15 +38,18 @@ public class CommentController {
 
 	@Operation(summary = "리뷰 코멘트 작성", description = "장소에 대한 리뷰 코멘트를 작성합니다.")
 	@ApiResponses({
-		@ApiResponse(responseCode = "201",
+		@ApiResponse(
+			responseCode = "201",
 			description = "리뷰 코멘트 작성 성공",
 			content = @Content(schema = @Schema(implementation = CommentPersistResponse.class))
 		),
-		@ApiResponse(responseCode = "400",
+		@ApiResponse(
+			responseCode = "400",
 			description = "INVALID_STAR_VALUE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
-		@ApiResponse(responseCode = "404",
+		@ApiResponse(
+			responseCode = "404",
 			description = "NOT_FOUND_USER / NOT_FOUND_PLACE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
@@ -57,5 +64,27 @@ public class CommentController {
 		return ResponseModel.success(CREATED, response);
 	}
 
+	@Operation(summary = "장소에 대한 리뷰 코멘트 목록 조회", description = "장소에 대한 리뷰 코멘트 목록을 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "장소에 대한 리뷰 코멘트 목록 조회 성공",
+			content = @Content(schema = @Schema(implementation = CommentListResponse.class))
+		)
+	})
+	@GetMapping("/{placeId}")
+	public ResponseModel<CommentListResponse> getReviewList(
+		@Parameter(
+			description = "장소 ID",
+			example = "1",
+			required = true
+		)
+		@PathVariable(name = "placeId") Long placeId
+	) {
+		CommentListResponse response = commentService.getReviewList(placeId);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
+	}
 
 }

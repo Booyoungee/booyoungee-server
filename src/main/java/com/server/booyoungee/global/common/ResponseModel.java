@@ -1,9 +1,7 @@
 package com.server.booyoungee.global.common;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResponseModel<T> {
 
-	private HttpStatus status = HttpStatus.OK;
+	private HttpStatus status;
 	private T data;
 
 	public static <T> ResponseModel<T> success(T data) {
