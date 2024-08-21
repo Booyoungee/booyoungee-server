@@ -1,5 +1,8 @@
 package com.server.booyoungee.domain.place.api.movie;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,5 +75,15 @@ public class MoviePlaceController {
 		MoviePlacePageResponse<MoviePlace> response = moviePlaceService
 			.getMoviePlacesByKeyword(keyword, page, size);
 		return ResponseModel.success(response);
+	}
+
+	@GetMapping("/nearby")
+	public ResponseEntity<List<MoviePlace>> getPlacesNearby(
+		@RequestParam Double mapX,
+		@RequestParam Double mapY,
+		@RequestParam Double radius) {
+
+		List<MoviePlace> nearbyPlaces = moviePlaceService.findPlacesNearby(mapX, mapY, radius);
+		return ResponseEntity.ok(nearbyPlaces);
 	}
 }

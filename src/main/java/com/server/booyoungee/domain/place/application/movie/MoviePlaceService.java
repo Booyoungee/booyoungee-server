@@ -100,4 +100,9 @@ public class MoviePlaceService {
 		return moviePlaceRepository.top10MoviePlace(PageRequest.of(0, 10));
 
 	}
+
+	public List<MoviePlace> findPlacesNearby(Double mapX, Double mapY, Double radius) {
+
+		return moviePlaceRepository.findPlacesNearby(mapX, mapY, radius);
+	}
 }
