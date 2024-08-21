@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.review.comment.domain;
 
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -47,11 +48,11 @@ public class Comment extends BaseTimeEntity {
 	@Embedded
 	private Stars stars;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "user_id")
 	private User writer;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "place_id")
 	private Place place;
 
