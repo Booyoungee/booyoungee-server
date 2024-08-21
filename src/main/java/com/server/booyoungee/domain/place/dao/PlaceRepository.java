@@ -11,6 +11,6 @@ import com.server.booyoungee.domain.place.domain.Place;
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
 
-	@Query("SELECT p FROM Place p ORDER BY p.viewCount DESC")
+	@Query("SELECT p FROM Place p  where p.viewCount>0 ORDER BY p.viewCount DESC")
 	Page<Place> findTop10ByOrderByViewCountDesc(Pageable pageable);
 }

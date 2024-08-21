@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.server.booyoungee.domain.place.application.PlaceService;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
+import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
 import com.server.booyoungee.domain.place.dao.hotPlace.HotPlaceRepository;
 import com.server.booyoungee.domain.place.domain.HotPlace;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.domain.store.StorePlace;
+import com.server.booyoungee.domain.place.domain.tour.TourPlace;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceResponseDto;
-import com.server.booyoungee.domain.place.application.tour.TourInfoService;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HotPlaceService {
 	private final HotPlaceRepository hotPlaceRepository;
-	private final TourInfoService tourInfoService;
+	private final TourPlaceService tourInfoService;
 	private final StorePlaceService storePlaceService;
 	private final MoviePlaceService moviePlaceService;
+	private final PlaceService placeService;
 
 	public List<HotPlaceResponseDto> getHotPlaces() {
 		// Retrieve all hot places from the repository
@@ -47,9 +49,10 @@ public class HotPlaceService {
 	}
 
 	public List<HotPlace> getPlaceViewCount() {
+
 		List<StorePlace> storeList = storePlaceService.Top10StorePlaces();
 		List<MoviePlace> movieList = moviePlaceService.Top10MoviePlaces();
-		List<TourInfoResponseDto> tourInfoList = tourInfoService.getTop10TourInfo();
+		List<TourPlace> tourInfoList = tourInfoService.getTop10TourInfo();
 
 		List<HotPlace> hotPlaceList = new ArrayList<>();
 
@@ -62,8 +65,8 @@ public class HotPlaceService {
 			.collect(Collectors.toList()));
 
 		hotPlaceList.addAll(tourInfoList.stream()
-			.map(place -> HotPlace.from(Long.valueOf(place.contentId()), "tour", place.title(),
-				Math.toIntExact(place.views())))
+			.map(place -> HotPlace.from(Long.valueOf(place.getId()), "tour", place.getName(),
+				Math.toIntExact(place.getViewCount())))
 			.collect(Collectors.toList()));
 
 		// HotPlace 리스트를 viewCount 순으로 정렬

@@ -19,8 +19,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaCodeResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkDetailsResponse;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
@@ -149,6 +147,9 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
+		if (jsonResult == null || !jsonResult.isArray() || jsonResult.isEmpty()) {
+			return Collections.emptyList();
+		}
 		return toList(jsonResult, TourInfoDetailsResponseDto[].class);
 	}
 
@@ -192,46 +193,6 @@ public class TourInfoOpenApiService {
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
 		return toList(jsonResult, TourInfoAreaCodeResponseDto[].class);
-	}
-
-	public List<TourInfoBookMarkResponse> findByContentId(String contentId) {
-		String requestUrl = baseUrl
-			+ "/detailCommon1"
-			+ "?ServiceKey=" + serviceKey
-			+ "&contentId=" + contentId
-			+ "&MobileOS=AND"
-			+ "&MobileApp=booyoungee"
-			+ "&defaultYN=" + "Y"
-			+ "&firstImageYN=" + "N"
-			+ "&areacodeYN=" + "N"
-			+ "&catcodeYN=" + "N"
-			+ "&addrinfoYN=" + "N"
-			+ "&mapinfoYN=" + "Y"
-			+ "&overviewYN=" + "N"
-			+ "&_type=" + _type;
-
-		JsonNode jsonResult = getTourInfo(requestUrl);
-		return toList(jsonResult, TourInfoBookMarkResponse[].class);
-	}
-
-	public List<TourInfoBookMarkDetailsResponse> findByTourInfoDetail(String contentId) {
-		String requestUrl = baseUrl
-			+ "/detailCommon1"
-			+ "?ServiceKey=" + serviceKey
-			+ "&contentId=" + contentId
-			+ "&MobileOS=AND"
-			+ "&MobileApp=booyoungee"
-			+ "&defaultYN=" + "Y"
-			+ "&firstImageYN=" + "Y"
-			+ "&areacodeYN=" + "N"
-			+ "&catcodeYN=" + "N"
-			+ "&addrinfoYN=" + "Y"
-			+ "&mapinfoYN=" + "N"
-			+ "&overviewYN=" + "N"
-			+ "&_type=" + _type;
-
-		JsonNode jsonResult = getTourInfo(requestUrl);
-		return toList(jsonResult, TourInfoBookMarkDetailsResponse[].class);
 	}
 
 	public List<TourInfoImageDto> getTourInfoImage(String keyword) {

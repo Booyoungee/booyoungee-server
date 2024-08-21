@@ -29,4 +29,10 @@ public class TourPlace extends Place {
 
 	private String contentTypeId;
 
+	public static TourPlace of(String contentId, String contentTypeId) {
+		return TourPlace.builder()
+			.contentId(contentId)
+			.contentTypeId(contentTypeId)
+			.build();
+	}
 }

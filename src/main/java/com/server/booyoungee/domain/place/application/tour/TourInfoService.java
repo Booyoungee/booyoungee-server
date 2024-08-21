@@ -2,13 +2,12 @@ package com.server.booyoungee.domain.place.application.tour;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 import com.server.booyoungee.domain.tourInfo.dao.TourInfoRepository;
 import com.server.booyoungee.domain.tourInfo.domain.TourInfo;
 import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TourInfoService {
 	private final TourInfoRepository tourInfoRepository;
-	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	public void viewContent(String contentId) {
 		TourInfo tourInfo = findById(contentId);
@@ -84,27 +82,4 @@ public class TourInfoService {
 		return tourInfoRepository.findById(contentId).orElse(null);
 	}
 
-	public List<TourInfoResponseDto> getTourInfoListByType(TourContentType contentId) {
-		return tourInfoRepository.findAllByTypes(contentId).stream()
-			.map(tourInfo -> TourInfoResponseDto.builder()
-				.contentId(tourInfo.getContentId())
-				.views(tourInfo.getViews())
-				.description(tourInfo.getContentTypeId().getDescription())
-				.build())
-			.toList();
-	}
-
-	public List<TourInfoResponseDto> getTop10TourInfo() {
-		List<TourInfoResponseDto> top10tourInfo = tourInfoRepository.top10tourInfo(PageRequest.of(0, 10)).stream()
-			.map(tourInfo -> {
-				return TourInfoResponseDto.builder()
-					.contentId(tourInfo.getContentId())
-					.views(tourInfo.getViews())
-					.description(tourInfo.getContentTypeId().getDescription())
-					.title(tourInfoOpenApiService.findByTourInfoDetail(tourInfo.getContentId()).get(0).title())
-					.build();
-			})
-			.toList();
-		return top10tourInfo;
-	}
 }

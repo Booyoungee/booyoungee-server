@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.bookmark.application.BookMarkService;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
@@ -48,14 +48,14 @@ public class BookMarkController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "북마크 조회 성공",
-			content = @Content(schema = @Schema(implementation = TourInfoBookMarkResponse.class))
+			content = @Content(schema = @Schema(implementation = BookMarkResponse.class))
 		)
 	})
 	@GetMapping("")
-	public ResponseModel<List<TourInfoBookMarkResponse>> getBookMarks(
+	public ResponseModel<List<BookMarkResponse>> getBookMarks(
 		@Parameter(hidden = true) @UserId User user
 	) {
-		List<TourInfoBookMarkResponse> response = bookMarkService.getBookMarks(user);
+		List<BookMarkResponse> response = bookMarkService.getBookMarks(user);
 		return response.isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
@@ -90,6 +90,11 @@ public class BookMarkController {
 		@ApiResponse(
 			responseCode = "404",
 			description = "NOT_FOUND_PLACE",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 	})

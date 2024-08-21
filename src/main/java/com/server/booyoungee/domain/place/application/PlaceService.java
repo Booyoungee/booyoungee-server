@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
@@ -21,8 +25,6 @@ import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkDetailsResponse;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
@@ -41,7 +43,7 @@ public class PlaceService {
 	private final TmdbApiService movieService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
-	public TourInfoBookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
+	public BookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
 		IOException,
 		NotFoundException {
 
@@ -50,21 +52,23 @@ public class PlaceService {
 			if (movie == null) {
 				throw new NotFoundMoviePlaceException();
 			}
-			return TourInfoBookMarkResponse.of(id, movie.id(), movie.name(), movie.mapX(), movie.mapY(),
-				"", "movie", null);
+			return BookMarkResponse.of(id, placeId, null, movie.name(), movie.mapX(), movie.mapY(),
+				type, type.getKey());
 
 		} else if (type.getKey().equals("store")) {
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 			if (store == null) {
 				throw new NotFoundStorePlaceException();
 			}
-			return TourInfoBookMarkResponse.of(id, store.id(), store.name(), store.mapX(), store.mapY(),
-				"", "store", null);
+			return BookMarkResponse.of(id, placeId, null, store.name(), store.mapX(), store.mapY(),
+				type, type.getKey());
 
 		} else {
+
 			TourInfoDetailsResponseDto tourInfo = placeService.getTour(placeId);
-			return TourInfoBookMarkResponse.of(id, placeId, tourInfo.title(), tourInfo.mapx(),
-				tourInfo.mapy(), tourInfo.contentid(), "tour", tourInfo.contenttypeid());
+			return BookMarkResponse.of(id, placeId, tourInfo.contentid(), tourInfo.title(), tourInfo.mapx(),
+				tourInfo.mapy(),
+				type, tourInfo.contenttypeid());
 		}
 	}
 
@@ -123,7 +127,7 @@ public class PlaceService {
 			return dto;
 
 		} else {
-			TourInfoBookMarkDetailsResponse place = tourInfoOpenApiService.findByTourInfoDetail("" + placeId).get(0);
+			TourInfoDetailsResponseDto place = placeService.getTour(placeId);
 
 			if (place.firstimage() != null && !place.firstimage().isEmpty()) {
 				imageList.add(place.firstimage());
@@ -143,4 +147,26 @@ public class PlaceService {
 			.orElseThrow(NotFoundPlaceException::new);
 	}
 
+	public Place getByPlaceId(Long placeId, PlaceType type) {
+		if (type.getKey().equals("tour")) {
+			Place place = placeRepository.findById(placeId)
+				.orElse(null);
+			if (place == null) {
+				place = placeService.saveTourPlace(placeId);
+				System.out.println("place = " + place.getId());
+				return place;
+			}
+			return place;
+
+		} else {
+			Place place = placeRepository.findById(placeId)
+				.orElseThrow(NotFoundPlaceException::new);
+			return place;
+		}
+	}
+
+	public Page<Place> getTop10Place() {
+		Pageable pageable = PageRequest.of(0, 10);
+		return placeRepository.findTop10ByOrderByViewCountDesc(pageable);
+	}
 }
