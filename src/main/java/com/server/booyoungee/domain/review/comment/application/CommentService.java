@@ -38,4 +38,9 @@ public class CommentService {
 		List<Comment> comments = commentRepository.findAllByPlaceId(placeId);
 		return CommentListResponse.from(comments);
 	}
+
+	public CommentListResponse getMyReviewList(Long userId) {
+		List<Comment> comments = commentRepository.findAllByWriterUserId(userId);
+		return CommentListResponse.from(comments);
+	}
 }

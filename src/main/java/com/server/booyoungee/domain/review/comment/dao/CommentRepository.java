@@ -10,4 +10,5 @@ import com.server.booyoungee.domain.review.comment.domain.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	List<Comment> findAllByPlaceId(Long placeId);
+	List<Comment> findAllByWriterUserId(Long userId);
 }

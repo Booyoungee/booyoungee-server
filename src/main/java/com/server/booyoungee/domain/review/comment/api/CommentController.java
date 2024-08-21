@@ -87,4 +87,22 @@ public class CommentController {
 			: ResponseModel.success(response);
 	}
 
+	@Operation(summary = "내가 쓴 리뷰 코멘트 목록 조회", description = "내가 쓴 리뷰 코멘트 목록을 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "내가 쓴 리뷰 코멘트 목록 조회 성공",
+			content = @Content(schema = @Schema(implementation = CommentListResponse.class))
+		)
+	})
+	@GetMapping("/my")
+	public ResponseModel<CommentListResponse> getMyReviewList(
+		@UserId Long userId
+	) {
+		CommentListResponse response = commentService.getMyReviewList(userId);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
+	}
+
 }
