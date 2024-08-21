@@ -34,13 +34,7 @@ public class HotPlaceService {
 
 		// Transform each HotPlace entity into a HotPlaceResponseDto
 		List<HotPlaceResponseDto> dto = hotPlaces.stream()
-			.map(hotPlace -> HotPlaceResponseDto.builder()
-				.placeId(hotPlace.getPlaceId())
-				.type(hotPlace.getType())
-				.name(hotPlace.getName())
-				.viewCount(hotPlace.getViewCount())
-				.updatedAt(hotPlace.getUpdatedAt())
-				.build())
+			.map(HotPlaceResponseDto::from)
 			.collect(Collectors.toList());
 
 		return dto;
@@ -60,39 +54,28 @@ public class HotPlaceService {
 		List<HotPlace> hotPlaceList = new ArrayList<>();
 
 		hotPlaceList.addAll(storeList.stream()
-			.map(place -> HotPlace.builder()
-				.placeId(place.getId())
-				.type("store")
-				.name(place.getName())
-				.viewCount(place.getViewCount())
-				.isHotPlace(true)
-				.build())
+			.map(place -> HotPlace.from(place.getId(), "store", place.getName(), place.getViewCount()))
 			.collect(Collectors.toList()));
 
 		hotPlaceList.addAll(movieList.stream()
-			.map(place -> HotPlace.builder()
-				.placeId(place.getId())
-				.type("movie")
-				.name(place.getName())
-				.viewCount(place.getViewCount())
-				.isHotPlace(true)
-				.build())
+			.map(place -> HotPlace.from(place.getId(), "movie", place.getName(), place.getViewCount()))
 			.collect(Collectors.toList()));
 
 		hotPlaceList.addAll(tourInfoList.stream()
-			.map(place -> HotPlace.builder()
-				.placeId(Long.valueOf(place.contentId()))  // Assuming place.getContentId() returns a String
-				.type("tour")
-				.name(place.title())
-				.viewCount(Math.toIntExact(place.views()))
-				.isHotPlace(true)
-				.build())
+			.map(place -> HotPlace.from(Long.valueOf(place.contentId()), "tour", place.title(),
+				Math.toIntExact(place.views())))
 			.collect(Collectors.toList()));
 
-		// Sort the list by viewCount in descending order
-		hotPlaceList.sort(Comparator.comparingInt(HotPlace::getViewCount).reversed());
-
-		return hotPlaceList;
+		// HotPlace 리스트를 viewCount 순으로 정렬
+		return hotPlaceList.stream()
+			.collect(Collectors.toMap(
+				HotPlace::getName,  // 중복 기준: 이름
+				place -> place,      // 값: HotPlace 객체
+				(existing, replacement) -> existing.getViewCount() >= replacement.getViewCount() ? existing :
+					replacement))  // 중복 처리: viewCount가 높은 객체 유지
+			.values().stream()
+			.sorted(Comparator.comparingInt(HotPlace::getViewCount).reversed())  // viewCount 기준으로 정렬
+			.collect(Collectors.toList());
 	}
 
 }

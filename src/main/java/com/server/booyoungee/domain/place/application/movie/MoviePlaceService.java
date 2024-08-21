@@ -100,4 +100,18 @@ public class MoviePlaceService {
 		return moviePlaceRepository.top10MoviePlace(PageRequest.of(0, 10));
 
 	}
+
+	public MoviePlacePageResponse<MoviePlace> findPlacesNearby(String mapX, String mapY, String radius, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		double longtitude = Double.parseDouble(mapX);
+		double latitude = Double.parseDouble(mapY);
+		double rad = Double.parseDouble(radius);
+		Long totalElements = moviePlaceRepository.countNearbyMoviePlaces(latitude, longtitude, rad);
+		List<MoviePlace> moviePlaces = moviePlaceRepository.findNearbyMoviePlaces(latitude, longtitude, rad,pageable);
+
+		List<MoviePlaceResponse> moviePlaceList = moviePlaces.stream()
+				.map(MoviePlaceResponse::from)
+				.collect(java.util.stream.Collectors.toList());
+		return MoviePlacePageResponse.of(moviePlaceList, PageableResponse.of(pageable, totalElements));
+	}
 }

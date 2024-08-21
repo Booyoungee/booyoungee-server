@@ -19,5 +19,22 @@ public record TourInfoBookMarkDetailsResponse(
 	String placeId
 
 ) {
+	public TourInfoBookMarkDetailsResponse {
+		if (placeType == null || placeType.isBlank()) {
+			placeType = "tour";
+		}
+	}
+
+	public static TourInfoBookMarkDetailsResponse fromPlace(String placeId, String title, String addr1, String addr2,
+		String contentid, String placeType) {
+		return TourInfoBookMarkDetailsResponse.builder()
+			.placeId(placeId)
+			.title(title)
+			.placeType(placeType)
+			.addr1(addr1)
+			.addr2(addr2)
+			.contentid(contentid)
+			.build();
+	}
 }
 

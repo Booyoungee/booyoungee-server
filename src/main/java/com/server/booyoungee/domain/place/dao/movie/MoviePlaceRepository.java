@@ -2,9 +2,11 @@ package com.server.booyoungee.domain.place.dao.movie;
 
 import java.util.List;
 
+import com.server.booyoungee.domain.place.domain.store.StorePlace;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
@@ -25,6 +27,27 @@ public interface MoviePlaceRepository extends JpaRepository<MoviePlace, Long> {
 
 	@Query("SELECT s FROM MoviePlace s where s.viewCount>0 ORDER BY s.viewCount DESC")
 	List<MoviePlace> top10MoviePlace(Pageable pageable);
+
+
+	@Query("SELECT sp FROM MoviePlace sp " +
+			"WHERE ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
+			"Point(:longitude, :latitude)) <= :radius " +
+			"ORDER BY ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
+			"Point(:longitude, :latitude))")
+	List<MoviePlace> findNearbyMoviePlaces(
+			@Param("latitude") double latitude,
+			@Param("longitude") double longitude,
+			@Param("radius") double radius,
+			Pageable pageable);
+
+	@Query("SELECT COUNT(sp) FROM MoviePlace sp " +
+			"WHERE ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
+			"Point(:longitude, :latitude)) <= :radius")
+	long countNearbyMoviePlaces(@Param("latitude") double latitude,
+								@Param("longitude") double longitude,
+								@Param("radius") double radius);
+
+
 
 	// TODO : QueryDsl로 변경
 }
