@@ -1,6 +1,6 @@
 package com.server.booyoungee.domain.bookmark.dto.response;
 
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
 import com.server.booyoungee.domain.place.domain.PlaceType;
 
@@ -25,4 +25,8 @@ public record BookMarkResponse(
 	@Schema(description = "장소 카테고리", example = "영화 촬영지", requiredMode = REQUIRED)
 	String placeCategory
 ) {
+	public static BookMarkResponse of(Long id, String name, Double latitude, Double longtidude, PlaceType type,
+		String placeCategory) {
+		return new BookMarkResponse(id, name, latitude, longtidude, type, placeCategory);
+	}
 }
