@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.bookmark.application.BookMarkService;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkListResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.place.domain.PlaceType;
@@ -56,12 +57,12 @@ public class BookMarkController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@GetMapping("")
-	public ResponseModel<List<BookMarkResponse>> getBookMarks(
-		@Parameter(hidden = true) @UserId User user
+	@GetMapping()
+	public ResponseModel<BookMarkListResponse> getBookMarks(
+		@Parameter @UserId User user
 	) {
-		List<BookMarkResponse> response = bookMarkService.getBookMarks(user);
-		return response.isEmpty()
+		BookMarkListResponse response = bookMarkService.getBookMarks(user);
+		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
 
@@ -104,9 +105,9 @@ public class BookMarkController {
 		),
 	})
 	@ResponseStatus(CREATED)
-	@PostMapping("")
+	@PostMapping()
 	ResponseModel<BookMarkPersistResponse> addBookMark(
-		@Parameter(hidden = true) @UserId User user,
+		@Parameter @UserId User user,
 		@RequestParam Long placeId,
 		@RequestParam PlaceType type
 	) {
@@ -137,7 +138,7 @@ public class BookMarkController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 	})
-	@DeleteMapping("")
+	@DeleteMapping()
 	ResponseModel<BookMarkPersistResponse> deleteBookMark(
 		@Parameter(hidden = true) @UserId User user,
 		@RequestParam Long bookMarkId

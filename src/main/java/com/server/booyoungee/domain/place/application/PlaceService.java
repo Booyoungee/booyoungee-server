@@ -153,7 +153,6 @@ public class PlaceService {
 				.orElse(null);
 			if (place == null) {
 				place = placeService.saveTourPlace(placeId);
-				System.out.println("place = " + place.getId());
 				return place;
 			}
 			return place;

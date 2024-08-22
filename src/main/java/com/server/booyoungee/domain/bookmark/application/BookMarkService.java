@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkListResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.bookmark.exception.DuplicateBookMarkException;
@@ -29,7 +30,7 @@ public class BookMarkService {
 	private final BookMarkRepository bookMarkRepository;
 	private final PlaceService placeService;
 
-	public List<BookMarkResponse> getBookMarks(User user) {
+	public BookMarkListResponse getBookMarks(User user) {
 		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
 		List<BookMarkResponse> dto = bookMarkList.stream()
 			.map(bookMark -> {
@@ -40,9 +41,7 @@ public class BookMarkService {
 				}
 			})
 			.collect(Collectors.toList());
-
-		return dto;
-
+		return BookMarkListResponse.of(dto);
 	}
 
 	public List<PlaceDetailsResponse> getMyBookMarkDetails(User user) throws IOException {
