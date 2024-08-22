@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import com.server.booyoungee.domain.bookmark.domain.BookMark;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +35,7 @@ public class Place {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-
 	private String name;
-
 
 	private String basicAddress;
 
@@ -48,6 +46,9 @@ public class Place {
 
 	@OneToMany(mappedBy = "place")
 	private List<Comment> comments = new ArrayList<>();
+
+	@OneToMany(mappedBy = "placeId")
+	private List<BookMark> bookmarks = new ArrayList<>();
 
 	public void increaseViewCount() {
 		this.viewCount++;

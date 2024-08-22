@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.bookmark.domain;
 
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.user.domain.User;
 
@@ -39,10 +40,19 @@ public class BookMark {
 	@JoinColumn(name = "userId", nullable = false)
 	private User userId;
 
-	@Column(nullable = false)
-	private Long placeId;
+	@ManyToOne
+	@JoinColumn(name = "placeId", nullable = false)
+	private Place placeId;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private PlaceType type;
+
+	public static BookMark of(User user, Place place, PlaceType type) {
+		return BookMark.builder()
+			.userId(user)
+			.placeId(place)
+			.type(type)
+			.build();
+	}
 }

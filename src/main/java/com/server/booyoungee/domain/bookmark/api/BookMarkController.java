@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.bookmark.application.BookMarkService;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkListResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
@@ -48,15 +49,20 @@ public class BookMarkController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "북마크 조회 성공",
-			content = @Content(schema = @Schema(implementation = TourInfoBookMarkResponse.class))
+			content = @Content(schema = @Schema(implementation = BookMarkResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@GetMapping("")
-	public ResponseModel<List<TourInfoBookMarkResponse>> getBookMarks(
-		@Parameter(hidden = true) @UserId User user
+	@GetMapping()
+	public ResponseModel<BookMarkListResponse> getBookMarks(
+		@Parameter @UserId User user
 	) {
-		List<TourInfoBookMarkResponse> response = bookMarkService.getBookMarks(user);
-		return response.isEmpty()
+		BookMarkListResponse response = bookMarkService.getBookMarks(user);
+		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
 
@@ -92,11 +98,16 @@ public class BookMarkController {
 			description = "NOT_FOUND_PLACE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
 	})
 	@ResponseStatus(CREATED)
-	@PostMapping("")
+	@PostMapping()
 	ResponseModel<BookMarkPersistResponse> addBookMark(
-		@Parameter(hidden = true) @UserId User user,
+		@Parameter @UserId User user,
 		@RequestParam Long placeId,
 		@RequestParam PlaceType type
 	) {
@@ -120,10 +131,14 @@ public class BookMarkController {
 			responseCode = "404",
 			description = "NOT_FOUND_BOOKMARK",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		)
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
 	})
-
-	@DeleteMapping("")
+	@DeleteMapping()
 	ResponseModel<BookMarkPersistResponse> deleteBookMark(
 		@Parameter(hidden = true) @UserId User user,
 		@RequestParam Long bookMarkId

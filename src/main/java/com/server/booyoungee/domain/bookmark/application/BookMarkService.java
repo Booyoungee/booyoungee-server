@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkListResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
+import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.bookmark.exception.DuplicateBookMarkException;
 import com.server.booyoungee.domain.bookmark.exception.NotFoundBookMarkException;
 import com.server.booyoungee.domain.place.application.PlaceService;
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
-import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
-import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoBookMarkResponse;
 import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
@@ -30,20 +30,18 @@ public class BookMarkService {
 	private final BookMarkRepository bookMarkRepository;
 	private final PlaceService placeService;
 
-	public List<TourInfoBookMarkResponse> getBookMarks(User user) {
+	public BookMarkListResponse getBookMarks(User user) {
 		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
-		List<TourInfoBookMarkResponse> dto = bookMarkList.stream()
+		List<BookMarkResponse> dto = bookMarkList.stream()
 			.map(bookMark -> {
 				try {
-					return getPlace(bookMark.getBookMarkId(), bookMark.getPlaceId(), bookMark.getType());
+					return getPlace(bookMark.getBookMarkId(), bookMark.getPlaceId().getId(), bookMark.getType());
 				} catch (IOException e) {
 					throw new NotFoundBookMarkException();
 				}
 			})
 			.collect(Collectors.toList());
-
-		return dto;
-
+		return BookMarkListResponse.of(dto);
 	}
 
 	public List<PlaceDetailsResponse> getMyBookMarkDetails(User user) throws IOException {
@@ -51,38 +49,27 @@ public class BookMarkService {
 		List<BookMark> bookMarkList = user.getBookMarks();
 		List<PlaceDetailsResponse> dto = new ArrayList<>();
 		for (BookMark bookMark : bookMarkList) {
-			dto.add(placeService.getDetails(bookMark.getPlaceId(), bookMark.getType()));
+			dto.add(placeService.getDetails(bookMark.getPlaceId().getId(), bookMark.getType()));
 		}
 		return dto;
 	}
 
+	@Transactional
 	public BookMarkPersistResponse addBookMark(User user, Long placeId, PlaceType type) {
-		try {
-			TourInfoBookMarkResponse dto = placeService.getPlace(1L, placeId, type);
-		} catch (Exception e) {
-			if (type.equals(PlaceType.movie)) {
-				throw new NotFoundMoviePlaceException();
-			} else if (type.equals(PlaceType.store)) {
-				throw new NotFoundStorePlaceException();
-			} else {
-				throw new NotFoundException("contentID : " + placeId + " not found.");
-			}
 
-		}
-		if (bookMarkRepository.existsByUserIdAndPlaceIdAndType(user, placeId, type)) {
+		Place place = placeService.getByPlaceId(placeId, type);
+
+		System.out.println("add bookmark placeId" + place.getId());
+
+		if (bookMarkRepository.existsByUserIdAndPlaceIdAndType(user, place, type)) {
 			throw new DuplicateBookMarkException();
 		}
-
-		BookMark bookMark = BookMark.builder()
-			.userId(user)
-			.placeId(placeId)
-			.type(type)
-			.build();
+		BookMark bookMark = BookMark.of(user, place, type);
 		bookMarkRepository.save(bookMark);
 		return BookMarkPersistResponse.from(bookMark);
 	}
 
-	public TourInfoBookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws IOException {
+	public BookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws IOException {
 		return placeService.getPlace(id, placeId, type);
 	}
 
@@ -95,7 +82,4 @@ public class BookMarkService {
 		return BookMarkPersistResponse.from(bookMark);
 	}
 
-	public boolean isMarked(User user, Long placeId) {
-		return bookMarkRepository.existsByUserIdAndPlaceId(user, placeId);
-	}
 }
