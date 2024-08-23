@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
 import com.server.booyoungee.domain.place.application.hotPlace.HotPlaceService;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceListResponse;
-import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlacePersistReponse;
+import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlacePersistResponse;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceResponse;
 import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
@@ -62,7 +61,7 @@ public class HotPlaceController {
 		@ApiResponse(
 			responseCode = "201",
 			description = "핫한 여행지 등록 성공",
-			content = @Content(schema = @Schema(implementation = BookMarkPersistResponse.class))
+			content = @Content(schema = @Schema(implementation = HotPlacePersistResponse.class))
 		),
 		@ApiResponse(
 			responseCode = "404",
@@ -77,8 +76,8 @@ public class HotPlaceController {
 	})
 	@ResponseStatus(CREATED)
 	@PostMapping()
-	public ResponseModel<HotPlacePersistReponse> saveHotPlace() {
-		HotPlacePersistReponse response = hotPlaceService.saveHotPlace();
+	public ResponseModel<HotPlacePersistResponse> saveHotPlace() {
+		HotPlacePersistResponse response = hotPlaceService.saveHotPlace();
 		return ResponseModel.success(response);
 	}
 

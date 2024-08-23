@@ -18,7 +18,7 @@ import com.server.booyoungee.domain.place.dao.hotPlace.HotPlaceRepository;
 import com.server.booyoungee.domain.place.domain.HotPlace;
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceListResponse;
-import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlacePersistReponse;
+import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlacePersistResponse;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.global.exception.CustomException;
@@ -61,10 +61,10 @@ public class HotPlaceService {
 	}
 
 	@Transactional
-	public HotPlacePersistReponse saveHotPlace() {
+	public HotPlacePersistResponse saveHotPlace() {
 
 		hotPlaceRepository.updateAllToNotHotPlace();
-		return HotPlacePersistReponse.from(saveAllHotPlace(getPlaceViewCount()));
+		return HotPlacePersistResponse.from(saveAllHotPlace(getPlaceViewCount()));
 	}
 
 	public List<HotPlace> saveAllHotPlace(List<HotPlace> hotPlaces) {
