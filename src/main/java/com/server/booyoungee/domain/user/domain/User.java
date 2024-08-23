@@ -9,6 +9,7 @@ import com.server.booyoungee.domain.review.comment.domain.Comment;
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
 
+import com.server.booyoungee.global.common.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +35,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,12 +57,6 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(nullable = false)
-	private LocalDateTime updatedAt;
-
 	@OneToMany(mappedBy = "writer")
 	List<Comment> comments = new ArrayList<>();
 
@@ -71,16 +66,6 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Stamp> stamps = new ArrayList<>();
 
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-		updatedAt = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		updatedAt = LocalDateTime.now();
-	}
 
 	public enum Role {
 		USER,
