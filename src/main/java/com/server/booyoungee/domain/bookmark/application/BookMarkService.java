@@ -57,7 +57,7 @@ public class BookMarkService {
 	@Transactional
 	public BookMarkPersistResponse addBookMark(User user, Long placeId, PlaceType type) {
 
-		Place place = placeService.getByPlaceId(placeId, type);
+		Place place = placeService.getByPlaceId(placeId, type.getKey());
 
 		System.out.println("add bookmark placeId" + place.getId());
 

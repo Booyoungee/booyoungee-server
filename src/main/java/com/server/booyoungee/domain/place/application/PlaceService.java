@@ -142,13 +142,15 @@ public class PlaceService {
 
 	}
 
+	//조회할 때 place 가져올 때
 	public Place getByPlaceId(Long placeId) {
 		return placeRepository.findById(placeId)
 			.orElseThrow(NotFoundPlaceException::new);
 	}
 
-	public Place getByPlaceId(Long placeId, PlaceType type) {
-		if (type.getKey().equals("tour")) {
+	//등록할 때 place 가져올 때
+	public Place getByPlaceId(Long placeId, String type) {
+		if (type.equals("tour")) {
 			Place place = placeRepository.findById(placeId)
 				.orElse(null);
 			if (place == null) {
