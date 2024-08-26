@@ -2,6 +2,8 @@ package com.server.booyoungee.domain.like.api;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +19,14 @@ import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -53,6 +57,33 @@ public class LikeController {
 	) {
 		LikePersistResponse response = likeService.saveLike(user, request);
 		return ResponseModel.success(CREATED, response);
+	}
+
+	@Operation(summary = "좋아요 삭제", description = "장소에 대한 좋아요를 삭제합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "좋아요 삭제 성공",
+			content = @Content(schema = @Schema(implementation = LikePersistResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "USER_NOT_LIKE_OWNER",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_LIKE",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+	})
+	@DeleteMapping("/{likeId}")
+	public ResponseModel<LikePersistResponse> deleteLike(
+		@UserId User user,
+		@Parameter(description = "좋아요 ID", example = "1", required = true) @PathVariable("likeId") @Positive Long likeId
+	) {
+		LikePersistResponse response = likeService.deleteLike(user, likeId);
+		return ResponseModel.success(response);
 	}
 
 }
