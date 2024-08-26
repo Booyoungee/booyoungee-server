@@ -1,12 +1,21 @@
 package com.server.booyoungee.domain.place.domain;
 
+import static jakarta.persistence.FetchType.*;
+
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.ColumnDefault;
+
+import com.server.booyoungee.domain.place.domain.store.StorePlace;
+import com.server.booyoungee.domain.place.domain.tour.TourPlace;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -27,24 +36,20 @@ public class HotPlace {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long placeId;
+	@ManyToOne(fetch = EAGER)
+	@JoinColumn(name = "place_id")
+	private Place place;
 
 	@Column(nullable = false)
 	private String type;
-
-	@Column(nullable = false)
-	private String name;
 
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
-	@Column(nullable = false, columnDefinition = "0")
-	private int viewCount;
 
-	@Column(nullable = false)
+	@ColumnDefault("true")
 	private boolean isHotPlace;
 
 	@PrePersist
@@ -58,27 +63,33 @@ public class HotPlace {
 		updatedAt = LocalDateTime.now();
 	}
 
-	public static HotPlace from(Long placeId, String type, String name, int viewCount) {
-		return HotPlace.builder()
-			.placeId(placeId)
-			.type(type)
-			.name(name)
-			.viewCount(viewCount)
-			.isHotPlace(true)
-			.build();
-	}
-
 	// Builder 패턴 사용을 위해 추가된 빌더 메서드
 
 	public static HotPlace of(
-		Long placeId, String type, String name, int viewCount, boolean isHotPlace
+		Place place, String type, boolean isHotPlace
 	) {
 		return HotPlace.builder()
-			.placeId(placeId)
+			.isHotPlace(true)
+			.place(place)
 			.type(type)
-			.name(name)
-			.viewCount(viewCount)
 			.isHotPlace(isHotPlace)
+			.build();
+	}
+
+	public static HotPlace from(
+		Place place
+	) {
+		String type;
+		if (place instanceof TourPlace)
+			type = "tour";
+		else if (place instanceof StorePlace)
+			type = "store";
+		else
+			type = "movie";
+		return HotPlace.builder()
+			.isHotPlace(true)
+			.place(place)
+			.type(type)
 			.build();
 	}
 
