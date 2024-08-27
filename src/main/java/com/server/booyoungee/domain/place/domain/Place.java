@@ -50,13 +50,13 @@ public class Place {
 	@OneToMany(mappedBy = "place")
 	private List<Comment> comments = new ArrayList<>();
 
-	@OneToMany(mappedBy = "placeId")
+	@OneToMany(mappedBy = "placeId", fetch = FetchType.LAZY)
 	private List<BookMark> bookmarks = new ArrayList<>();
 
 	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
 	private List<Like> likes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "place")
+	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
 	private List<Stamp> stamps = new ArrayList<>();
 
 	public void increaseViewCount() {

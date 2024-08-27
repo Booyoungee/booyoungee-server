@@ -1,7 +1,5 @@
 package com.server.booyoungee.domain.stamp.domain;
 
-import java.time.LocalDateTime;
-
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.global.common.BaseTimeEntity;
@@ -13,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -46,12 +43,6 @@ public class Stamp extends BaseTimeEntity {
 	private Place place;
 
 	private String type;
-
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-		updatedAt = LocalDateTime.now();
-	}
 
 	public static Stamp of(User user, Place place, String type) {
 		return Stamp.builder()

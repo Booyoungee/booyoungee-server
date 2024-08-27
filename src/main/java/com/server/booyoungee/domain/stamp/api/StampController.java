@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.stamp.application.StampService;
 import com.server.booyoungee.domain.stamp.dto.request.StampRequest;
+import com.server.booyoungee.domain.stamp.dto.response.StampListResponse;
 import com.server.booyoungee.domain.stamp.dto.response.StampPersistResponse;
 import com.server.booyoungee.domain.stamp.dto.response.StampResponse;
-import com.server.booyoungee.domain.stamp.dto.response.StampResponseList;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -45,8 +46,8 @@ public class StampController {
 			content = @Content(schema = @Schema(implementation = StampPersistResponse.class))
 		),
 		@ApiResponse(
-			responseCode = "409",
-			description = "DUPLICATE_STAMP(중복된 요청)",
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 		@ApiResponse(
@@ -55,19 +56,19 @@ public class StampController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 		@ApiResponse(
-			responseCode = "400",
-			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			responseCode = "409",
+			description = "DUPLICATE_STAMP(중복된 요청)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
+		)
 	})
 	@ResponseStatus(CREATED)
-	@PostMapping()
+	@PostMapping
 	public ResponseModel<StampPersistResponse> addStamp(
 		@UserId User user,
-		@RequestBody StampRequest dto
+		@Valid @RequestBody StampRequest dto
 	) {
 		StampPersistResponse response = stampService.createStamp(user, dto);
-		return ResponseModel.success(response);
+		return ResponseModel.success(CREATED, response);
 	}
 
 	@Operation(
@@ -77,24 +78,24 @@ public class StampController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "스탬프 조회 성공",
-			content = @Content(schema = @Schema(implementation = StampResponseList.class))
-		),
-		@ApiResponse(
-			responseCode = "404",
-			description = "NOT_FOUND_STAMP(스탬프를 찾을 수 없음)",
-			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			content = @Content(schema = @Schema(implementation = StampListResponse.class))
 		),
 		@ApiResponse(
 			responseCode = "400",
 			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_STAMP(스탬프를 찾을 수 없음)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@GetMapping()
-	public ResponseModel<StampResponseList> getStamp(
+	@GetMapping
+	public ResponseModel<StampListResponse> getStamp(
 		@UserId User user
 	) {
-		StampResponseList response = stampService.getStamp(user);
+		StampListResponse response = stampService.getStamp(user);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
@@ -110,15 +111,15 @@ public class StampController {
 			content = @Content(schema = @Schema(implementation = StampResponse.class))
 		),
 		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
 			responseCode = "404",
 			description = "NOT_FOUND_STAMP(스탬프를 찾을 수 없음)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
-		@ApiResponse(
-			responseCode = "400",
-			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
-			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		)
 	})
 	@GetMapping("/details")
 	public ResponseModel<StampResponse> getStamp(
@@ -137,6 +138,11 @@ public class StampController {
 			content = @Content(schema = @Schema(implementation = StampPersistResponse.class))
 		),
 		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
 			responseCode = "403",
 			description = "USER_NOT_HAVE_STAMP(권한문제)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
@@ -145,14 +151,9 @@ public class StampController {
 			responseCode = "404",
 			description = "NOT_FOUND_STAMP",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
-		@ApiResponse(
-			responseCode = "400",
-			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
-			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
+		)
 	})
-	@DeleteMapping()
+	@DeleteMapping
 	ResponseModel<StampPersistResponse> deleteStamp(
 		@UserId User user,
 		@RequestParam Long stampId
