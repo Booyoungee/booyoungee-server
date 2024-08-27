@@ -52,7 +52,7 @@ public class Place {
 	@OneToMany(mappedBy = "placeId")
 	private List<BookMark> bookmarks = new ArrayList<>();
 
-	@OneToMany(mappedBy = "place", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
 	private List<Like> likes = new ArrayList<>();
 
 	public void increaseViewCount() {

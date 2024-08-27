@@ -56,10 +56,10 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "writer")
 	List<Comment> comments = new ArrayList<>();
 
-	@OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<BookMark> bookMarks = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Stamp> stamps = new ArrayList<>();
 
 	public enum Role {

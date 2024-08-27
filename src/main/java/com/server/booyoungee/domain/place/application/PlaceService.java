@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
@@ -43,6 +44,7 @@ public class PlaceService {
 	private final TmdbApiService movieService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
+	@Transactional
 	public BookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
 		IOException,
 		NotFoundException {
@@ -72,6 +74,7 @@ public class PlaceService {
 		}
 	}
 
+	@Transactional
 	public List<String> placeImageList(String name) throws IOException {
 		List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(name);
 		List<String> imageList = new ArrayList<>();
@@ -88,6 +91,7 @@ public class PlaceService {
 		return imageList;
 	}
 
+	@Transactional
 	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type) throws IOException {
 
 		PlaceDetailsResponse dto;
