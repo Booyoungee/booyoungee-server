@@ -23,6 +23,7 @@ import com.server.booyoungee.global.exception.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -123,6 +124,11 @@ public class StampController {
 	})
 	@GetMapping("/details")
 	public ResponseModel<StampResponse> getStamp(
+		@Parameter(
+			description = "스탬프 ID",
+			example = "1",
+			required = true
+		)
 		@RequestParam Long stampId,
 		@UserId User user
 	) {
@@ -156,6 +162,11 @@ public class StampController {
 	@DeleteMapping
 	ResponseModel<StampPersistResponse> deleteStamp(
 		@UserId User user,
+		@Parameter(
+			description = "스탬프 ID",
+			example = "1",
+			required = true
+		)
 		@RequestParam Long stampId
 	) {
 		StampPersistResponse response = stampService.deleteStamp(user, stampId);
@@ -166,6 +177,11 @@ public class StampController {
 	@Operation(summary = "특정 장소 스탬프 수 조회")
 	@GetMapping("/count")
 	public ResponseModel<?> getCountStampByPlaceId(
+		@Parameter(
+			description = "장소 ID",
+			example = "1",
+			required = true
+		)
 		@RequestParam Long placeId) {
 		return ResponseModel.success(stampService.getStampCountByPlaceId(placeId));
 	}
