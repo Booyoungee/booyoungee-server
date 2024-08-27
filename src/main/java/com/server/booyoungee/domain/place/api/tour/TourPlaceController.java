@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
+import com.server.booyoungee.domain.place.domain.tour.TourContentType;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/tourInfo")
 @Tag(name = "TourInfoApi", description = "관광 정보 조회 api / 담당자 : 이한음")
-public class TourInfoController {
+public class TourPlaceController {
 	private final TourPlaceService tourInfoService;
 
 	@GetMapping("/{contentId}")

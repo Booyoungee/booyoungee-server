@@ -1,8 +1,6 @@
 package com.server.booyoungee.domain.place.dto.response.tour;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
+import com.server.booyoungee.domain.place.domain.tour.TourContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 

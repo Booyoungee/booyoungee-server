@@ -2,11 +2,9 @@ package com.server.booyoungee.domain.place.application.tour;
 
 import static com.server.booyoungee.domain.place.exception.tour.TourInfoExceptionCode.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +15,7 @@ import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonRespon
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourPlaceResponseDto;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
-import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
+import com.server.booyoungee.domain.place.domain.tour.TourContentType;
 import com.server.booyoungee.global.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;

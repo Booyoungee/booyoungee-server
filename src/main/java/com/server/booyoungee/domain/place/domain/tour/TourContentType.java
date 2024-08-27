@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.tourInfo.domain.etc;
+package com.server.booyoungee.domain.place.domain.tour;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
