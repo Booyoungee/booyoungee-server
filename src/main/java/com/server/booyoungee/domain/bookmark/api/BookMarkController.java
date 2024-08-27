@@ -25,6 +25,7 @@ import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,7 +56,7 @@ public class BookMarkController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@GetMapping()
+	@GetMapping
 	public ResponseModel<BookMarkListResponse> getBookMarks(
 		@UserId User user
 	) {
@@ -87,8 +88,8 @@ public class BookMarkController {
 			content = @Content(schema = @Schema(implementation = BookMarkPersistResponse.class))
 		),
 		@ApiResponse(
-			responseCode = "409",
-			description = "DUPLICATE_BOOKMARK",
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 		@ApiResponse(
@@ -97,16 +98,26 @@ public class BookMarkController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 		@ApiResponse(
-			responseCode = "400",
-			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			responseCode = "409",
+			description = "DUPLICATE_BOOKMARK",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
+		)
 	})
 	@ResponseStatus(CREATED)
-	@PostMapping()
+	@PostMapping
 	ResponseModel<BookMarkPersistResponse> addBookMark(
 		@UserId User user,
+		@Parameter(
+			description = "장소 ID",
+			example = "1",
+			required = true
+		)
 		@RequestParam Long placeId,
+		@Parameter(
+			description = "장소 type",
+			example = "tour",
+			required = true
+		)
 		@RequestParam PlaceType type
 	) {
 		BookMarkPersistResponse response = bookMarkService.addBookMark(user, placeId, type);
@@ -121,6 +132,11 @@ public class BookMarkController {
 			content = @Content(schema = @Schema(implementation = BookMarkPersistResponse.class))
 		),
 		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
 			responseCode = "403",
 			description = "USER_NOT_HAVE_BOOKMARK",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
@@ -129,16 +145,16 @@ public class BookMarkController {
 			responseCode = "404",
 			description = "NOT_FOUND_BOOKMARK",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
-		@ApiResponse(
-			responseCode = "400",
-			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
-			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
+		)
 	})
-	@DeleteMapping()
+	@DeleteMapping
 	ResponseModel<BookMarkPersistResponse> deleteBookMark(
 		@UserId User user,
+		@Parameter(
+			description = "북마크 ID",
+			example = "1",
+			required = true
+		)
 		@RequestParam Long bookMarkId
 	) {
 		BookMarkPersistResponse response = bookMarkService.deleteBookMark(user, bookMarkId);
