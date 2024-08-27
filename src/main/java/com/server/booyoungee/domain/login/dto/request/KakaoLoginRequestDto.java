@@ -2,14 +2,23 @@ package com.server.booyoungee.domain.login.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
 @Builder
-public class KakaoLoginRequestDto {
+public record KakaoLoginRequestDto(
+
 	@JsonProperty("access_token")
-	private String accessToken;
+	@NotBlank
+	String accessToken,
 	@JsonProperty("refresh_token")
-	private String refreshToken;
+	@NotBlank
+	String refreshToken
+) {
+	public static KakaoLoginRequestDto of(String accessToken, String refreshToken) {
+		return KakaoLoginRequestDto.builder()
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.build();
+	}
 }

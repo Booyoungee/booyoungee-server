@@ -1,5 +1,7 @@
 package com.server.booyoungee.domain.login.api;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.login.application.AuthService;
@@ -20,18 +23,22 @@ import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
-import com.server.booyoungee.domain.login.dto.response.SignUpResponseDto;
+import com.server.booyoungee.domain.login.dto.response.SignUpResponse;
 import com.server.booyoungee.domain.user.application.UserService;
 import com.server.booyoungee.global.common.ResponseModel;
-import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.exception.ExceptionResponse;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -49,11 +56,29 @@ public class AuthController {
 	@Value("${kakao.redirect.url}")
 	private String redirectUri;// Replace with your actual redirect URI
 
-	@Operation(summary = "카카오 로그인",
+	@Operation(
+		summary = "카카오 로그인",
 		description = "엑세스 토큰과 리프레시 토큰을 전달 받으면 JWT 토큰을 발급합니다.")
-	@PostMapping("")
-	public ResponseModel<?> kakaoLogin(
-		@RequestBody KakaoLoginRequestDto accessToken) throws IOException {
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "로그인 성공",
+			content = @Content(schema = @Schema(implementation = JwtTokenResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_USER_INFO(잘못된 엑세스 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_USER(회원가입 필요)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
+	@PostMapping
+	public ResponseModel<JwtTokenResponse> kakaoLogin(
+		@Valid @RequestBody KakaoLoginRequestDto accessToken) throws IOException {
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
 		JwtTokenResponse tokens = authService.login(accessToken, request);
 		return ResponseModel.success(tokens);
@@ -61,17 +86,33 @@ public class AuthController {
 
 	@Operation(summary = "회원가입",
 		description = "엑세스 토큰과 리프레시 토큰을 , 닉네임을 전달받으면 jwt 토큰과 닉네임을 발급합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "201",
+			description = "회원가입 성공",
+			content = @Content(schema = @Schema(implementation = SignUpResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_USER_INFO(올바르지 않은 엑세스 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "409",
+			description = "DUPLICATE_NICKNAME(중복된 닉네임)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
+	@ResponseStatus(CREATED)
 	@PostMapping("/signup")
-	public ResponseModel<?> signUp(@RequestBody SignUpRequestDto token) {
+	public ResponseModel<SignUpResponse> signUp(
+		@Valid @RequestBody SignUpRequestDto token) {
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		String name = userService.duplicateNickname(token.getNickname());
+		String name = userService.duplicateNickname(token.nickname());
 		JwtTokenResponse tokens = authService.signup(token, name, request);
-		SignUpResponseDto dto = SignUpResponseDto.builder()
-			.accessToken(tokens.accessToken())
-			.refreshToken(tokens.refreshToken())
-			.nickname(name)
-			.build();
-		return ResponseModel.success(dto);
+		SignUpResponse response = SignUpResponse.of(
+			tokens.accessToken(), tokens.refreshToken(), name);
+		return ResponseModel.success(CREATED, response);
 	}
 
 	@Hidden
@@ -90,10 +131,9 @@ public class AuthController {
 	public ResponseModel<?> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.builder()
-			.accessToken(response.getAccess_token())
-			.refreshToken(response.getRefresh_token())
-			.build();
+		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.of(
+			response.getAccess_token(), response.getRefresh_token()
+		);
 		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
 		return ResponseModel.success((tokens));
 	}
