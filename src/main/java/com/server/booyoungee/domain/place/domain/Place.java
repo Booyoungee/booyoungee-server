@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
 import com.server.booyoungee.domain.like.domain.Like;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
+import com.server.booyoungee.domain.stamp.domain.Stamp;
 
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -54,6 +55,9 @@ public class Place {
 
 	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
 	private List<Like> likes = new ArrayList<>();
+
+	@OneToMany(mappedBy = "place")
+	private List<Stamp> stamps = new ArrayList<>();
 
 	public void increaseViewCount() {
 		this.viewCount++;

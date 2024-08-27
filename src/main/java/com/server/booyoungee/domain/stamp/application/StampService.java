@@ -1,20 +1,23 @@
 package com.server.booyoungee.domain.stamp.application;
 
+import static com.server.booyoungee.domain.stamp.exception.StampExceptionCode.*;
+
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.server.booyoungee.domain.place.application.PlaceService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.stamp.dao.StampRepository;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
-import com.server.booyoungee.domain.stamp.dto.PlaceStampCountDto;
-import com.server.booyoungee.domain.stamp.dto.StampResponseDto;
 import com.server.booyoungee.domain.stamp.dto.request.StampRequest;
+import com.server.booyoungee.domain.stamp.dto.response.StampPersistResponse;
 import com.server.booyoungee.domain.stamp.dto.response.StampResponse;
 import com.server.booyoungee.domain.stamp.dto.response.StampResponseList;
-import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.utils.LocationUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -26,31 +29,33 @@ public class StampService {
 
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
-	public void createStamp(User user, StampRequest dto) {
+	private final PlaceService placeService;
+
+	@Transactional
+	public StampPersistResponse createStamp(User user, StampRequest dto) {
 		double userX = dto.userX();
 		double userY = dto.userY();
 		double x = dto.x();
 		double y = dto.y();
 		double distance = LocationUtils.calculateDistance(userY, userX, y, x);
 
+		Place place = placeService.getByPlaceId(dto.placeId(), dto.type());
+
 		if (distance <= 50) {
-			if (!isExistStamp(user, dto.placeId())) {
-				Stamp stamp = Stamp.builder()
-					.user(user)
-					.placeId(dto.placeId())
-					.type(dto.type())
-					.build();
-				stampRepository.save(stamp);
+			if (!isExistStamp(user, place)) {
+				Stamp stamp = Stamp.of(user, place, dto.type());
+				return StampPersistResponse.of(stampRepository.save(stamp).getStampId());
+
 			} else {
-				throw new IllegalArgumentException("이미 존재하는 스탬프입니다.");
+				throw new CustomException(DUPLICATE_STAMP);
 			}
 
 		} else {
-			throw new IllegalArgumentException("User is not within 50 meters of the place.");
+			throw new CustomException(SO_FAR);
 		}
 	}
 
-	public boolean isExistStamp(User user, String placeId) {
+	public boolean isExistStamp(User user, Place placeId) {
 		return stampRepository.existsByUserAndPlaceId(user, placeId);
 	}
 
@@ -58,8 +63,7 @@ public class StampService {
 		List<Stamp> stamps = stampRepository.findAllByUser(user);
 		List<StampResponse> stampResponses = stamps.stream()
 			.map(stamp -> {
-				String placeName = getPlaceName(stamp.getType(), stamp.getPlaceId());
-				return StampResponse.of(stamp, placeName);
+				return StampResponse.from(stamp);
 			})
 			.toList();
 		return StampResponseList.from(stampResponses);
@@ -67,50 +71,20 @@ public class StampService {
 
 	public StampResponse getStamp(User user, Long stampId) {
 		Stamp stamp = stampRepository.findByUserAndStampId(user, stampId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 스탬프가 존재 하지 않습니다."));
-		String placeName = getPlaceName(stamp.getType(), stamp.getPlaceId());
-		return StampResponse.of(stamp, placeName);
+			.orElseThrow(() -> new CustomException(NOT_FOUND_STAMP));
+		return StampResponse.from(stamp);
 	}
 
-	public String getPlaceName(String type, String placeId) {
-		// TODO: 타입에 대한 검사 로직 필요한지 검토
-		return tourInfoOpenApiService.getTitle(placeId);
+	@Transactional
+	public int getStampCountByPlaceId(Long placeId) {
+		Place place = placeService.getByPlaceId(placeId);
+		return place.getStamps().size();
 	}
 
-	public List<Stamp> getStampByPlaceId(String placeId) {
-		List<Stamp> stamp = stampRepository.findByPlaceId(placeId);
-		return stamp;
+	public StampPersistResponse deleteStamp(User user, Long stampId) {
+		Stamp stamp = stampRepository.findByUserAndStampId(user, stampId)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_STAMP));
+		stampRepository.delete(stamp);
+		return StampPersistResponse.of(stampId);
 	}
-
-	public int getStampCountByPlaceId(String placeId) {
-		return getStampByPlaceId(placeId).size();
-	}
-
-	// TODO : 페이징 처리 제거 검토
-	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable) {
-		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCounts(pageable);
-		return stampToStampResponseDto(placeStampCounts);
-	}
-
-	public Page<StampResponseDto> getPlaceStampCounts(Pageable pageable, String type) {
-		Page<PlaceStampCountDto> placeStampCounts = stampRepository.findPlaceStampCountsByType(type, pageable);
-		return stampToStampResponseDto(placeStampCounts);
-	}
-
-	public Page<StampResponseDto> stampToStampResponseDto(Page<PlaceStampCountDto> placeStampCounts) {
-		return placeStampCounts.map(dto -> {
-			try {
-				String placeName = getPlaceName(dto.type(), dto.placeId());
-				return StampResponseDto.builder()
-					.placeId(dto.placeId())
-					.placeName(placeName)
-					.type(dto.type())
-					.count(dto.count())
-					.build();
-			} catch (Exception e) {
-				throw new RuntimeException("Failed to get place name", e);
-			}
-		});
-	}
-
 }
