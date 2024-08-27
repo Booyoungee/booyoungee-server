@@ -1,15 +1,13 @@
 package com.server.booyoungee.domain.user.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.server.booyoungee.domain.review.comment.domain.Comment;
-
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.review.comment.domain.Comment;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
-
 import com.server.booyoungee.global.common.BaseTimeEntity;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,8 +18,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -60,12 +56,11 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "writer")
 	List<Comment> comments = new ArrayList<>();
 
-	@OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<BookMark> bookMarks = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Stamp> stamps = new ArrayList<>();
-
 
 	public enum Role {
 		USER,

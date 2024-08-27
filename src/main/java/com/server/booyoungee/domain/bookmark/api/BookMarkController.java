@@ -24,9 +24,7 @@ import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -59,7 +57,7 @@ public class BookMarkController {
 	})
 	@GetMapping()
 	public ResponseModel<BookMarkListResponse> getBookMarks(
-		@Parameter @UserId User user
+		@UserId User user
 	) {
 		BookMarkListResponse response = bookMarkService.getBookMarks(user);
 		return response.contents().isEmpty()
@@ -68,13 +66,13 @@ public class BookMarkController {
 
 	}
 
-	@Hidden
+	//@Hidden
 	@Operation(summary = "마이페이지에서 북마크 조회",
 		description = "마이페이지에서 북마크에 등록된 장소들의 상세 정보들을 가져옵니다."
 	)
 	@GetMapping("/me")
 	ResponseModel<List<PlaceDetailsResponse>> getMyBookMarkDetails(
-		@Parameter(hidden = true) @UserId User user
+		@UserId User user
 	) throws IOException {
 		return ResponseModel.success(bookMarkService.getMyBookMarkDetails(user));
 	}
@@ -107,7 +105,7 @@ public class BookMarkController {
 	@ResponseStatus(CREATED)
 	@PostMapping()
 	ResponseModel<BookMarkPersistResponse> addBookMark(
-		@Parameter @UserId User user,
+		@UserId User user,
 		@RequestParam Long placeId,
 		@RequestParam PlaceType type
 	) {
@@ -140,7 +138,7 @@ public class BookMarkController {
 	})
 	@DeleteMapping()
 	ResponseModel<BookMarkPersistResponse> deleteBookMark(
-		@Parameter(hidden = true) @UserId User user,
+		@UserId User user,
 		@RequestParam Long bookMarkId
 	) {
 		BookMarkPersistResponse response = bookMarkService.deleteBookMark(user, bookMarkId);

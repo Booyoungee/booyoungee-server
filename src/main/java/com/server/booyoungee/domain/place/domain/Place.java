@@ -6,10 +6,12 @@ import java.util.List;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.like.domain.Like;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,6 +51,9 @@ public class Place {
 
 	@OneToMany(mappedBy = "placeId")
 	private List<BookMark> bookmarks = new ArrayList<>();
+
+	@OneToMany(mappedBy = "place", fetch = FetchType.EAGER)
+	private List<Like> likes = new ArrayList<>();
 
 	public void increaseViewCount() {
 		this.viewCount++;
