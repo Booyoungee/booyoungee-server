@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
@@ -43,6 +44,7 @@ public class PlaceService {
 	private final TmdbApiService movieService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
+	@Transactional
 	public BookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
 		IOException,
 		NotFoundException {
@@ -72,6 +74,7 @@ public class PlaceService {
 		}
 	}
 
+	@Transactional
 	public List<String> placeImageList(String name) throws IOException {
 		List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(name);
 		List<String> imageList = new ArrayList<>();
@@ -88,10 +91,13 @@ public class PlaceService {
 		return imageList;
 	}
 
+	@Transactional
 	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type) throws IOException {
 
 		PlaceDetailsResponse dto;
 		List<String> imageList = new ArrayList<>();
+
+		Place place = getByPlaceId(placeId);
 
 		if (type.getKey().equals("movie")) {
 
@@ -113,8 +119,9 @@ public class PlaceService {
 			for (MovieImagesDto.BackDrops backdrop : backdrops) {
 				posterUrl.add(backdrop.getFilePath());
 			}
+
 			dto = PlaceDetailsResponse.of(placeId + "", moviePlace.name(), moviePlace.basicAddress(),
-				placeImageList(moviePlace.name()), type, movieList, posterUrl);
+				placeImageList(moviePlace.name()), type, movieList, posterUrl, 0, 0);
 
 			return dto;
 
@@ -122,21 +129,23 @@ public class PlaceService {
 
 			StorePlaceResponse store = storePlaceService.getStore(placeId);
 			dto = PlaceDetailsResponse.of(placeId + "", store.name(), store.basicAddress(), imageList, type, null,
-				null);
+				null, place.getLikes().size(), 0);
 
 			return dto;
 
 		} else {
-			TourInfoDetailsResponseDto place = placeService.getTour(placeId);
+			TourInfoDetailsResponseDto tourPlace = placeService.getTour(placeId);
 
-			if (place.firstimage() != null && !place.firstimage().isEmpty()) {
-				imageList.add(place.firstimage());
-				if (place.firstimage2() != null && !place.firstimage2().isEmpty()) {
-					imageList.add(place.firstimage2());
+			if (tourPlace.firstimage() != null && !tourPlace.firstimage().isEmpty()) {
+				imageList.add(tourPlace.firstimage());
+				if (tourPlace.firstimage2() != null && !tourPlace.firstimage2().isEmpty()) {
+					imageList.add(tourPlace.firstimage2());
 				}
 			}
 
-			dto = PlaceDetailsResponse.of(placeId + "", place.title(), place.addr1(), imageList, type, null, null);
+			dto = PlaceDetailsResponse.of(placeId + "", tourPlace.title(), tourPlace.addr1(), imageList, type, null,
+				null, 0,
+				0);
 			return dto;
 		}
 
