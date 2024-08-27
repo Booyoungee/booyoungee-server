@@ -46,7 +46,8 @@ public class BookMarkService {
 
 	public List<PlaceDetailsResponse> getMyBookMarkDetails(User user) throws IOException {
 
-		List<BookMark> bookMarkList = user.getBookMarks();
+		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
+		System.out.println("getMyBookMarkDetails bookMarkList" + bookMarkList.size());
 		List<PlaceDetailsResponse> dto = new ArrayList<>();
 		for (BookMark bookMark : bookMarkList) {
 			dto.add(placeService.getDetails(bookMark.getPlaceId().getId(), bookMark.getType()));

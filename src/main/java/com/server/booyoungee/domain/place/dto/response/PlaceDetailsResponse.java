@@ -14,9 +14,14 @@ public record PlaceDetailsResponse(
 	List<String> images,
 	PlaceType type,
 	List<String> movies,
-	List<String> posterUrl
+	List<String> posterUrl,
+
+	int likeCount,
+
+	int starCount
 ) {
-	public static PlaceDetailsResponse of(String placeId, String name, String address, List<String> images, PlaceType type, List<String> movies, List<String> posterUrl) {
-		return new PlaceDetailsResponse(placeId, name, address, images, type, movies, posterUrl);
+	public static PlaceDetailsResponse of(String placeId, String name, String address, List<String> images,
+		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount) {
+		return new PlaceDetailsResponse(placeId, name, address, images, type, movies, posterUrl, likeCount, starCount);
 	}
 }

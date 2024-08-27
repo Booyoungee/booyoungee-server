@@ -17,7 +17,7 @@ public record StampResponse(
 	Long stampId,
 
 	@Schema(description = "장소 ID", example = "1", requiredMode = REQUIRED)
-	String placeId,
+	Long placeId,
 
 	@Schema(description = "장소 이름", example = "광안리해변", requiredMode = REQUIRED)
 	String placeName,
@@ -30,22 +30,35 @@ public record StampResponse(
 	// Long count,
 
 	@Schema(description = "생성일", example = "2021.09.01.12:00:00", requiredMode = REQUIRED)
-	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss")
+	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss.SSS")
 	LocalDateTime createdAt,
 
 	@Schema(description = "수정일", example = "2021.09.01.12:00:00", requiredMode = REQUIRED)
 	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss.SSS")
 	LocalDateTime updatedAt
 ) {
-	public static StampResponse of(Stamp stamp, String placeName) {
+	public static StampResponse from(Stamp stamp) {
 		return StampResponse.builder()
 			.stampId(stamp.getStampId())
-			.placeId(stamp.getPlaceId())
-			.placeName(placeName)
+			.placeId(stamp.getPlace().getId())
+			.placeName(stamp.getPlace().getName())
 			.type(stamp.getType())
 			// .count(count)
 			.createdAt(stamp.getCreatedAt())
 			.updatedAt(stamp.getUpdatedAt())
+			.build();
+	}
+
+	static public StampResponse of(Long stampId, LocalDateTime createdAt, LocalDateTime updatedAt, Long placeId,
+		String placeName, String type) {
+		return StampResponse.builder()
+			.stampId(stampId)
+			.placeId(placeId)
+			.placeName(placeName)
+			.type(type)
+			// .count(count)
+			.createdAt(createdAt)
+			.updatedAt(updatedAt)
 			.build();
 	}
 

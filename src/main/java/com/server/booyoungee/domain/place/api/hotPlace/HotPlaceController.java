@@ -46,7 +46,7 @@ public class HotPlaceController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@GetMapping("")
+	@GetMapping()
 	public ResponseModel<HotPlaceListResponse> getHotPlaces() {
 		HotPlaceListResponse response = hotPlaceService.getHotPlaces();
 		return response.contents().isEmpty()
@@ -64,21 +64,21 @@ public class HotPlaceController {
 			content = @Content(schema = @Schema(implementation = HotPlacePersistResponse.class))
 		),
 		@ApiResponse(
-			responseCode = "404",
-			description = "NOT_FOUND_PLACE",
-			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-		),
-		@ApiResponse(
 			responseCode = "400",
 			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_PLACE",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
 	})
 	@ResponseStatus(CREATED)
 	@PostMapping()
 	public ResponseModel<HotPlacePersistResponse> saveHotPlace() {
 		HotPlacePersistResponse response = hotPlaceService.saveHotPlace();
-		return ResponseModel.success(response);
+		return ResponseModel.success(CREATED, response);
 	}
 
 }
