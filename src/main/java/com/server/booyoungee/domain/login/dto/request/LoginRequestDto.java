@@ -7,5 +7,6 @@ import jakarta.validation.constraints.NotNull;
 public record LoginRequestDto(
 	@NotNull Provider provider,
 	String name
+
 ) {
 }

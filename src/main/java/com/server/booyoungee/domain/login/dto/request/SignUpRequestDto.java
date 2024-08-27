@@ -5,19 +5,21 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record SignUpRequestDto(
 	@JsonProperty("access_token")
 	@Schema(description = "액세스 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
-	@NotBlank
+	@NotNull
 	String accessToken,
+
 	@JsonProperty("refresh_token")
 	@Schema(description = "리프레시 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
-	@NotBlank
+	@NotNull
 	String refreshToken,
+
 	@Schema(description = "닉네임", example = "홍길동", requiredMode = REQUIRED)
-	@NotBlank
+	@NotNull
 	String nickname
 ) {
 
