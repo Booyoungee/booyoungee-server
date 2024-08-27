@@ -88,6 +88,7 @@ public class TourInfoOpenApiController {
 	) {
 		List<TourInfoCommonResponse> jsonResult = tourInfoOpenApiService
 			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
+		tourPlaceService.viewContents(jsonResult);
 		return ResponseModel.success(jsonResult);
 	}
 
