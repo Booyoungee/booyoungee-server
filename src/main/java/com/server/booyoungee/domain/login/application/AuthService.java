@@ -1,7 +1,5 @@
 package com.server.booyoungee.domain.login.application;
 
-import static com.server.booyoungee.domain.login.exception.LoginExceptionCode.*;
-
 import java.io.IOException;
 import java.util.Optional;
 
@@ -21,10 +19,10 @@ import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.login.exception.ConflictUserException;
+import com.server.booyoungee.domain.login.exception.NotFoundUserException;
 import com.server.booyoungee.domain.login.exception.NotFoundUserInfoException;
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
-import com.server.booyoungee.global.exception.CustomException;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 import com.server.booyoungee.global.utils.JwtUtil;
 
@@ -42,35 +40,35 @@ public class AuthService {
 
 	@Transactional
 	public JwtTokenResponse login(KakaoLoginRequestDto providerToken, LoginRequestDto request) throws IOException {
-		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.getAccessToken());
+		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.accessToken());
 		User user = loadOrCreateUser(socialInfo);
-		String refreshToken = providerToken.getRefreshToken();
+		String refreshToken = providerToken.refreshToken();
 		if (refreshToken == null) {
 			refreshToken = user.getRefreshToken();
 		}
-		return generateTokensWithUpdateRefreshToken(user, providerToken.getAccessToken(), refreshToken);
+		return generateTokensWithUpdateRefreshToken(user, providerToken.accessToken(), refreshToken);
 	}
 
 	private SocialInfoDto getSocialInfo(LoginRequestDto request, String providerToken) {
 		if (request.provider().toString().equals(Provider.KAKAO.toString())) {
 			return kakaoLoginService.getInfo(providerToken);
 		} else {
-			throw new CustomException(NOT_FOUND_USER_INFO);
+			throw new NotFoundUserInfoException(); //엑세스 토큰이 잘못됨
 		}
 	}
 
 	private User loadOrCreateUser(SocialInfoDto socialInfo) {
 		return userRepository.findBySerialId(socialInfo.serialId())
 			.orElseGet(() -> {
-				throw new NotFoundUserInfoException(); //회원가입 필요 404
+				throw new NotFoundUserException(); //회원가입 필요 404
 			});
 	}
 
 	@Transactional
-	public JwtTokenResponse signup(SignUpRequestDto providerToken, String name, LoginRequestDto request)  {
-		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.getAccessToken());
+	public JwtTokenResponse signup(SignUpRequestDto providerToken, String name, LoginRequestDto request) {
+		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.accessToken());
 		User user = createUser(providerToken, name, socialInfo);
-		return generateTokensWithUpdateRefreshToken(user, providerToken.getAccessToken(), user.getRefreshToken());
+		return generateTokensWithUpdateRefreshToken(user, providerToken.accessToken(), user.getRefreshToken());
 	}
 
 	private User createUser(SignUpRequestDto providerToken, String name, SocialInfoDto socialInfo) {
@@ -84,7 +82,7 @@ public class AuthService {
 			.email("")
 			.name(name)
 			.role(User.Role.USER)
-			.refreshToken(providerToken.getRefreshToken()) // Initialize refreshToken as an empty string
+			.refreshToken(providerToken.refreshToken()) // Initialize refreshToken as an empty string
 			.build();
 		userRepository.save(newUser);
 		return newUser;
