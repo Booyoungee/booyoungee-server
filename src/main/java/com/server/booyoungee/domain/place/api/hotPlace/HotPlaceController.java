@@ -1,4 +1,4 @@
-package com.server.booyoungee.domain.place.api;
+package com.server.booyoungee.domain.place.api.hotPlace;
 
 import static org.springframework.http.HttpStatus.*;
 

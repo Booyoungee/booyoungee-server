@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaCodeResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageResponseDto;
@@ -44,8 +44,7 @@ public class TourInfoOpenApiService {
 	@Value("${tourInfo.format}")
 	private String _type;
 
-	public List<TourInfoCommonResponseDto> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY,
-		String radius) {
+	public List<TourInfoCommonResponse> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) {
 		String requestUrl = baseUrl
 			+ "/locationBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -59,10 +58,10 @@ public class TourInfoOpenApiService {
 			+ "&radius=" + radius;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return toList(jsonResult, TourInfoCommonResponseDto[].class);
+		return toList(jsonResult, TourInfoCommonResponse[].class);
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
+	public List<TourInfoCommonResponse> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
 		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		String requestUrl = baseUrl
 			+ "/searchKeyword1"
@@ -72,17 +71,17 @@ public class TourInfoOpenApiService {
 			+ "&MobileOS=AND"
 			+ "&MobileApp=booyoungee"
 			+ "&keyword=" + encodedKeyword
-			+ "&areaCode=" + "6" // 부산 지역코드 : 6
+			+ "&areaCode=" + "6"
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
 		if (jsonResult == null || !jsonResult.isArray() || jsonResult.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return toList(jsonResult, TourInfoCommonResponseDto[].class);
+		return toList(jsonResult, TourInfoCommonResponse[].class);
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate,
+	public List<TourInfoCommonResponse> getTourInfoByFestival(int numOfRows, int pageNo, String eventStartDate,
 		String eventEndDate) {
 		String requestUrl = baseUrl
 			+ "/searchFestival1"
@@ -97,7 +96,7 @@ public class TourInfoOpenApiService {
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
-		return toList(jsonResult, TourInfoCommonResponseDto[].class);
+		return toList(jsonResult, TourInfoCommonResponse[].class);
 	}
 
 	public List<TourInfoStayResponseDto> getTourInfoByStay(int numOfRows, int pageNo) {

@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface TourPlaceRepository extends JpaRepository<TourPlace, Long> {
     Optional<TourPlace> findByContentId(String contentId);
 
+    boolean existsByContentId(String contentId);
+
     Optional<TourPlace> findByContentTypeId(String type);
 
     @Query("SELECT s FROM TourPlace s where s.viewCount>0 ORDER BY s.viewCount DESC")
