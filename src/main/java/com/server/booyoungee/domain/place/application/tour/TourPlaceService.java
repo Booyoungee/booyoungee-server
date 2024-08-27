@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.server.booyoungee.domain.place.dao.tour.TourPlaceRepository;
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.tour.TourPlace;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourPlaceResponseDto;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
@@ -29,7 +30,7 @@ public class TourPlaceService {
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	@Transactional //북마크 조회시 사용
-	public TourInfoDetailsResponseDto getTour(Long placeId) throws IOException {
+	public TourInfoDetailsResponseDto getTour(Long placeId) {
 
 		TourPlace tourPlace = tourPlaceRepository.findById(placeId)
 			.orElseThrow(NotFoundPlaceException::new);
@@ -75,9 +76,29 @@ public class TourPlaceService {
 		return tourInfoList;
 	}
 
-	public List<TourPlace> getTop10TourInfo() {
-		List<TourPlace> top10tourInfo = tourPlaceRepository.top10TourPlace(PageRequest.of(0, 10));
-		return top10tourInfo;
+	public void viewContents(List<TourInfoCommonResponse> jsonResult) {
+		for (TourInfoCommonResponse tourInfoCommonResponse : jsonResult) {
+			String contentId = tourInfoCommonResponse.contentid();
+			String contentTypeId = tourInfoCommonResponse.contenttypeid();
+			if (!isExist(contentId)) {
+				saveContent(contentId, contentTypeId);
+			}
+		}
+	}
+
+	public void viewContent(String contentId, String contentTypeId) {
+		if (!isExist(contentId)) {
+			saveContent(contentId, contentTypeId);
+		}
+	}
+
+	private void saveContent(String contentId, String contentTypeId) {
+		TourPlace tourPlace = TourPlace.of(contentId, contentTypeId);
+		tourPlaceRepository.save(tourPlace);
+	}
+
+	private boolean isExist(String contentId) {
+		return tourPlaceRepository.existsByContentId(contentId);
 	}
 
 }

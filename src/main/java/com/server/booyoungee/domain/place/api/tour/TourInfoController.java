@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.booyoungee.domain.place.application.tour.TourInfoService;
 import com.server.booyoungee.domain.tourInfo.domain.etc.TourContentType;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoResponseDto;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;

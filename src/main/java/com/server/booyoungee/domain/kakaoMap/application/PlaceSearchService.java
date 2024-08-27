@@ -17,8 +17,8 @@ import com.server.booyoungee.domain.kakaoMap.dto.KeywordSearchDto;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchListResponseDto;
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
-import com.server.booyoungee.domain.place.application.tour.TourInfoService;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponseDto;
+import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class PlaceSearchService {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
-	private final TourInfoService tourInfoService;
+	private final TourPlaceService tourPlaceService;
 	private final ObjectMapper objectMapper;
 
 	@Value("${tourInfo.url}")
@@ -68,7 +68,7 @@ public class PlaceSearchService {
 			.filter(doc -> doc.getCategoryName().contains("관광"))
 			.findFirst()
 			.orElse(dto.getDocuments().get(0)); // Default to the first document if none match
-		List<TourInfoCommonResponseDto> tourInfo = getTourInfoByKeyword(10, 1, query);
+		List<TourInfoCommonResponse> tourInfo = getTourInfoByKeyword(10, 1, query);
 
 		String firstImage1 = null;
 		String firstImage2 = null;
@@ -78,7 +78,7 @@ public class PlaceSearchService {
 		if (tourInfo != null && !tourInfo.isEmpty()) {
 			contentId = tourInfo.get(0).contentid();
 			type = tourInfo.get(0).contenttypeid();
-			tourInfoService.viewContent(contentId, type);
+			tourPlaceService.viewContent(contentId, type);
 			firstImage1 = tourInfo.get(0).firstimage();
 			firstImage2 = tourInfo.get(0).firstimage2();
 		}
@@ -94,7 +94,7 @@ public class PlaceSearchService {
 		return responseDto;
 	}
 
-	public List<TourInfoCommonResponseDto> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
+	public List<TourInfoCommonResponse> getTourInfoByKeyword(int numOfRows, int pageNo, String keyword) {
 		try {
 			String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 			String requestUrl = baseUrl
@@ -109,7 +109,7 @@ public class PlaceSearchService {
 				+ "&_type=" + _type;
 
 			JsonNode jsonResult = tourInfoOpenApiService.getTourInfo(requestUrl);
-			return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponseDto[].class));
+			return Arrays.asList(objectMapper.treeToValue(jsonResult, TourInfoCommonResponse[].class));
 		} catch (UnknownContentTypeException e) {
 			System.err.println("Content type error: " + e.getMessage());
 			return null;
@@ -129,7 +129,7 @@ public class PlaceSearchService {
 			.filter(doc -> doc.getCategoryName().contains("관광"))
 			.findFirst()
 			.orElse(dto.getDocuments().get(0)); // Default to the first document if none match
-		List<TourInfoCommonResponseDto> tourInfo = getTourInfoByKeyword(10, 1, query);
+		List<TourInfoCommonResponse> tourInfo = getTourInfoByKeyword(10, 1, query);
 
 		String firstImage1 = null;
 		String firstImage2 = null;
@@ -139,7 +139,7 @@ public class PlaceSearchService {
 		if (tourInfo != null && !tourInfo.isEmpty()) {
 			contentId = tourInfo.get(0).contentid();
 			type = tourInfo.get(0).contenttypeid();
-			tourInfoService.viewContent(contentId, type);
+			tourPlaceService.viewContent(contentId, type);
 			firstImage1 = tourInfo.get(0).firstimage();
 			firstImage2 = tourInfo.get(0).firstimage2();
 		}
