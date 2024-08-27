@@ -67,12 +67,24 @@ public class TourInfoOpenApiController {
 		return ResponseModel.success(jsonResult);
 	}
 
-	@Operation(summary = "국문 관광정보 Open API 부산 키워드 전체 검색")
+	@Operation(summary = "국문 관광 정보 Open API 키워드 검색", description = "키워드를 기반으로 관광 정보를 검색합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "키워드 기반 관광 정보 검색 성공",
+			content = @Content(schema = @Schema(implementation = TourInfoCommonResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "OPEN_API_CALL_ERROR / LIST_PARSING_ERROR",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+	})
 	@GetMapping("/keyword")
 	public ResponseModel<List<TourInfoCommonResponse>> getOpenApiInfoByKeyword(
-		@RequestParam(defaultValue = "10") int numOfRows,
-		@RequestParam(defaultValue = "0") int pageNo,
-		@RequestParam String keyword
+		@Parameter(description = "페이지 내 최대 응답 개수", example = "10", required = true) @RequestParam @Positive int numOfRows,
+		@Parameter(description = "페이지 인덱스", example = "0", required = true) @RequestParam @PositiveOrZero int pageNo,
+		@Parameter(description = "검색 키워드", example = "해운대", required = true) @RequestParam String keyword
 	) {
 		List<TourInfoCommonResponse> jsonResult = tourInfoOpenApiService
 			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
@@ -154,6 +166,7 @@ public class TourInfoOpenApiController {
 		return ResponseModel.success(jsonResult);
 	}
 
+	@Hidden
 	@GetMapping("/areaCode")
 	@Operation(summary = "국문 관광정보 Open API 부산 지역 코드 조회")
 	public ResponseModel<?> getOpenApiAreaCode() {

@@ -71,7 +71,7 @@ public class TourInfoOpenApiService {
 			+ "&MobileOS=AND"
 			+ "&MobileApp=booyoungee"
 			+ "&keyword=" + encodedKeyword
-			+ "&areaCode=" + "6" // 부산 지역코드 : 6
+			+ "&areaCode=" + "6"
 			+ "&_type=" + _type;
 
 		JsonNode jsonResult = getTourInfo(requestUrl);
