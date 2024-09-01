@@ -6,10 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record SignUpRequestDto(
 	@JsonProperty("access_token")
-	@Schema(description = "액세스 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
+	@Schema(description = "카카오 액세스 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
 	@NotNull
 	String accessToken,
 
@@ -22,5 +24,11 @@ public record SignUpRequestDto(
 	@NotNull
 	String nickname
 ) {
-
+	public static SignUpRequestDto of(String accessToken, String refreshToken, String nickname) {
+		return SignUpRequestDto.builder()
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.nickname(nickname)
+			.build();
+	}
 }
