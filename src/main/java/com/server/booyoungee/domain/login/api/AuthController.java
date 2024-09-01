@@ -40,7 +40,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -80,9 +79,12 @@ public class AuthController {
 	})
 	@PostMapping
 	public ResponseModel<JwtTokenResponse> kakaoLogin(
-		@Valid @RequestBody KakaoLoginRequestDto accessToken) throws IOException {
+		@RequestHeader("X-Kakao-Access-Token") String accessToken,
+		@RequestHeader("X-Kakao-Refresh-Token") String refreshToken
+	) throws IOException {
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		JwtTokenResponse tokens = authService.login(accessToken, request);
+		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.of(accessToken, refreshToken);
+		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
 		return ResponseModel.success(tokens);
 	}
 
@@ -108,8 +110,8 @@ public class AuthController {
 	@ResponseStatus(CREATED)
 	@PostMapping("/signup")
 	public ResponseModel<SignUpResponse> signUp(
-		@RequestHeader("access_token") String accessToken,
-		@RequestHeader("refresh_Token") String refreshToken,
+		@RequestHeader("X-Kakao-Access-Token") String accessToken,
+		@RequestHeader("X-Kakao-Refresh-Token") String refreshToken,
 		@RequestBody NickNameRequestDto dto) {
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
 		String name = userService.duplicateNickname(dto.nickname());
