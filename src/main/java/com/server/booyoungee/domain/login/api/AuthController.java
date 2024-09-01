@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +22,7 @@ import com.server.booyoungee.domain.login.application.KakaoLoginService;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
 import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequestDto;
 import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
+import com.server.booyoungee.domain.login.dto.request.NickNameRequestDto;
 import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.login.dto.response.SignUpResponse;
@@ -106,9 +108,12 @@ public class AuthController {
 	@ResponseStatus(CREATED)
 	@PostMapping("/signup")
 	public ResponseModel<SignUpResponse> signUp(
-		@Valid @RequestBody SignUpRequestDto token) {
+		@RequestHeader("access_token") String accessToken,
+		@RequestHeader("refresh_Token") String refreshToken,
+		@RequestBody NickNameRequestDto dto) {
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		String name = userService.duplicateNickname(token.nickname());
+		String name = userService.duplicateNickname(dto.nickname());
+		SignUpRequestDto token = SignUpRequestDto.of(accessToken, refreshToken, dto.nickname());
 		JwtTokenResponse tokens = authService.signup(token, name, request);
 		SignUpResponse response = SignUpResponse.of(
 			tokens.accessToken(), tokens.refreshToken(), name);
@@ -125,17 +130,40 @@ public class AuthController {
 		return ResponseModel.success("로그아웃에 성공하였습니다.");
 	}
 
-	@Operation(summary = "jwt 토큰 갱신",
+	@Operation(
+		summary = "jwt 토큰 갱신",
 		description = "리프레시 토큰을 전달받으면 새로운 jwt 엑세스 토큰을 발급합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "발급 성공",
+			content = @Content(schema = @Schema(implementation = JwtTokenResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_USER_INFO(잘못된 리프레시 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "Unauthorized(만료된 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_USER(회원가입 필요)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
 	@PostMapping("/refresh-jwt-token")
-	public ResponseModel<?> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
+	public ResponseModel<JwtTokenResponse> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
 		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
 		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.of(
 			response.getAccess_token(), response.getRefresh_token()
 		);
 		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
-		return ResponseModel.success((tokens));
+		return ResponseModel.success(tokens);
 	}
 
 	@Hidden
