@@ -4,7 +4,7 @@ import com.server.booyoungee.domain.login.domain.enums.Provider;
 
 import jakarta.validation.constraints.NotNull;
 
-public record LoginRequestDto(
+public record LoginRequest(
 	@NotNull Provider provider,
 	String name
 
