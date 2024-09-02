@@ -6,24 +6,20 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.dto.response.UserPersistResponse;
+import com.server.booyoungee.domain.user.interceptor.UserId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.server.booyoungee.domain.login.application.AuthService;
 import com.server.booyoungee.domain.login.application.KakaoLoginService;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
-import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequestDto;
-import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
-import com.server.booyoungee.domain.login.dto.request.NickNameRequestDto;
-import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
+import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequest;
+import com.server.booyoungee.domain.login.dto.request.LoginRequest;
+import com.server.booyoungee.domain.login.dto.request.NickNameRequest;
+import com.server.booyoungee.domain.login.dto.request.SignUpRequest;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.login.dto.response.SignUpResponse;
 import com.server.booyoungee.domain.user.application.UserService;
@@ -41,6 +37,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/oauth")
@@ -51,6 +49,7 @@ public class AuthController {
 	private final AuthService authService;
 	private final KakaoLoginService kakaoLoginService;
 	private final UserService userService;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Value("${kakao.api.key}")
 	private String apiKey;
@@ -82,8 +81,8 @@ public class AuthController {
 		@RequestHeader("X-Kakao-Access-Token") String accessToken,
 		@RequestHeader("X-Kakao-Refresh-Token") String refreshToken
 	) throws IOException {
-		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.of(accessToken, refreshToken);
+		LoginRequest request = new LoginRequest(Provider.KAKAO, null);
+		KakaoLoginRequest kakaoLoginRequestDto = KakaoLoginRequest.of(accessToken, refreshToken);
 		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
 		return ResponseModel.success(tokens);
 	}
@@ -112,17 +111,17 @@ public class AuthController {
 	public ResponseModel<SignUpResponse> signUp(
 		@RequestHeader("X-Kakao-Access-Token") String accessToken,
 		@RequestHeader("X-Kakao-Refresh-Token") String refreshToken,
-		@RequestBody NickNameRequestDto dto) {
-		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
+		@RequestBody NickNameRequest dto) {
+		LoginRequest request = new LoginRequest(Provider.KAKAO, null);
 		String name = userService.duplicateNickname(dto.nickname());
-		SignUpRequestDto token = SignUpRequestDto.of(accessToken, refreshToken, dto.nickname());
+		SignUpRequest token = SignUpRequest.of(accessToken, refreshToken, dto.nickname());
 		JwtTokenResponse tokens = authService.signup(token, name, request);
 		SignUpResponse response = SignUpResponse.of(
 			tokens.accessToken(), tokens.refreshToken(), name);
 		return ResponseModel.success(CREATED, response);
 	}
 
-	@Hidden
+
 	@Operation(summary = "로그아웃", description = "로그아웃을 수행합니다.")
 	@PostMapping("/logout")
 	public ResponseModel<?> logout() {
@@ -130,6 +129,18 @@ public class AuthController {
 			(UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
 		authService.logout(authentication);
 		return ResponseModel.success("로그아웃에 성공하였습니다.");
+	}
+
+	@Operation(summary = "회원탈퇴", description = "회원탈퇴를 수행합니다.")
+	@DeleteMapping
+	public ResponseModel<UserPersistResponse> deleteUser(
+			@UserId User user
+	) {
+		UserAuthentication authentication =
+			(UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
+		authService.logout(authentication);
+		UserPersistResponse response = userService.deleteUser(user);
+		return ResponseModel.success(response);
 	}
 
 	@Operation(
@@ -160,8 +171,8 @@ public class AuthController {
 	@PostMapping("/refresh-jwt-token")
 	public ResponseModel<JwtTokenResponse> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
-		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.of(
+		LoginRequest request = new LoginRequest(Provider.KAKAO, null);
+		KakaoLoginRequest kakaoLoginRequestDto = KakaoLoginRequest.of(
 			response.getAccess_token(), response.getRefresh_token()
 		);
 		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
@@ -204,11 +215,13 @@ public class AuthController {
 	public ResponseModel<?> kakaoCallback(@RequestParam String code) throws IOException {
 		System.out.println("callback start");
 		KakaoTokenResponse accessToken = kakaoLoginService.getAccessToken(code, apiKey, redirectUri);
-		LoginRequestDto request = new LoginRequestDto(Provider.KAKAO, null);
-		KakaoLoginRequestDto kakaoLoginRequestDto = KakaoLoginRequestDto.builder()
+		LoginRequest request = new LoginRequest(Provider.KAKAO, null);
+		KakaoLoginRequest kakaoLoginRequestDto = KakaoLoginRequest.builder()
 			.accessToken(accessToken.getAccess_token())
 			.refreshToken(accessToken.getRefresh_token())
 			.build();
+		logger.info("Access Token: {}", accessToken.getAccess_token());
+		logger.info("Refresh Token: {}", accessToken.getRefresh_token());
 		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
 		return ResponseModel.success(tokens);
 	}

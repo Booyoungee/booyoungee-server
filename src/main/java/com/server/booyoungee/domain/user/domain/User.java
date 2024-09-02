@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.server.booyoungee.domain.bookmark.domain.BookMark;
+import com.server.booyoungee.domain.like.domain.Like;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
 import com.server.booyoungee.global.common.BaseTimeEntity;
@@ -61,6 +62,9 @@ public class User extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Stamp> stamps = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Like> likes = new ArrayList<>();
 
 	public enum Role {
 		USER,

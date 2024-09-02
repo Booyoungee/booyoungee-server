@@ -14,9 +14,9 @@ import org.springframework.web.client.RestTemplate;
 import com.server.booyoungee.domain.login.domain.Constants;
 import com.server.booyoungee.domain.login.domain.enums.Provider;
 import com.server.booyoungee.domain.login.dto.SocialInfoDto;
-import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequestDto;
-import com.server.booyoungee.domain.login.dto.request.LoginRequestDto;
-import com.server.booyoungee.domain.login.dto.request.SignUpRequestDto;
+import com.server.booyoungee.domain.login.dto.request.KakaoLoginRequest;
+import com.server.booyoungee.domain.login.dto.request.LoginRequest;
+import com.server.booyoungee.domain.login.dto.request.SignUpRequest;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.login.exception.ConflictUserException;
 import com.server.booyoungee.domain.login.exception.NotFoundUserException;
@@ -39,7 +39,7 @@ public class AuthService {
 	private final RestTemplate restTemplate;
 
 	@Transactional
-	public JwtTokenResponse login(KakaoLoginRequestDto providerToken, LoginRequestDto request) throws IOException {
+	public JwtTokenResponse login(KakaoLoginRequest providerToken, LoginRequest request) throws IOException {
 		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.accessToken());
 		User user = loadOrCreateUser(socialInfo);
 		String refreshToken = providerToken.refreshToken();
@@ -49,7 +49,7 @@ public class AuthService {
 		return generateTokensWithUpdateRefreshToken(user, providerToken.accessToken(), refreshToken);
 	}
 
-	private SocialInfoDto getSocialInfo(LoginRequestDto request, String providerToken) {
+	private SocialInfoDto getSocialInfo(LoginRequest request, String providerToken) {
 		if (request.provider().toString().equals(Provider.KAKAO.toString())) {
 			return kakaoLoginService.getInfo(providerToken);
 		} else {
@@ -65,13 +65,13 @@ public class AuthService {
 	}
 
 	@Transactional
-	public JwtTokenResponse signup(SignUpRequestDto providerToken, String name, LoginRequestDto request) {
+	public JwtTokenResponse signup(SignUpRequest providerToken, String name, LoginRequest request) {
 		SocialInfoDto socialInfo = getSocialInfo(request, providerToken.accessToken());
 		User user = createUser(providerToken, name, socialInfo);
 		return generateTokensWithUpdateRefreshToken(user, providerToken.accessToken(), user.getRefreshToken());
 	}
 
-	private User createUser(SignUpRequestDto providerToken, String name, SocialInfoDto socialInfo) {
+	private User createUser(SignUpRequest providerToken, String name, SocialInfoDto socialInfo) {
 		Optional<User> existingUser = userRepository.findBySerialId(socialInfo.serialId());
 		if (existingUser.isPresent()) {
 			throw new ConflictUserException(); // Assuming USER_ALREADY_EXISTS is a defined error code
