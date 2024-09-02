@@ -121,17 +121,61 @@ public class AuthController {
 		return ResponseModel.success(CREATED, response);
 	}
 
-
 	@Operation(summary = "로그아웃", description = "로그아웃을 수행합니다.")
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "로그아웃 성공",
+					content = @Content(schema = @Schema(implementation = UserPersistResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "400",
+					description = "NOT_FOUND_USER(올바르지 않은 엑세스 토큰)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "401",
+					description = "NOT_FOUND_USER_INFO(로그인이 필요합니다.)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "서버에러",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			)
+	})
 	@PostMapping("/logout")
-	public ResponseModel<?> logout() {
+	public ResponseModel<UserPersistResponse> logout() {
 		UserAuthentication authentication =
 			(UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
-		authService.logout(authentication);
-		return ResponseModel.success("로그아웃에 성공하였습니다.");
+		UserPersistResponse response =authService.logout(authentication);
+		return ResponseModel.success(response);
 	}
 
+
 	@Operation(summary = "회원탈퇴", description = "회원탈퇴를 수행합니다.")
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "회원탈퇴 성공",
+					content = @Content(schema = @Schema(implementation = UserPersistResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "400",
+					description = "NOT_FOUND_USER(올바르지 않은 엑세스 토큰)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "401",
+					description = "NOT_FOUND_USER_INFO(로그인이 필요합니다.)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "서버에러",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			)
+	})
 	@DeleteMapping
 	public ResponseModel<UserPersistResponse> deleteUser(
 			@UserId User user

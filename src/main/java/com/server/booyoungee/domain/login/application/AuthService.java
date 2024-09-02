@@ -3,6 +3,7 @@ package com.server.booyoungee.domain.login.application;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.server.booyoungee.domain.user.dto.response.UserPersistResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -104,7 +105,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public void logout(UserAuthentication authentication) {
+	public UserPersistResponse logout(UserAuthentication authentication) {
 		String accessToken = jwtUtil.getOriginalAccessToken(authentication.getAccessToken());
 		String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
 		HttpHeaders headers = new HttpHeaders();
@@ -115,8 +116,17 @@ public class AuthService {
 		restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
 		try {
 			Long userId = Long.parseLong(authentication.getName());
+
+			if(userId==null)
+				throw new NotFoundUserInfoException();
+
 			User user = userRepository.findByUserId(userId).get();
+
+			if(user==null)
+				throw new NotFoundUserException();
+
 			user.updateRefreshToken("");
+			return UserPersistResponse.of(userId);
 		} catch (HttpClientErrorException e) {
 			throw new RuntimeException("HTTP error while getting access token from Kakao: " + e.getStatusCode() + " - "
 				+ e.getResponseBodyAsString(), e);
