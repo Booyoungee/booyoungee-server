@@ -10,11 +10,11 @@ import lombok.Builder;
 @Builder
 public record SignUpResponse(
 
-	@JsonProperty("access_token")
+	@JsonProperty("accessToken")
 	@Schema(description = "JWT 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
 	String accessToken,
 
-	@JsonProperty("refresh_token")
+	@JsonProperty("refreshToken")
 	@Schema(description = "리프레시 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
 	String refreshToken,
 
