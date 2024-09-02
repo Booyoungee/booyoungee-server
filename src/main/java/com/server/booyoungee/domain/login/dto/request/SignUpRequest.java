@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record SignUpRequestDto(
+public record SignUpRequest(
 	@JsonProperty("access_token")
 	@Schema(description = "카카오 액세스 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlh", requiredMode = REQUIRED)
 	@NotNull
@@ -24,8 +24,8 @@ public record SignUpRequestDto(
 	@NotNull
 	String nickname
 ) {
-	public static SignUpRequestDto of(String accessToken, String refreshToken, String nickname) {
-		return SignUpRequestDto.builder()
+	public static SignUpRequest of(String accessToken, String refreshToken, String nickname) {
+		return SignUpRequest.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.nickname(nickname)

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record KakaoLoginRequestDto(
+public record KakaoLoginRequest(
 
 	@JsonProperty("access_token")
 	@NotNull
@@ -17,8 +17,8 @@ public record KakaoLoginRequestDto(
 	String refreshToken
 
 ) {
-	public static KakaoLoginRequestDto of(String accessToken, String refreshToken) {
-		return KakaoLoginRequestDto.builder()
+	public static KakaoLoginRequest of(String accessToken, String refreshToken) {
+		return KakaoLoginRequest.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
