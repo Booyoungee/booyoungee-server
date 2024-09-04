@@ -54,34 +54,6 @@ public class StorePlaceController {
 			: ResponseModel.success(response);
 	}
 
-	@GetMapping("/name")
-	@Operation(summary = "식당 이름으로 조회")
-	public ResponseModel<StorePlaceListResponse> getStoresByName(
-		@RequestParam String name
-	) {
-		StorePlaceListResponse response = storePlaceService.getStoreByName(name);
-		return ResponseModel.success(response);
-	}
-
-	@GetMapping("/district")
-	@Operation(summary = "군/구 별 식당 조회")
-	public ResponseModel<StorePlaceListResponse> getStoresByDistrict(
-		@RequestParam String district
-	) {
-		StorePlaceListResponse response = storePlaceService.getStoreByDistrict(district);
-		return ResponseModel.success(response);
-	}
-
-	@GetMapping("")
-	@Operation(summary = "식당 가장 많이 조회한 순")
-	public ResponseModel<StorePlacePageResponse<StorePlace>> getStoresList(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size
-	) {
-		StorePlacePageResponse<StorePlace> response = storePlaceService.getStores(page, size);
-		return ResponseModel.success(response);
-	}
-
 	// TODO: IO 에러 로그 제거 해야함
 	@GetMapping("/details")
 	@ApiResponses({
@@ -94,6 +66,38 @@ public class StorePlaceController {
 		return ResponseModel.success(response);
 	}
 
+	@Hidden
+	@GetMapping("/name")
+	@Operation(summary = "식당 이름으로 조회")
+	public ResponseModel<StorePlaceListResponse> getStoresByName(
+		@RequestParam String name
+	) {
+		StorePlaceListResponse response = storePlaceService.getStoreByName(name);
+		return ResponseModel.success(response);
+	}
+
+	@Hidden
+	@GetMapping("/district")
+	@Operation(summary = "군/구 별 식당 조회")
+	public ResponseModel<StorePlaceListResponse> getStoresByDistrict(
+		@RequestParam String district
+	) {
+		StorePlaceListResponse response = storePlaceService.getStoreByDistrict(district);
+		return ResponseModel.success(response);
+	}
+
+	@Hidden
+	@GetMapping("")
+	@Operation(summary = "식당 가장 많이 조회한 순")
+	public ResponseModel<StorePlacePageResponse<StorePlace>> getStoresList(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		StorePlacePageResponse<StorePlace> response = storePlaceService.getStores(page, size);
+		return ResponseModel.success(response);
+	}
+
+	@Hidden
 	@PostMapping("/reset/viewCount")
 	@Operation(summary = "조회수 초기화")
 	public ResponseModel<?> resetViews() {
