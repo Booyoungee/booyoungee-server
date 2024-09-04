@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record StorePlacePageResponse<T>(
 	@Schema(
 		description = "장소 목록",
-		example = "[{\"id\":1,\"name\":\"희망통닭\",\"basicAddress\":\"부산광역시 동래구 명륜로\",\"district\":\"동래구\",\"viewCount\":\"512\",\"storeId\":550,\"detailAddress\":\"98번길 94 희망통닭\",\"tel\":\"051-555-0000\",\"mainBusiness\":\"치킨\"}]",
+		example = "[{\"id\":22,\"name\":\"태화육개장\",\"basicAddress\":\"부산광역시 부산진구 서면문화로 18(부전동, 1층)\",\"district\":\"부산진구\",\"viewCount\":\"0\",\"storeId\":887,\"detailAddress\":\"1층 태화육개장\",\"tel\":\"051-803-8320\",\"mainBusiness\":\"육개장\",\"mapX\":\"129.056980120201\",\"mapY\":\"35.1592040842729\",\"placeType\":\"STORE\"}]",
 		requiredMode = REQUIRED
 	)
 	List<StorePlaceResponse> contents,

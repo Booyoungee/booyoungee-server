@@ -1,11 +1,9 @@
 package com.server.booyoungee.domain.place.api.store;
 
-import java.io.IOException;
-import java.util.List;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
-import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
-import org.springframework.http.ResponseEntity;
+import java.io.IOException;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,44 +19,39 @@ import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/storePlace")
+@RequestMapping("/api/v1/place/store")
 @RequiredArgsConstructor
-@Tag(name = "StorePlace", description = "지역 상생 식당 api / 관리자 : 이영학,이한음")
+@Tag(name = "StorePlace", description = "지역 상생 식당 api / 담당자 : 이한음")
 public class StorePlaceController {
 	private final StorePlaceService storePlaceService;
 
-	@GetMapping("/name")
-	@Operation(summary = "식당 이름으로 조회")
-	public ResponseModel<StorePlaceListResponse> getStoresByName(
-		@RequestParam String name
+	@Operation(summary = "내 주변 지역 상생 식당 지도 마커", description = "내 위치를 기반으로 주변 지역 상생 식당 마커를 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "내 주변 지역 상생 식당 지도 마커 불러오기 성공",
+			content = @Content(schema = @Schema(implementation = StorePlaceListResponse.class))
+		),
+	})
+	@GetMapping("/nearby")
+	public ResponseModel<StorePlaceListResponse> getStorePlacesNearby(
+		@Parameter(description = "내 위치 X 좌표", example = "129", required = true) @RequestParam String mapX,
+		@Parameter(description = "내 위치 Y 좌표", example = "35", required = true) @RequestParam String mapY,
+		@Parameter(description = "내 위치 기준 반경", example = "20000", required = true) @RequestParam int radius
 	) {
-		StorePlaceListResponse response = storePlaceService.getStoreByName(name);
-		return ResponseModel.success(response);
-	}
-
-	@GetMapping("/district")
-	@Operation(summary = "군/구 별 식당 조회")
-	public ResponseModel<StorePlaceListResponse> getStoresByDistrict(
-		@RequestParam String district
-	) {
-		StorePlaceListResponse response = storePlaceService.getStoreByDistrict(district);
-		return ResponseModel.success(response);
-	}
-
-	@GetMapping("")
-	@Operation(summary = "식당 가장 많이 조회한 순")
-	public ResponseModel<StorePlacePageResponse<StorePlace>> getStoresList(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size
-	) {
-		StorePlacePageResponse<StorePlace> response = storePlaceService.getStores(page, size);
-		return ResponseModel.success(response);
+		StorePlaceListResponse response = storePlaceService.getStorePlacesNearby(mapX, mapY, radius);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
 	}
 
 	// TODO: IO 에러 로그 제거 해야함
@@ -73,6 +66,38 @@ public class StorePlaceController {
 		return ResponseModel.success(response);
 	}
 
+	@Hidden
+	@GetMapping("/name")
+	@Operation(summary = "식당 이름으로 조회")
+	public ResponseModel<StorePlaceListResponse> getStoresByName(
+		@RequestParam String name
+	) {
+		StorePlaceListResponse response = storePlaceService.getStoreByName(name);
+		return ResponseModel.success(response);
+	}
+
+	@Hidden
+	@GetMapping("/district")
+	@Operation(summary = "군/구 별 식당 조회")
+	public ResponseModel<StorePlaceListResponse> getStoresByDistrict(
+		@RequestParam String district
+	) {
+		StorePlaceListResponse response = storePlaceService.getStoreByDistrict(district);
+		return ResponseModel.success(response);
+	}
+
+	@Hidden
+	@GetMapping("")
+	@Operation(summary = "식당 가장 많이 조회한 순")
+	public ResponseModel<StorePlacePageResponse<StorePlace>> getStoresList(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		StorePlacePageResponse<StorePlace> response = storePlaceService.getStores(page, size);
+		return ResponseModel.success(response);
+	}
+
+	@Hidden
 	@PostMapping("/reset/viewCount")
 	@Operation(summary = "조회수 초기화")
 	public ResponseModel<?> resetViews() {
@@ -85,16 +110,6 @@ public class StorePlaceController {
 	public ResponseModel<?> update() {
 		storePlaceService.updateXY();
 		return ResponseModel.success("update");
-	}
-	@Hidden
-	@GetMapping("/nearby")
-	public ResponseEntity<List<StorePlace>> getPlacesNearby(
-			@RequestParam Double mapX,
-			@RequestParam Double mapY,
-			@RequestParam Double radius) {
-
-		List<StorePlace>nearbyPlaces = storePlaceService.findNearbyStorePlaces(mapX, mapY, radius);
-		return ResponseEntity.ok(nearbyPlaces);
 	}
 
 }
