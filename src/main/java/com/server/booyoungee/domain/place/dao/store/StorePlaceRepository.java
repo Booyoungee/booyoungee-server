@@ -3,7 +3,6 @@ package com.server.booyoungee.domain.place.dao.store;
 import java.util.List;
 import java.util.Optional;
 
-import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +28,18 @@ public interface StorePlaceRepository extends JpaRepository<StorePlace, Long> {
 
 	Optional<StorePlace> findByStoreId(Long storeId);
 
+	@Query("SELECT sp FROM StorePlace sp "
+		+ "WHERE (6371000 * acos( cos( radians(CAST(:mapY AS double)) ) "
+		+ "* cos( radians(CAST(sp.mapY AS double)) ) "
+		+ "* cos( radians(CAST(sp.mapX AS double)) "
+		+ "- radians(CAST(:mapX AS double)) ) "
+		+ "+ sin( radians(CAST(:mapY AS double)) ) "
+		+ "* sin( radians(CAST(sp.mapY AS double)) ) )) <= :radius")
+	List<StorePlace> findStorePlacesByMapXAndMapY(
+		@Param("mapX") String mapX,
+		@Param("mapY") String mapY,
+		@Param("radius") int radius);
+
 	@Modifying
 	@Transactional
 	@Query("UPDATE StorePlace s SET s.viewCount = 0")
@@ -36,16 +47,5 @@ public interface StorePlaceRepository extends JpaRepository<StorePlace, Long> {
 
 	@Query("SELECT s FROM StorePlace s where s.viewCount>0 ORDER BY s.viewCount DESC")
 	List<StorePlace> top10StorePlace(PageRequest of);
-
-
-	@Query("SELECT sp FROM StorePlace sp " +
-			"WHERE ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
-			"Point(:longitude, :latitude)) <= :radius " +
-			"ORDER BY ST_Distance_Sphere(Point(cast(sp.mapX as double), cast(sp.mapY as double)), " +
-			"Point(:longitude, :latitude))")
-	List<StorePlace> findNearbyStorePlaces(
-			@Param("latitude") double latitude,
-			@Param("longitude") double longitude,
-			@Param("radius") double radius);
 
 }

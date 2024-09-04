@@ -53,7 +53,7 @@ public class TourInfoOpenApiController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 	})
-	@GetMapping("/location")
+	@GetMapping("/nearby")
 	public ResponseModel<List<TourInfoCommonResponse>> getOpenApiInfoByLocation(
 		@Parameter(description = "페이지 내 최대 응답 개수", example = "10", required = true) @RequestParam @Positive int numOfRows,
 		@Parameter(description = "페이지 인덱스", example = "0", required = true) @RequestParam @PositiveOrZero int pageNo,
