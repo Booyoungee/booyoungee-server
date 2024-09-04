@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
@@ -101,17 +102,8 @@ public class MoviePlaceService {
 
 	}
 
-	public MoviePlacePageResponse<MoviePlace> findPlacesNearby(String mapX, String mapY, String radius, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		double longtitude = Double.parseDouble(mapX);
-		double latitude = Double.parseDouble(mapY);
-		double rad = Double.parseDouble(radius);
-		Long totalElements = moviePlaceRepository.countNearbyMoviePlaces(latitude, longtitude, rad);
-		List<MoviePlace> moviePlaces = moviePlaceRepository.findNearbyMoviePlaces(latitude, longtitude, rad,pageable);
-
-		List<MoviePlaceResponse> moviePlaceList = moviePlaces.stream()
-				.map(MoviePlaceResponse::from)
-				.collect(java.util.stream.Collectors.toList());
-		return MoviePlacePageResponse.of(moviePlaceList, PageableResponse.of(pageable, totalElements));
+	public MoviePlaceListResponse getMoviePlacesNearby(String mapX, String mapY, int radius) {
+		List<MoviePlace> moviePlaces = moviePlaceRepository.findMoviePlacesByMapXAndMapY(mapX, mapY, radius);
+		return MoviePlaceListResponse.of(moviePlaces);
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.global.common.ResponseModel;
@@ -55,17 +56,24 @@ public class MoviePlaceController {
 			: ResponseModel.success(response);
 	}
 
-	@Operation(summary = "내 주변  촬영지 조회")
+	@Operation(summary = "내 주변 영화 촬영지 지도 마커", description = "영화 촬영지 마커를 표시하기 위해 내 좌표 주변 영화 촬영지를 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "내 주변 영화 촬영지 지도 마커 불러오기 성공",
+			content = @Content(schema = @Schema(implementation = MoviePlaceListResponse.class))
+		),
+	})
 	@GetMapping("/nearby")
-	public ResponseModel<MoviePlacePageResponse<MoviePlace>>getMoviePlacesNearby(
-		@RequestParam String mapX,
-		@RequestParam String mapY,
-		@RequestParam String radius,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
-
-		MoviePlacePageResponse<MoviePlace> nearbyPlaces = moviePlaceService.findPlacesNearby(mapX, mapY, radius,page,size);
-		return ResponseModel.success(nearbyPlaces);
+	public ResponseModel<MoviePlaceListResponse> getMoviePlacesNearby(
+		@Parameter(description = "내 위치 X 좌표", example = "129", required = true) @RequestParam String mapX,
+		@Parameter(description = "내 위치 Y 좌표", example = "35", required = true) @RequestParam String mapY,
+		@Parameter(description = "내 위치 기준 반경", example = "20000", required = true) @RequestParam int radius
+	) {
+		MoviePlaceListResponse response = moviePlaceService.getMoviePlacesNearby(mapX, mapY, radius);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
 	}
 
 	@Hidden
