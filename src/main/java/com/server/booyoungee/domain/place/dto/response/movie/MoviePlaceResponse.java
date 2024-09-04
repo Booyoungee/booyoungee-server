@@ -32,10 +32,10 @@ public record MoviePlaceResponse(
 	@Schema(description = "장면 설명", example = "경찰수사팀과 가족들이 유괴범과의 두 번째 접촉을 시도하는 장면", requiredMode = REQUIRED)
 	String description,
 
-	@Schema(description = "위도", example = "129.0650146", requiredMode = REQUIRED)
+	@Schema(description = "경도", example = "129.0650146", requiredMode = REQUIRED)
 	String mapX,
 
-	@Schema(description = "경도", example = "35.0686809", requiredMode = REQUIRED)
+	@Schema(description = "위도", example = "35.0686809", requiredMode = REQUIRED)
 	String mapY,
 
 	@Schema(description = "제작년도", example = "2015", requiredMode = REQUIRED)
