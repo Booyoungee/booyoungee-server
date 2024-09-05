@@ -18,11 +18,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/place")
 @RequiredArgsConstructor
+@Tag(name = "Place", description = "장소 조회 / 담당자 : 이한음,이영학")
 public class PlaceController {
 
 	private final PlaceService placeService;
