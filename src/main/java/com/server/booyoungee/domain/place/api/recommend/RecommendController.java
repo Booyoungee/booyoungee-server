@@ -68,6 +68,11 @@ public class RecommendController {
 			responseCode = "404",
 			description = "NOT_FOUND_PLACE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "409",
+			description = "ALREADY_RECOMMEND_PLACE",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
 	@PostMapping()
