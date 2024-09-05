@@ -30,7 +30,6 @@ public class StorePlaceService {
 	private final PlaceSearchService placeSearchService;
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 
-
 	public StorePlaceListResponse getStoreByName(String name) {
 		List<StorePlace> stores = storePlaceRepository.findAllByName(name);
 		return StorePlaceListResponse.of(stores);
@@ -61,7 +60,7 @@ public class StorePlaceService {
 	}
 
 	public StorePlaceResponse getStore(Long storeId) throws IOException {
-		StorePlace store = storePlaceRepository.findByStoreId(storeId)
+		StorePlace store = storePlaceRepository.findById(storeId)
 			.orElseThrow(NotFoundStorePlaceException::new);
 		store.increaseViewCount();
 		storePlaceRepository.save(store);

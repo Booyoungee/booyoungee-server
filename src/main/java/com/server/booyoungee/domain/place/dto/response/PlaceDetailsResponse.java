@@ -11,6 +11,8 @@ public record PlaceDetailsResponse(
 	String placeId,
 	String name,
 	String address,
+
+	String tel,
 	List<String> images,
 	PlaceType type,
 	List<String> movies,
@@ -20,8 +22,9 @@ public record PlaceDetailsResponse(
 
 	int starCount
 ) {
-	public static PlaceDetailsResponse of(String placeId, String name, String address, List<String> images,
+	public static PlaceDetailsResponse of(String placeId, String name, String address, String tel, List<String> images,
 		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount) {
-		return new PlaceDetailsResponse(placeId, name, address, images, type, movies, posterUrl, likeCount, starCount);
+		return new PlaceDetailsResponse(placeId, name, address, tel, images, type, movies, posterUrl, likeCount,
+			starCount);
 	}
 }

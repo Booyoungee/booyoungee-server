@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/hot")
+@RequestMapping("/api/v1/hot")
 @RequiredArgsConstructor
 @Tag(name = "HotPlace", description = "지금 핫한 여행지 api / 관리자 : 이영학")
 public class HotPlaceController {
