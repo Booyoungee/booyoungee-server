@@ -15,6 +15,7 @@ import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.movie.dto.request.MoviePosterDto;
 import com.server.booyoungee.domain.movie.dto.response.MovieDetailsDto;
 import com.server.booyoungee.domain.movie.dto.response.TmdbResponseDto;
+import com.server.booyoungee.domain.movie.exception.NotFoundMovieInfoException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -78,7 +79,7 @@ public class TmdbApiService {
 		}
 
 		return movieOptional.map(this::mapToMovieDetailsDto)
-			.orElseThrow(() -> new RuntimeException("Failed to save or retrieve movie information."));
+			.orElseThrow(NotFoundMovieInfoException::new);
 	}
 
 	private MovieDetailsDto mapToMovieDetailsDto(Movie movie) {

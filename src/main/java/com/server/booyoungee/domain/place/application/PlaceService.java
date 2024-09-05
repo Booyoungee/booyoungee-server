@@ -27,7 +27,6 @@ import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageRespo
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
@@ -75,79 +74,84 @@ public class PlaceService {
 	}
 
 	@Transactional
-	public List<String> placeImageList(String name) throws IOException {
-		List<TourInfoImageDto> images = tourInfoOpenApiService.getTourInfoImage(name);
-		List<String> imageList = new ArrayList<>();
-		if (!images.isEmpty()) {
-			TourInfoImageDto image = images.get(0);
+	public List<String> placeImageList(TourInfoDetailsResponseDto image) throws IOException {
 
-			if (image.firstimage() != null && !image.firstimage().equals("")) {
-				imageList.add(image.firstimage());
-				if (image.firstimage2() != null && !image.firstimage2().equals("")) {
-					imageList.add(image.firstimage2());
-				}
+		List<String> imageList = new ArrayList<>();
+		if (image.firstimage() != null && !image.firstimage().equals("")) {
+			imageList.add(image.firstimage());
+			if (image.firstimage2() != null && !image.firstimage2().equals("")) {
+				imageList.add(image.firstimage2());
 			}
 		}
 		return imageList;
+	}
+
+	private List<String> getMovieList(MoviePlaceResponse moviePlace) {
+		MoviePlacePageResponse<MoviePlace> places = moviePlaceService.getMoviePlacesByKeyword(moviePlace.name(), 1, 3);
+		List<String> movieList = new ArrayList<>();
+		for (MoviePlaceResponse movieTag : places.contents()) {
+			movieList.add(movieTag.movieName());
+		}
+		if (movieList.isEmpty()) {
+			movieList.add(moviePlace.movieName());
+		}
+		return movieList;
+	}
+
+	private List<String> moviePosterList(MoviePlaceResponse moviePlace) {
+		List<String> posterUrl = new ArrayList<>();
+		List<MovieImagesDto.BackDrops> backdrops = movieService.getMovie(moviePlace.movieName()).getBackdrops();
+		for (MovieImagesDto.BackDrops backdrop : backdrops) {
+			posterUrl.add(backdrop.getFilePath());
+		}
+		return posterUrl;
 	}
 
 	@Transactional
 	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type) throws IOException {
 
 		PlaceDetailsResponse dto;
+		TourInfoDetailsResponseDto tourInfo = null;
 		List<String> imageList = new ArrayList<>();
+		List<String> posterUrl = null;
+		List<String> movieList = null;
+		String tel = null;
 
 		Place place = getByPlaceId(placeId);
 
-		if (type.getKey().equals("movie")) {
+		// Check the type of place
+		if (type.getKey().equals("tour")) {
+			tourInfo = placeService.getTour(placeId);
+			imageList = placeImageList(tourInfo);
 
-			MoviePlaceResponse moviePlace = moviePlaceService.getMoviePlace(placeId);
-
-			MoviePlacePageResponse<MoviePlace> places = moviePlaceService.getMoviePlacesByKeyword(moviePlace.name(), 1,
-				3);
-
-			List<String> posterUrl = new ArrayList<>();
-			List<String> movieList = new ArrayList<>();
-			for (MoviePlaceResponse movieTag : places.contents()) {
-				movieList.add(movieTag.movieName());
-			}
-			if (movieList.isEmpty()) {
-				movieList.add(moviePlace.movieName());
-			}
-
-			List<MovieImagesDto.BackDrops> backdrops = movieService.getMovie(moviePlace.movieName()).getBackdrops();
-			for (MovieImagesDto.BackDrops backdrop : backdrops) {
-				posterUrl.add(backdrop.getFilePath());
-			}
-
-			dto = PlaceDetailsResponse.of(placeId + "", moviePlace.name(), moviePlace.basicAddress(),
-				placeImageList(moviePlace.name()), type, movieList, posterUrl, 0, 0);
-
-			return dto;
-
-		} else if (type.getKey().equals("store")) {
-
-			StorePlaceResponse store = storePlaceService.getStore(placeId);
-			dto = PlaceDetailsResponse.of(placeId + "", store.name(), store.basicAddress(), imageList, type, null,
-				null, place.getLikes().size(), 0);
-
-			return dto;
+			dto = PlaceDetailsResponse.of(placeId + "", tourInfo.title(), tourInfo.addr1(), tourInfo.tel(),
+				imageList, type, movieList,
+				posterUrl, place.getLikes().size(),
+				0);
 
 		} else {
-			TourInfoDetailsResponseDto tourPlace = placeService.getTour(placeId);
-
-			if (tourPlace.firstimage() != null && !tourPlace.firstimage().isEmpty()) {
-				imageList.add(tourPlace.firstimage());
-				if (tourPlace.firstimage2() != null && !tourPlace.firstimage2().isEmpty()) {
-					imageList.add(tourPlace.firstimage2());
-				}
+			List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
+				place.getName());
+			// Use Optional to handle potential null or empty list
+			tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
+			if (tourInfo != null) {
+				tel = tourInfo.tel();
+				imageList = placeImageList(tourInfo);
 			}
 
-			dto = PlaceDetailsResponse.of(placeId + "", tourPlace.title(), tourPlace.addr1(), imageList, type, null,
-				null, 0,
-				0);
-			return dto;
+			if (type.getKey().equals("movie")) {
+				MoviePlaceResponse moviePlace = moviePlaceService.getMoviePlace(placeId);
+				movieList = getMovieList(moviePlace);
+				posterUrl = moviePosterList(moviePlace);
+			}
+
+			dto = PlaceDetailsResponse.of(placeId + "", place.getName(), place.getBasicAddress(), tel,
+				imageList, type, movieList,
+				posterUrl, place.getLikes().size(), 0);
+
 		}
+		// Rest of your logic goes here...
+		return dto;
 
 	}
 

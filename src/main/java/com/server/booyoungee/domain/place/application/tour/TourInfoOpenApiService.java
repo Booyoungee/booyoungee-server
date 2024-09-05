@@ -21,7 +21,6 @@ import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaCodeResp
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoImageResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoIntroResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoStayResponseDto;
@@ -44,7 +43,8 @@ public class TourInfoOpenApiService {
 	@Value("${tourInfo.format}")
 	private String _type;
 
-	public List<TourInfoCommonResponse> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY, String radius) {
+	public List<TourInfoCommonResponse> getTourInfoByLocation(int numOfRows, int pageNo, String mapX, String mapY,
+		String radius) {
 		String requestUrl = baseUrl
 			+ "/locationBasedList1"
 			+ "?ServiceKey=" + serviceKey
@@ -194,7 +194,7 @@ public class TourInfoOpenApiService {
 		return toList(jsonResult, TourInfoAreaCodeResponseDto[].class);
 	}
 
-	public List<TourInfoImageDto> getTourInfoImage(String keyword) {
+	public List<TourInfoDetailsResponseDto> getTourInfoByKeyword(String keyword) {
 		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
 		String requestUrl = baseUrl
 			+ "/searchKeyword1"
@@ -211,7 +211,7 @@ public class TourInfoOpenApiService {
 		if (jsonResult == null || !jsonResult.isArray() || jsonResult.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return toList(jsonResult, TourInfoImageDto[].class);
+		return toList(jsonResult, TourInfoDetailsResponseDto[].class);
 	}
 
 	public JsonNode getTourInfo(String url) {

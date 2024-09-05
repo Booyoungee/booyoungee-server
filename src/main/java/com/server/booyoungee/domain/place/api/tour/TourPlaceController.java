@@ -3,16 +3,16 @@ package com.server.booyoungee.domain.place.api.tour;
 import java.io.IOException;
 import java.util.List;
 
-import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
-import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
-import com.server.booyoungee.domain.place.dto.response.tour.TourPlaceResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
 import com.server.booyoungee.domain.place.domain.tour.TourContentType;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
+import com.server.booyoungee.domain.place.dto.response.tour.TourPlaceResponseDto;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,4 +60,5 @@ public class TourPlaceController {
 		List<TourPlaceResponseDto> tourInfoList = tourInfoService.getTourInfoListByType(contentId);
 		return ResponseModel.success(tourInfoList);
 	}
+
 }
