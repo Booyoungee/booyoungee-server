@@ -6,12 +6,19 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import com.server.booyoungee.domain.user.domain.User;
-import com.server.booyoungee.domain.user.dto.response.UserPersistResponse;
-import com.server.booyoungee.domain.user.interceptor.UserId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.login.application.AuthService;
 import com.server.booyoungee.domain.login.application.KakaoLoginService;
@@ -23,6 +30,9 @@ import com.server.booyoungee.domain.login.dto.request.SignUpRequest;
 import com.server.booyoungee.domain.login.dto.response.JwtTokenResponse;
 import com.server.booyoungee.domain.login.dto.response.SignUpResponse;
 import com.server.booyoungee.domain.user.application.UserService;
+import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.dto.response.UserPersistResponse;
+import com.server.booyoungee.domain.user.interceptor.UserId;
 import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
 import com.server.booyoungee.global.oauth.dto.KakaoTokenResponse;
@@ -37,8 +47,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/oauth")
@@ -123,67 +131,66 @@ public class AuthController {
 
 	@Operation(summary = "로그아웃", description = "로그아웃을 수행합니다.")
 	@ApiResponses({
-			@ApiResponse(
-					responseCode = "200",
-					description = "로그아웃 성공",
-					content = @Content(schema = @Schema(implementation = UserPersistResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "400",
-					description = "NOT_FOUND_USER(올바르지 않은 엑세스 토큰)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "401",
-					description = "NOT_FOUND_USER_INFO(로그인이 필요합니다.)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "500",
-					description = "서버에러",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			)
+		@ApiResponse(
+			responseCode = "200",
+			description = "로그아웃 성공",
+			content = @Content(schema = @Schema(implementation = UserPersistResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_USER(올바르지 않은 엑세스 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "NOT_FOUND_USER_INFO(로그인이 필요합니다.)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "서버에러",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
 	})
 	@PostMapping("/logout")
 	public ResponseModel<UserPersistResponse> logout() {
 		UserAuthentication authentication =
 			(UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
-		UserPersistResponse response =authService.logout(authentication);
+		UserPersistResponse response = authService.logout(authentication);
 		return ResponseModel.success(response);
 	}
 
-
 	@Operation(summary = "회원탈퇴", description = "회원탈퇴를 수행합니다.")
 	@ApiResponses({
-			@ApiResponse(
-					responseCode = "200",
-					description = "회원탈퇴 성공",
-					content = @Content(schema = @Schema(implementation = UserPersistResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "400",
-					description = "NOT_FOUND_USER(올바르지 않은 엑세스 토큰)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "401",
-					description = "NOT_FOUND_USER_INFO(로그인이 필요합니다.)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "500",
-					description = "서버에러",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			)
+		@ApiResponse(
+			responseCode = "200",
+			description = "회원탈퇴 성공",
+			content = @Content(schema = @Schema(implementation = UserPersistResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_USER(올바르지 않은 엑세스 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "NOT_FOUND_USER_INFO(로그인이 필요합니다.)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "서버에러",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
 	})
 	@DeleteMapping
 	public ResponseModel<UserPersistResponse> deleteUser(
-			@UserId User user
+		@UserId User user
 	) {
 		UserAuthentication authentication =
 			(UserAuthentication)SecurityContextHolder.getContext().getAuthentication();
 		authService.logout(authentication);
-		UserPersistResponse response = userService.deleteUser(user);
+		UserPersistResponse response = authService.deleteUser(user);
 		return ResponseModel.success(response);
 	}
 

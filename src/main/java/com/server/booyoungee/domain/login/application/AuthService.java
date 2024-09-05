@@ -3,7 +3,6 @@ package com.server.booyoungee.domain.login.application;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.server.booyoungee.domain.user.dto.response.UserPersistResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +23,7 @@ import com.server.booyoungee.domain.login.exception.NotFoundUserException;
 import com.server.booyoungee.domain.login.exception.NotFoundUserInfoException;
 import com.server.booyoungee.domain.user.dao.UserRepository;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.dto.response.UserPersistResponse;
 import com.server.booyoungee.global.oauth.security.info.UserAuthentication;
 import com.server.booyoungee.global.utils.JwtUtil;
 
@@ -117,12 +117,12 @@ public class AuthService {
 		try {
 			Long userId = Long.parseLong(authentication.getName());
 
-			if(userId==null)
+			if (userId == null)
 				throw new NotFoundUserInfoException();
 
 			User user = userRepository.findByUserId(userId).get();
 
-			if(user==null)
+			if (user == null)
 				throw new NotFoundUserException();
 
 			user.updateRefreshToken("");
@@ -134,6 +134,16 @@ public class AuthService {
 			throw new RuntimeException("Unexpected error while getting access token from Kakao", e);
 		}
 
+	}
+
+	@Transactional
+	public UserPersistResponse deleteUser(User user) {
+		if (!userRepository.existsById(user.getUserId())) {
+			throw new NotFoundUserException(); //404
+		}
+		UserPersistResponse response = UserPersistResponse.of(user.getUserId());
+		userRepository.delete(user);
+		return response;
 	}
 
 }
