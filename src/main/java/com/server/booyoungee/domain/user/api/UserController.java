@@ -2,7 +2,7 @@ package com.server.booyoungee.domain.user.api;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -121,7 +121,7 @@ public class UserController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@PutMapping("/nickname")
+	@PatchMapping("/nickname")
 	public ResponseModel<NickNameResponse> updateNickname(
 		@UserId User user,
 		@Parameter(
