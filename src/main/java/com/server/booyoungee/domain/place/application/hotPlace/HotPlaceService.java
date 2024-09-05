@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.place.application.PlaceService;
-import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
-import com.server.booyoungee.domain.place.application.store.StorePlaceService;
 import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
 import com.server.booyoungee.domain.place.dao.hotPlace.HotPlaceRepository;
 import com.server.booyoungee.domain.place.domain.HotPlace;
@@ -31,8 +29,6 @@ import lombok.RequiredArgsConstructor;
 public class HotPlaceService {
 	private final HotPlaceRepository hotPlaceRepository;
 	private final TourPlaceService tourInfoService;
-	private final StorePlaceService storePlaceService;
-	private final MoviePlaceService moviePlaceService;
 	private final PlaceService placeService;
 
 	public HotPlaceListResponse getHotPlaces() {

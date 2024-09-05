@@ -2,12 +2,11 @@ package com.server.booyoungee.domain.place.domain;
 
 import static jakarta.persistence.FetchType.*;
 
-import java.time.LocalDateTime;
-
 import org.hibernate.annotations.ColumnDefault;
 
 import com.server.booyoungee.domain.place.domain.store.StorePlace;
 import com.server.booyoungee.domain.place.domain.tour.TourPlace;
+import com.server.booyoungee.global.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "hot_place")
-public class HotPlace {
+public class HotPlace extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,26 +40,8 @@ public class HotPlace {
 	@Column(nullable = false)
 	private String type;
 
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(nullable = false)
-	private LocalDateTime updatedAt;
-
 	@ColumnDefault("true")
 	private boolean isHotPlace;
-
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-		updatedAt = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		updatedAt = LocalDateTime.now();
-	}
-
 	// Builder 패턴 사용을 위해 추가된 빌더 메서드
 
 	public static HotPlace of(
