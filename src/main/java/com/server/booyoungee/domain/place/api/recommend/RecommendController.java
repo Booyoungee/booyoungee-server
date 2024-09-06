@@ -3,19 +3,15 @@ package com.server.booyoungee.domain.place.api.recommend;
 import static org.springframework.http.HttpStatus.*;
 
 import java.io.IOException;
+import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import com.server.booyoungee.domain.place.domain.RecommendPlace;
+import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPersistListResponse;
+import org.springframework.web.bind.annotation.*;
 
 import com.server.booyoungee.domain.place.application.recommend.RecommendService;
 import com.server.booyoungee.domain.place.domain.PlaceType;
-import com.server.booyoungee.domain.place.dto.response.RecommendPlaceListResponse;
+import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPersistResponse;
 import com.server.booyoungee.global.common.ResponseModel;
 import com.server.booyoungee.global.exception.ExceptionResponse;
@@ -36,12 +32,16 @@ public class RecommendController {
 	private final RecommendService recommendService;
 
 	//ADMIN용
-	@PutMapping()
-	public void updateAllToNotRecommendPlace() {
-		recommendService.updateRecommend();
+	@PatchMapping
+	public ResponseModel<RecommendPersistListResponse> updateAllToNotRecommendPlace() {
+		List<RecommendPlace> places=recommendService.updateRecommend();
+		RecommendPersistListResponse response = RecommendPersistListResponse.from(places);
+		return response.recommendIds().isEmpty()
+				? ResponseModel.success(NO_CONTENT, response)
+				: ResponseModel.success(response);
 	}
 
-	@DeleteMapping()
+	@DeleteMapping
 	public ResponseModel<RecommendPersistResponse> deleteRecommend(
 		@RequestParam Long id
 	) {
@@ -75,7 +75,7 @@ public class RecommendController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@PostMapping()
+	@PostMapping
 	@ResponseStatus(CREATED)
 	public ResponseModel<RecommendPersistResponse> addRecommend(
 
@@ -109,7 +109,7 @@ public class RecommendController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
-	@GetMapping()
+	@GetMapping
 	public ResponseModel<RecommendPlaceListResponse> getRecommendList() throws IOException {
 
 		RecommendPlaceListResponse response = recommendService.getRecommendList();

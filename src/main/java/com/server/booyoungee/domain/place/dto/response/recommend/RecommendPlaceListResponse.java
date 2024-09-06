@@ -1,7 +1,8 @@
-package com.server.booyoungee.domain.place.dto.response;
+package com.server.booyoungee.domain.place.dto.response.recommend;
 
 import java.util.List;
 
+import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record RecommendPlaceListResponse(

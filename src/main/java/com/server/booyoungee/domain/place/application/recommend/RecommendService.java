@@ -14,7 +14,7 @@ import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.RecommendPlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
-import com.server.booyoungee.domain.place.dto.response.RecommendPlaceListResponse;
+import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPersistResponse;
 import com.server.booyoungee.domain.place.exception.DuplicatePlaceExcepiton;
 
@@ -49,9 +49,11 @@ public class RecommendService {
 	}
 
 	@Transactional
-	public void updateRecommend() {
+	public List<RecommendPlace> updateRecommend() {
 		//TODO 기존 데이터의 isRecommend를 false로 변경
 		recommendRepository.updateAllToNotRecommendPlace();
+		return recommendRepository.findAll();
+
 	}
 
 	@Transactional

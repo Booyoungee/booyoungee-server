@@ -12,6 +12,8 @@ import com.server.booyoungee.domain.place.domain.RecommendPlace;
 
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface RecommendRepository extends JpaRepository<RecommendPlace, Long> {
 
@@ -25,5 +27,6 @@ public interface RecommendRepository extends JpaRepository<RecommendPlace, Long>
 
 	@Query("SELECT CASE WHEN COUNT(h) > 0 THEN true ELSE false END FROM RecommendPlace h WHERE h.isRecommendPlace = true AND h.place.id = :placeId")
 	boolean existsByPlaceId(@Param("placeId") Long placeId);
+
 
 }
