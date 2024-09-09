@@ -47,18 +47,25 @@ public record PlaceDetailsResponse(
 	@Schema(description = "스탬프 수", example = "1", requiredMode = REQUIRED)
 	int stampCount,
 
+	@Schema(description = "리뷰 수", example = "1", requiredMode = REQUIRED)
+	int reviewCount,
+
 	@Schema(description = "장소에 대한 사용자 정보",
 			example = "{\"hasStamp\":true,\"hasLike\":true,\"hasBookmark\":true}",
 			requiredMode = REQUIRED)
 	UserMeResponse me
 ) {
 	public static PlaceDetailsResponse of(String placeId, String name, String address, String tel, List<String> images,
-		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount,int stampCount,UserMeResponse me) {
+		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount,int stampCount,int reviewCount,UserMeResponse me) {
 		return new PlaceDetailsResponse(placeId, name, address, tel, images, type, movies, posterUrl, likeCount,
-			starCount,stampCount,me);
+			starCount,stampCount,reviewCount,me);
 	}
 
 	public static PlaceDetailsResponse from(Place place,PlaceType type,String tel,List<String> images, List<String> movies, List<String> posterUrl,UserMeResponse me) {
-		return new PlaceDetailsResponse(place.getId()+"", place.getName(), place.getBasicAddress(), tel, images, type, movies, posterUrl, place.getLikes().size(), 0,place.getStamps().size(),me);
+		return new PlaceDetailsResponse(
+				place.getId()+"", place.getName(), place.getBasicAddress(),
+				tel, images, type, movies, posterUrl,
+				place.getLikes().size(), 0,place.getStamps().size(),place.getComments().size(),
+				me);
 	}
 }
