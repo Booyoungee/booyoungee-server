@@ -2,6 +2,8 @@ package com.server.booyoungee.domain.place.api;
 
 import java.io.IOException;
 
+import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.interceptor.UserId;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +41,11 @@ public class PlaceController {
 			content = @Content(schema = @Schema(implementation = PlaceDetailsResponse.class))
 		),
 		@ApiResponse(
+			responseCode = "401",
+			description = "Unauthorized(만료된 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
 			responseCode = "404",
 			description = "NOT_FOUND_MovieInfo(영화 API 오류)",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
@@ -46,10 +53,11 @@ public class PlaceController {
 	})
 	@GetMapping("/details")
 	public ResponseModel<PlaceDetailsResponse> getPlaceDetails(
+		@UserId User user,
 		@RequestParam Long placeId,
 		@RequestParam PlaceType placeType
 	) throws IOException {
-		PlaceDetailsResponse response = placeService.getDetails(placeId, placeType);
+		PlaceDetailsResponse response = placeService.getDetails(placeId, placeType,user);
 		return ResponseModel.success(response);
 	}
 }

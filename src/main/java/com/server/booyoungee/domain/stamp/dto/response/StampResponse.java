@@ -25,10 +25,6 @@ public record StampResponse(
 	@Schema(description = "스탬프 타입", example = "STAMP", requiredMode = REQUIRED)
 	String type,
 
-	// TODO: count 필드 제거
-	// @Schema(description = "스탬프 횟수", example = "3", requiredMode = REQUIRED)
-	// Long count,
-
 	@Schema(description = "생성일", example = "2021.09.01.12:00:00", requiredMode = REQUIRED)
 	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss.SSS")
 	LocalDateTime createdAt,
