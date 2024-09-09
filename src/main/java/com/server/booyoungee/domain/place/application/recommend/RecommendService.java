@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.server.booyoungee.domain.user.domain.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class RecommendService {
 	}
 
 	@Transactional
-	public RecommendPlaceListResponse getRecommendList() throws IOException {
+	public RecommendPlaceListResponse getRecommendList(User user) throws IOException {
 		Pageable topFive = PageRequest.of(0, 5);
 		List<RecommendPlace> places = recommendRepository.findAll(topFive).getContent();
 
@@ -65,7 +66,7 @@ public class RecommendService {
 		for (RecommendPlace place : places) {
 			PlaceType type = PlaceType.valueOf(place.getType());
 			PlaceDetailsResponse placeDetails = placeService.getDetails(place.getPlace().getId(),
-				type);
+				type,user);
 			placeList.add(placeDetails);
 		}
 		RecommendPlaceListResponse response = RecommendPlaceListResponse.of(placeList);

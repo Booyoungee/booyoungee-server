@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.server.booyoungee.domain.place.domain.RecommendPlace;
 import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPersistListResponse;
+import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.domain.user.interceptor.UserId;
 import org.springframework.web.bind.annotation.*;
 
 import com.server.booyoungee.domain.place.application.recommend.RecommendService;
@@ -104,15 +106,22 @@ public class RecommendController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 		@ApiResponse(
+		responseCode = "401",
+		description = "Unauthorized(만료된 토큰)",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
 			responseCode = "404",
 			description = "NOT_FOUND_PLACE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		)
 	})
 	@GetMapping
-	public ResponseModel<RecommendPlaceListResponse> getRecommendList() throws IOException {
+	public ResponseModel<RecommendPlaceListResponse> getRecommendList(
+			@UserId User user
+	) throws IOException {
 
-		RecommendPlaceListResponse response = recommendService.getRecommendList();
+		RecommendPlaceListResponse response = recommendService.getRecommendList(user);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);

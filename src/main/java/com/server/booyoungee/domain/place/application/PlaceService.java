@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
+import com.server.booyoungee.domain.like.dao.LikeRepository;
+import com.server.booyoungee.domain.place.dto.response.UserMeResponse;
+import com.server.booyoungee.domain.stamp.dao.StampRepository;
+import com.server.booyoungee.domain.stamp.domain.Stamp;
+import com.server.booyoungee.domain.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +48,10 @@ public class PlaceService {
 	private final StorePlaceService storePlaceService;
 	private final TmdbApiService movieService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
+
+	private final StampRepository stampRepository;
+	private final BookMarkRepository bookMarkRepository;
+	private final LikeRepository likeRepository;
 
 	@Transactional
 	public BookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
@@ -108,7 +118,16 @@ public class PlaceService {
 	}
 
 	@Transactional
-	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type) throws IOException {
+	public UserMeResponse getUserMe(Place place, User user)
+	{
+		boolean hasStamp = stampRepository.existsByUserAndPlace(user, place);
+		boolean hasLike = likeRepository.existsByUserAndPlace(user, place);
+		boolean hasBookmark = bookMarkRepository.existsByUserIdAndPlaceId(user, place);
+		return UserMeResponse.of(hasStamp, hasLike, hasBookmark);
+
+	}
+	@Transactional
+	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type,User me) throws IOException {
 
 		if (!isMatchType(placeId, type.getKey())) {
 			throw new NotFoundPlaceException();
@@ -123,6 +142,8 @@ public class PlaceService {
 
 		Place place = getByPlaceId(placeId);
 
+		UserMeResponse userMe = getUserMe(place, me);
+
 		// Check the type of place
 		if (type.getKey().equals("tour")) {
 			tourInfo = placeService.getTour(placeId);
@@ -131,7 +152,7 @@ public class PlaceService {
 			dto = PlaceDetailsResponse.of(placeId + "", tourInfo.title(), tourInfo.addr1(), tourInfo.tel(),
 				imageList, type, movieList,
 				posterUrl, place.getLikes().size(),
-				0);
+				0, place.getStamps().size(),userMe);
 
 		} else {
 			List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
@@ -149,9 +170,7 @@ public class PlaceService {
 				posterUrl = moviePosterList(moviePlace);
 			}
 
-			dto = PlaceDetailsResponse.of(placeId + "", place.getName(), place.getBasicAddress(), tel,
-				imageList, type, movieList,
-				posterUrl, place.getLikes().size(), 0);
+			dto = PlaceDetailsResponse.from(place, type, tel, imageList, movieList, posterUrl,userMe);
 
 		}
 		// Rest of your logic goes here...

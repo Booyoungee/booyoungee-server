@@ -50,7 +50,7 @@ public class BookMarkService {
 		System.out.println("getMyBookMarkDetails bookMarkList" + bookMarkList.size());
 		List<PlaceDetailsResponse> dto = new ArrayList<>();
 		for (BookMark bookMark : bookMarkList) {
-			dto.add(placeService.getDetails(bookMark.getPlaceId().getId(), bookMark.getType()));
+			dto.add(placeService.getDetails(bookMark.getPlaceId().getId(), bookMark.getType(),user));
 		}
 		return dto;
 	}
