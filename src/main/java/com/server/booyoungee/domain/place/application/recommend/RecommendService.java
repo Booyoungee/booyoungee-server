@@ -14,8 +14,8 @@ import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.RecommendPlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
-import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPersistResponse;
+import com.server.booyoungee.domain.place.dto.response.recommend.RecommendPlaceListResponse;
 import com.server.booyoungee.domain.place.exception.DuplicatePlaceExcepiton;
 
 import jakarta.transaction.Transactional;
@@ -63,8 +63,9 @@ public class RecommendService {
 
 		List<PlaceDetailsResponse> placeList = new ArrayList<>();
 		for (RecommendPlace place : places) {
+			PlaceType type = PlaceType.valueOf(place.getType());
 			PlaceDetailsResponse placeDetails = placeService.getDetails(place.getPlace().getId(),
-				PlaceType.getKey(place.getType()));
+				type);
 			placeList.add(placeDetails);
 		}
 		RecommendPlaceListResponse response = RecommendPlaceListResponse.of(placeList);

@@ -220,7 +220,8 @@ public class AuthController {
 		)
 	})
 	@PostMapping("/refresh-jwt-token")
-	public ResponseModel<JwtTokenResponse> refreshJwtToken(@RequestParam String refreshToken) throws IOException {
+	public ResponseModel<JwtTokenResponse> refreshJwtToken(
+		@RequestHeader("X-Kakao-Refresh-Token") String refreshToken) throws IOException {
 		KakaoTokenResponse response = kakaoLoginService.refreshKakaoToken(refreshToken);
 		LoginRequest request = new LoginRequest(Provider.KAKAO, null);
 		KakaoLoginRequest kakaoLoginRequestDto = KakaoLoginRequest.of(
@@ -276,5 +277,7 @@ public class AuthController {
 		JwtTokenResponse tokens = authService.login(kakaoLoginRequestDto, request);
 		return ResponseModel.success(tokens);
 	}
+
+	//
 
 }
