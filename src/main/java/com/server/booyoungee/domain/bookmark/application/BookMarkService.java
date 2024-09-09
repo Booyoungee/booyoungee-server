@@ -60,8 +60,6 @@ public class BookMarkService {
 
 		Place place = placeService.getByPlaceId(placeId, type.getKey());
 
-		System.out.println("add bookmark placeId" + place.getId());
-
 		if (bookMarkRepository.existsByUserIdAndPlaceIdAndType(user, place, type)) {
 			throw new DuplicateBookMarkException();
 		}

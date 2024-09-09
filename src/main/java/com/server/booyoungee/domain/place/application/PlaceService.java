@@ -110,6 +110,10 @@ public class PlaceService {
 	@Transactional
 	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type) throws IOException {
 
+		if (!isMatchType(placeId, type.getKey())) {
+			throw new NotFoundPlaceException();
+		}
+
 		PlaceDetailsResponse dto;
 		TourInfoDetailsResponseDto tourInfo = null;
 		List<String> imageList = new ArrayList<>();
@@ -161,8 +165,18 @@ public class PlaceService {
 			.orElseThrow(NotFoundPlaceException::new);
 	}
 
+	public boolean isMatchType(Long placeId, String type) {
+		String types = placeRepository.findDiscriminatorTypeById(placeId).toLowerCase();
+		return types.equals(type);
+	}
+
 	//등록할 때 place 가져올 때
 	public Place getByPlaceId(Long placeId, String type) {
+
+		if (!isMatchType(placeId, type)) {
+			throw new NotFoundPlaceException();
+		}
+
 		if (type.equals("tour")) {
 			Place place = placeRepository.findById(placeId)
 				.orElse(null);
