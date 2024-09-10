@@ -16,8 +16,8 @@ import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
-import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceSummaryListResponse;
-import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceSummaryResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
@@ -86,9 +86,9 @@ public class MoviePlaceService {
 	}
 
 	@Transactional
-	public MoviePlaceSummaryListResponse getMoviePlacesByFilter(String filter) {
+	public PlaceSummaryListResponse getMoviePlacesByFilter(String filter) {
 		List<Long> moviePlaceIds = new ArrayList<>();
-		List<MoviePlaceSummaryResponse> moviePlaces = new ArrayList<>();
+		List<PlaceSummaryResponse> moviePlaces = new ArrayList<>();
 
 		moviePlaceIds = switch (filter) {
 			case "like" -> likeRepository.findTopPlacesByLikes();
@@ -107,11 +107,11 @@ public class MoviePlaceService {
 				int likeCount = likeRepository.countByPlaceId(id);
 				int reviewCount = commentRepository.countByPlaceId(id);
 				moviePlaces.add(
-					MoviePlaceSummaryResponse.of(moviePlace.get(), stars, likeCount, reviewCount)
+					PlaceSummaryResponse.of(moviePlace.get(), stars, likeCount, reviewCount)
 				);
 			}
 		});
-		return MoviePlaceSummaryListResponse.of(moviePlaces);
+		return PlaceSummaryListResponse.of(moviePlaces);
 	}
 
 	public MoviePlacePageResponse<MoviePlace> getMoviePlacesByMovieNameKeyword(String keyword, int page, int size) {

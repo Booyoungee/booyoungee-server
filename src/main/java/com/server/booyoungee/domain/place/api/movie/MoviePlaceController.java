@@ -14,7 +14,7 @@ import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
-import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Hidden;
@@ -38,10 +38,10 @@ public class MoviePlaceController {
 
 	@Operation(summary = "영화 촬영지 카테고리 필터 조회", description = "영화 촬영지 카테고리에서 별점, 리뷰, 좋아요 순 필터로 조회합니다.")
 	@GetMapping
-	public ResponseModel<MoviePlaceSummaryListResponse> getMoviePlacesByFilter(
+	public ResponseModel<PlaceSummaryListResponse> getMoviePlacesByFilter(
 		@Parameter(description = "필터(star/review/like)", example = "star", required = true) @RequestParam String filter
 	) {
-		MoviePlaceSummaryListResponse response = moviePlaceService.getMoviePlacesByFilter(filter);
+		PlaceSummaryListResponse response = moviePlaceService.getMoviePlacesByFilter(filter);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
