@@ -3,17 +3,25 @@ package com.server.booyoungee.domain.place.application.movie;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.server.booyoungee.domain.like.dao.LikeRepository;
 import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceSummaryResponse;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
+import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
+import com.server.booyoungee.domain.review.comment.domain.Comment;
+import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.global.common.PageableResponse;
 import com.server.booyoungee.global.handler.ExcelSheetHandler;
 
@@ -24,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MoviePlaceService {
 	private final MoviePlaceRepository moviePlaceRepository;
+	private final LikeRepository likeRepository;
+	private final CommentRepository commentRepository;
 
 	@Transactional
 	public void initData() throws Exception {
@@ -73,6 +83,35 @@ public class MoviePlaceService {
 			.map(MoviePlaceResponse::from)
 			.collect(java.util.stream.Collectors.toList());
 		return MoviePlacePageResponse.of(moviePlaceList, PageableResponse.of(pageable, totalElements));
+	}
+
+	@Transactional
+	public MoviePlaceSummaryListResponse getMoviePlacesByFilter(String filter) {
+		List<Long> moviePlaceIds = new ArrayList<>();
+		List<MoviePlaceSummaryResponse> moviePlaces = new ArrayList<>();
+
+		moviePlaceIds = switch (filter) {
+			case "like" -> likeRepository.findTopPlacesByLikes();
+			case "review" -> commentRepository.findTopPlacesByReviews();
+			case "star" -> commentRepository.findTopPlacesByStars();
+			default -> moviePlaceIds;
+		};
+
+		moviePlaceIds.forEach(id -> {
+			Optional<MoviePlace> moviePlace = moviePlaceRepository.findById(id);
+			if (moviePlace.isPresent()) {
+				List<Stars> stars = commentRepository.findAllByPlaceId(id)
+					.stream()
+					.map(Comment::getStars)
+					.collect(Collectors.toList());
+				int likeCount = likeRepository.countByPlaceId(id);
+				int reviewCount = commentRepository.countByPlaceId(id);
+				moviePlaces.add(
+					MoviePlaceSummaryResponse.of(moviePlace.get(), stars, likeCount, reviewCount)
+				);
+			}
+		});
+		return MoviePlaceSummaryListResponse.of(moviePlaces);
 	}
 
 	public MoviePlacePageResponse<MoviePlace> getMoviePlacesByMovieNameKeyword(String keyword, int page, int size) {

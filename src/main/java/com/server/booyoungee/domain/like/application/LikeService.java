@@ -1,5 +1,7 @@
 package com.server.booyoungee.domain.like.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,14 @@ public class LikeService {
 		validateIsOwner(like, user);
 		likeRepository.delete(like);
 		return LikePersistResponse.from(like);
+	}
+
+	public List<Long> getTopPlacesByLikes() {
+		return likeRepository.findTopPlacesByLikes();
+	}
+
+	public int getLikeCountByPlaceId(Long placeId) {
+		return likeRepository.countByPlaceId(placeId);
 	}
 
 	private Like getLikeById(Long likeId) {
