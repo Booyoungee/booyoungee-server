@@ -3,13 +3,8 @@ package com.server.booyoungee.domain.place.application;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
-import com.server.booyoungee.domain.like.dao.LikeRepository;
-import com.server.booyoungee.domain.place.dto.response.UserMeResponse;
-import com.server.booyoungee.domain.stamp.dao.StampRepository;
-import com.server.booyoungee.domain.stamp.domain.Stamp;
-import com.server.booyoungee.domain.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import com.server.booyoungee.domain.bookmark.dao.BookMarkRepository;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
+import com.server.booyoungee.domain.like.dao.LikeRepository;
 import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
@@ -29,6 +26,7 @@ import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
+import com.server.booyoungee.domain.place.dto.response.UserMeResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
@@ -36,6 +34,11 @@ import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsRespo
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
+import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
+import com.server.booyoungee.domain.review.comment.domain.Comment;
+import com.server.booyoungee.domain.review.stars.domain.Stars;
+import com.server.booyoungee.domain.stamp.dao.StampRepository;
+import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,6 +55,7 @@ public class PlaceService {
 	private final StampRepository stampRepository;
 	private final BookMarkRepository bookMarkRepository;
 	private final LikeRepository likeRepository;
+	private final CommentRepository commentRepository;
 
 	@Transactional
 	public BookMarkResponse getPlace(Long id, Long placeId, PlaceType type) throws
@@ -118,16 +122,16 @@ public class PlaceService {
 	}
 
 	@Transactional
-	public UserMeResponse getUserMe(Place place, User user)
-	{
+	public UserMeResponse getUserMe(Place place, User user) {
 		boolean hasStamp = stampRepository.existsByUserAndPlace(user, place);
 		boolean hasLike = likeRepository.existsByUserAndPlace(user, place);
 		boolean hasBookmark = bookMarkRepository.existsByUserIdAndPlaceId(user, place);
 		return UserMeResponse.of(hasStamp, hasLike, hasBookmark);
 
 	}
+
 	@Transactional
-	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type,User me) throws IOException {
+	public PlaceDetailsResponse getDetails(Long placeId, PlaceType type, User me) throws IOException {
 
 		if (!isMatchType(placeId, type.getKey())) {
 			throw new NotFoundPlaceException();
@@ -144,6 +148,11 @@ public class PlaceService {
 
 		UserMeResponse userMe = getUserMe(place, me);
 
+		List<Stars> stars = commentRepository.findAllByPlaceId(placeId)
+			.stream()
+			.map(Comment::getStars)
+			.collect(Collectors.toList());
+
 		// Check the type of place
 		if (type.getKey().equals("tour")) {
 			tourInfo = placeService.getTour(placeId);
@@ -152,7 +161,7 @@ public class PlaceService {
 			dto = PlaceDetailsResponse.of(placeId + "", tourInfo.title(), tourInfo.addr1(), tourInfo.tel(),
 				imageList, type, movieList,
 				posterUrl, place.getLikes().size(),
-				0, place.getStamps().size(),place.getComments().size(),userMe);
+				0, place.getStamps().size(), place.getComments().size(), stars, userMe);
 
 		} else {
 			List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
@@ -170,7 +179,7 @@ public class PlaceService {
 				posterUrl = moviePosterList(moviePlace);
 			}
 
-			dto = PlaceDetailsResponse.from(place, type, tel, imageList, movieList, posterUrl,userMe);
+			dto = PlaceDetailsResponse.from(place, type, tel, imageList, movieList, posterUrl, stars, userMe);
 
 		}
 		// Rest of your logic goes here...

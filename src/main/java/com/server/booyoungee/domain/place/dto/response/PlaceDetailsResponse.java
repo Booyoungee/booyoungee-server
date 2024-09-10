@@ -1,15 +1,15 @@
 package com.server.booyoungee.domain.place.dto.response;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
+
 import java.util.List;
 
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
+import com.server.booyoungee.domain.review.stars.domain.Stars;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED;
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 @Builder
 public record PlaceDetailsResponse(
@@ -50,22 +50,28 @@ public record PlaceDetailsResponse(
 	@Schema(description = "리뷰 수", example = "1", requiredMode = REQUIRED)
 	int reviewCount,
 
+	@Schema(description = "별점", example = "4.7", requiredMode = REQUIRED)
+	double stars,
+
 	@Schema(description = "장소에 대한 사용자 정보",
-			example = "{\"hasStamp\":true,\"hasLike\":true,\"hasBookmark\":true}",
-			requiredMode = REQUIRED)
+		example = "{\"hasStamp\":true,\"hasLike\":true,\"hasBookmark\":true}",
+		requiredMode = REQUIRED)
 	UserMeResponse me
 ) {
 	public static PlaceDetailsResponse of(String placeId, String name, String address, String tel, List<String> images,
-		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount,int stampCount,int reviewCount,UserMeResponse me) {
+		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount, int stampCount,
+		int reviewCount, List<Stars> stars, UserMeResponse me) {
 		return new PlaceDetailsResponse(placeId, name, address, tel, images, type, movies, posterUrl, likeCount,
-			starCount,stampCount,reviewCount,me);
+			starCount, stampCount, reviewCount, stars.stream().mapToDouble(Stars::getStars).average().orElse(0), me);
 	}
 
-	public static PlaceDetailsResponse from(Place place,PlaceType type,String tel,List<String> images, List<String> movies, List<String> posterUrl,UserMeResponse me) {
+	public static PlaceDetailsResponse from(Place place, PlaceType type, String tel, List<String> images,
+		List<String> movies, List<String> posterUrl, List<Stars> stars, UserMeResponse me) {
 		return new PlaceDetailsResponse(
-				place.getId()+"", place.getName(), place.getBasicAddress(),
-				tel, images, type, movies, posterUrl,
-				place.getLikes().size(), 0,place.getStamps().size(),place.getComments().size(),
-				me);
+			place.getId() + "", place.getName(), place.getBasicAddress(),
+			tel, images, type, movies, posterUrl,
+			place.getLikes().size(), 0, place.getStamps().size(), place.getComments().size(),
+			stars.stream().mapToDouble(Stars::getStars).average().orElse(0),
+			me);
 	}
 }

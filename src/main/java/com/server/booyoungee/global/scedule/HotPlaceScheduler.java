@@ -13,12 +13,12 @@ public class HotPlaceScheduler {
 
 	private final HotPlaceService hotPlaceService;
 
-	@Scheduled(fixedRate = 10800000) // 3 hours in milliseconds
+	@Scheduled(cron = "0 0 0/3 * * *") // 3 hours in milliseconds
 	public void updateHotPlaces() {
 		hotPlaceService.saveHotPlace();
 	}
 
-	@Scheduled(fixedRate = 10800000 * 8)//24 hours in milliseconds
+	@Scheduled(cron = "0 0 0 * * *")//24 hours in milliseconds
 	public void updateViewCount() {
 		//updateViewCount
 	}
