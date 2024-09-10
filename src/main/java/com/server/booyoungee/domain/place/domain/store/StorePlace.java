@@ -5,6 +5,7 @@ import com.server.booyoungee.domain.place.domain.Place;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +15,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Entity
 @SuperBuilder
-@Table(name = "store_place")
+@Table(name = "store_place", indexes = {
+	@Index(name = "idx_store_id", columnList = "storeId"),
+})
 @DiscriminatorValue("STORE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StorePlace extends Place {

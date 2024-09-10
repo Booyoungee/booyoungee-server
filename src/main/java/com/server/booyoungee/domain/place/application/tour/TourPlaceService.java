@@ -2,20 +2,29 @@ package com.server.booyoungee.domain.place.application.tour;
 
 import static com.server.booyoungee.domain.place.exception.tour.TourInfoExceptionCode.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.server.booyoungee.domain.like.dao.LikeRepository;
 import com.server.booyoungee.domain.place.dao.tour.TourPlaceRepository;
 import com.server.booyoungee.domain.place.domain.Place;
+import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.domain.tour.TourPlace;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourPlaceResponseDto;
 import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.place.domain.tour.TourContentType;
+import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
+import com.server.booyoungee.domain.review.comment.domain.Comment;
+import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.global.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +35,39 @@ public class TourPlaceService {
 
 	private final TourPlaceRepository tourPlaceRepository;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
+	private final LikeRepository likeRepository;
+	private final CommentRepository commentRepository;
+
+	@Transactional
+	public PlaceSummaryListResponse getTourPlacesByFilter(String filter) {
+		List<Long> tourPlaceIds = new ArrayList<>();
+		List<PlaceSummaryResponse> tourPlaces = new ArrayList<>();
+
+		tourPlaceIds = switch (filter) {
+			case "like" -> likeRepository.findTopPlacesByLikes();
+			case "review" -> commentRepository.findTopPlacesByReviews();
+			case "star" -> commentRepository.findTopPlacesByStars();
+			default -> tourPlaceIds;
+		};
+
+		tourPlaceIds.forEach(id -> {
+			Optional<TourPlace> tourPlace = tourPlaceRepository.findById(id);
+			if (tourPlace.isPresent()) {
+				List<TourInfoDetailsResponseDto> response = tourInfoOpenApiService.getCommonInfoByContentId(tourPlace.get().getContentId());
+				List<Stars> stars = commentRepository.findAllByPlaceId(id)
+					.stream()
+					.map(Comment::getStars)
+					.collect(Collectors.toList());
+				int likeCount = likeRepository.countByPlaceId(id);
+				int reviewCount = commentRepository.countByPlaceId(id);
+				tourPlaces.add(
+					PlaceSummaryResponse.of(tourPlace.get(), response.get(0).title(), response.get(0).addr1(),  stars, likeCount, reviewCount)
+				);
+			}
+		});
+		return PlaceSummaryListResponse.of(tourPlaces);
+	}
+
 
 	@Transactional //북마크 조회시 사용
 	public TourInfoDetailsResponseDto getTour(Long placeId) {

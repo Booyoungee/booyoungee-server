@@ -1,6 +1,7 @@
 package com.server.booyoungee.domain.review.comment.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import com.server.booyoungee.domain.review.comment.dto.response.CommentListRespo
 import com.server.booyoungee.domain.review.comment.dto.response.CommentPersistResponse;
 import com.server.booyoungee.domain.review.comment.exception.NotFoundCommentException;
 import com.server.booyoungee.domain.review.comment.exception.UserNotWriterOfCommentException;
+import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,13 @@ public class CommentService {
 		return CommentListResponse.from(comments);
 	}
 
+	public List<Stars> getStars(Long placeId) {
+		List<Comment> comments = commentRepository.findAllByPlaceId(placeId);
+		return comments.stream()
+			.map(Comment::getStars)
+			.collect(Collectors.toList());
+	}
+
 	@Transactional
 	public CommentListResponse getMyReviewList(User user) {
 		List<Comment> comments = commentRepository.findAllByWriter(user);
@@ -57,6 +66,18 @@ public class CommentService {
 		validateReviewWriter(comment, user);
 		commentRepository.deleteById(commentId);
 		return CommentPersistResponse.from(comment);
+	}
+
+	public int getReviewCountByPlaceId(Long placeId) {
+		return commentRepository.countByPlaceId(placeId);
+	}
+
+	public List<Long> getTopPlacesByReviews() {
+		return commentRepository.findTopPlacesByReviews();
+	}
+
+	public List<Long> getTopPlacesByStars() {
+		return commentRepository.findTopPlacesByStars();
 	}
 
 	private Comment getComment(Long commentId) {

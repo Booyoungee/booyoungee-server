@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
@@ -35,6 +36,24 @@ import lombok.RequiredArgsConstructor;
 public class MoviePlaceController {
 	private final MoviePlaceService moviePlaceService;
 
+	@Operation(summary = "영화 촬영지 카테고리 필터 조회", description = "영화 촬영지 카테고리에서 별점, 리뷰, 좋아요 순 필터로 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "영화 촬영지 카테고리 필터 조회 성공",
+			content = @Content(schema = @Schema(implementation = PlaceSummaryListResponse.class))
+		),
+	})
+	@GetMapping
+	public ResponseModel<PlaceSummaryListResponse> getMoviePlacesByFilter(
+		@Parameter(description = "필터(star/review/like)", example = "star", required = true) @RequestParam String filter
+	) {
+		PlaceSummaryListResponse response = moviePlaceService.getMoviePlacesByFilter(filter);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
+	}
+
 	@Operation(summary = "검색창에 영화 제목으로 촬영지 검색", description = "검색창에 영화 제목을 입력하여 연관된 영화 촬영지를 검색합니다.")
 	@ApiResponses({
 		@ApiResponse(
@@ -43,7 +62,7 @@ public class MoviePlaceController {
 			content = @Content(schema = @Schema(implementation = MoviePlacePageResponse.class))
 		),
 	})
-	@GetMapping
+	@GetMapping("/search")
 	public ResponseModel<MoviePlacePageResponse<MoviePlace>> getMovieLocationByMovieName(
 		@Parameter(description = "영화 이름", example = "해운대", required = true) @RequestParam String keyword,
 		@RequestParam(defaultValue = "0") @PositiveOrZero int page,

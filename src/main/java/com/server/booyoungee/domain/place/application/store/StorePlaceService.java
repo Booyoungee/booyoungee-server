@@ -1,7 +1,9 @@
 package com.server.booyoungee.domain.place.application.store;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -12,12 +14,18 @@ import com.server.booyoungee.domain.kakaoMap.application.KakaoAddressSearchServi
 import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoAddressToCode;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
+import com.server.booyoungee.domain.like.dao.LikeRepository;
 import com.server.booyoungee.domain.place.dao.store.StorePlaceRepository;
 import com.server.booyoungee.domain.place.domain.store.StorePlace;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
+import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
+import com.server.booyoungee.domain.review.comment.domain.Comment;
+import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.global.common.PageableResponse;
 
 import jakarta.transaction.Transactional;
@@ -29,6 +37,8 @@ public class StorePlaceService {
 	private final StorePlaceRepository storePlaceRepository;
 	private final PlaceSearchService placeSearchService;
 	private final KakaoAddressSearchService kakaoAddressSearchService;
+	private final LikeRepository likeRepository;
+	private final CommentRepository commentRepository;
 
 	public StorePlaceListResponse getStoreByName(String name) {
 		List<StorePlace> stores = storePlaceRepository.findAllByName(name);
@@ -65,6 +75,35 @@ public class StorePlaceService {
 		store.increaseViewCount();
 		storePlaceRepository.save(store);
 		return StorePlaceResponse.from(store);
+	}
+
+	@Transactional
+	public PlaceSummaryListResponse getStorePlacesByFilter(String filter) {
+		List<Long> storePlaceIds = new ArrayList<>();
+		List<PlaceSummaryResponse> storePlaces = new ArrayList<>();
+
+		storePlaceIds = switch (filter) {
+			case "like" -> likeRepository.findTopPlacesByLikes();
+			case "review" -> commentRepository.findTopPlacesByReviews();
+			case "star" -> commentRepository.findTopPlacesByStars();
+			default -> storePlaceIds;
+		};
+
+		storePlaceIds.forEach(id -> {
+			Optional<StorePlace> storePlace = storePlaceRepository.findById(id);
+			if (storePlace.isPresent()) {
+				List<Stars> stars = commentRepository.findAllByPlaceId(id)
+					.stream()
+					.map(Comment::getStars)
+					.collect(Collectors.toList());
+				int likeCount = likeRepository.countByPlaceId(id);
+				int reviewCount = commentRepository.countByPlaceId(id);
+				storePlaces.add(
+					PlaceSummaryResponse.of(storePlace.get(), stars, likeCount, reviewCount)
+				);
+			}
+		});
+		return PlaceSummaryListResponse.of(storePlaces);
 	}
 
 	public void restoreViews() {
