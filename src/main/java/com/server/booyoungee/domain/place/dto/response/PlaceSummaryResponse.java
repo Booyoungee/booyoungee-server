@@ -5,6 +5,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import java.util.List;
 
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 
@@ -34,6 +35,16 @@ public record PlaceSummaryResponse(
 	@Schema(description = "영화 제목", example = "극비 수사", requiredMode = NOT_REQUIRED)
 	String movieName
 ) {
+	public static PlaceSummaryResponse of (Place place, List<Stars> stars, int likes, int reviews) {
+		return PlaceSummaryResponse.builder()
+			.id(place.getId())
+			.name(place.getName())
+			.basicAddress(place.getBasicAddress())
+			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
+			.likes(likes)
+			.reviews(reviews)
+			.build();
+	}
 
 	public static PlaceSummaryResponse of (MoviePlace moviePlace, List<Stars> stars, int likes, int reviews) {
 		return PlaceSummaryResponse.builder()

@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
-import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.global.common.ResponseModel;
 
 import io.swagger.v3.oas.annotations.Hidden;
@@ -37,6 +37,13 @@ public class MoviePlaceController {
 	private final MoviePlaceService moviePlaceService;
 
 	@Operation(summary = "영화 촬영지 카테고리 필터 조회", description = "영화 촬영지 카테고리에서 별점, 리뷰, 좋아요 순 필터로 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "영화 촬영지 카테고리 필터 조회 성공",
+			content = @Content(schema = @Schema(implementation = PlaceSummaryListResponse.class))
+		),
+	})
 	@GetMapping
 	public ResponseModel<PlaceSummaryListResponse> getMoviePlacesByFilter(
 		@Parameter(description = "필터(star/review/like)", example = "star", required = true) @RequestParam String filter

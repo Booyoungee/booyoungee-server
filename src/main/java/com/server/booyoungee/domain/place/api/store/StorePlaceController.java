@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
 import com.server.booyoungee.domain.place.domain.store.StorePlace;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.global.common.ResponseModel;
@@ -33,6 +34,24 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "StorePlace", description = "지역 상생 식당 api / 담당자 : 이한음")
 public class StorePlaceController {
 	private final StorePlaceService storePlaceService;
+
+	@Operation(summary = "지역 상생 식당 카테고리 필터 조회", description = "지역 상생 식당 카테고리에서 별점, 리뷰, 좋아요 순 필터로 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "지역 상생 식당 카테고리 필터 조회 성공",
+			content = @Content(schema = @Schema(implementation = PlaceSummaryListResponse.class))
+		),
+	})
+	@GetMapping
+	public ResponseModel<PlaceSummaryListResponse> getStorePlacesByFilter(
+		@Parameter(description = "필터(star/review/like)", example = "star", required = true) @RequestParam String filter
+	) {
+		PlaceSummaryListResponse response = storePlaceService.getStorePlacesByFilter(filter);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
+	}
 
 	@Operation(summary = "내 주변 지역 상생 식당 지도 마커", description = "내 위치를 기반으로 주변 지역 상생 식당 마커를 조회합니다.")
 	@ApiResponses({
@@ -87,7 +106,7 @@ public class StorePlaceController {
 	}
 
 	@Hidden
-	@GetMapping("")
+	@GetMapping("/viewCount")
 	@Operation(summary = "식당 가장 많이 조회한 순")
 	public ResponseModel<StorePlacePageResponse<StorePlace>> getStoresList(
 		@RequestParam(defaultValue = "0") int page,
