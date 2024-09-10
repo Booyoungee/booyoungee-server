@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.domain.tour.TourPlace;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +36,19 @@ public record PlaceSummaryResponse(
 	@Schema(description = "영화 제목", example = "극비 수사", requiredMode = NOT_REQUIRED)
 	String movieName
 ) {
-	public static PlaceSummaryResponse of (Place place, List<Stars> stars, int likes, int reviews) {
+	public static PlaceSummaryResponse of(TourPlace tourPlace, String tourPlaceName, String tourPlaceBasicAddress,
+		List<Stars> stars, int likes, int reviews) {
+		return PlaceSummaryResponse.builder()
+			.id(tourPlace.getId())
+			.name(tourPlaceName)
+			.basicAddress(tourPlaceBasicAddress)
+			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
+			.likes(likes)
+			.reviews(reviews)
+			.build();
+	}
+
+	public static PlaceSummaryResponse of(Place place, List<Stars> stars, int likes, int reviews) {
 		return PlaceSummaryResponse.builder()
 			.id(place.getId())
 			.name(place.getName())
@@ -46,7 +59,7 @@ public record PlaceSummaryResponse(
 			.build();
 	}
 
-	public static PlaceSummaryResponse of (MoviePlace moviePlace, List<Stars> stars, int likes, int reviews) {
+	public static PlaceSummaryResponse of(MoviePlace moviePlace, List<Stars> stars, int likes, int reviews) {
 		return PlaceSummaryResponse.builder()
 			.id(moviePlace.getId())
 			.name(moviePlace.getName())
