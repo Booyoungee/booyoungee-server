@@ -19,6 +19,9 @@ public record CommentResponse(
 	@Schema(description = "장소 ID", example = "1", requiredMode = REQUIRED)
 	Long placeId,
 
+	@Schema(description = "장소 이름", example = "부산역", requiredMode = REQUIRED)
+	String placeName,
+
 	@Schema(description = "리뷰 내용", example = "좋아요", requiredMode = REQUIRED)
 	String content,
 
@@ -43,6 +46,7 @@ public record CommentResponse(
 		return CommentResponse.builder()
 			.id(comment.getId())
 			.placeId(comment.getPlace().getId())
+			.placeName(comment.getPlace().getName())
 			.content(comment.getContent())
 			.stars(comment.getStars().getStars())
 			.writerId(comment.getWriter().getUserId())
