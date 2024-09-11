@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.*;
 import java.io.IOException;
 import java.util.List;
 
+import com.server.booyoungee.domain.place.dto.response.PlaceDetailsListResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,11 +72,36 @@ public class BookMarkController {
 	@Operation(summary = "마이페이지에서 북마크 조회",
 		description = "마이페이지에서 북마크에 등록된 장소들의 상세 정보들을 가져옵니다."
 	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "북마크 조회 성공",
+					content = @Content(schema = @Schema(implementation = PlaceDetailsResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "400",
+					description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "401",
+					description = "Unauthorized(만료된 토큰)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
+			@ApiResponse(
+					responseCode = "404",
+					description = "NOT_FOUND_MovieInfo(영화 API 오류)",
+					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			)
+	})
 	@GetMapping("/me")
-	ResponseModel<List<PlaceDetailsResponse>> getMyBookMarkDetails(
+	ResponseModel<PlaceDetailsListResponse> getMyBookMarkDetails(
 		@UserId User user
 	) throws IOException {
-		return ResponseModel.success(bookMarkService.getMyBookMarkDetails(user));
+		PlaceDetailsListResponse response = PlaceDetailsListResponse.of(bookMarkService.getMyBookMarkDetails(user));
+		return response.contents().isEmpty()
+				? ResponseModel.success(NO_CONTENT, response)
+				: ResponseModel.success(response);
 	}
 
 	@Operation(
