@@ -18,6 +18,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -65,6 +68,14 @@ public class User extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Like> likes = new ArrayList<>();
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "blocked_user",
+		joinColumns = @JoinColumn(name = "blocker_id"),
+		inverseJoinColumns = @JoinColumn(name = "blocked_id")
+	)
+	private List<User> blockedUsers = new ArrayList<>();
 
 	public enum Role {
 		USER,
