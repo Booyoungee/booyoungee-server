@@ -1,7 +1,6 @@
 package com.server.booyoungee.domain.review.comment.api;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -104,6 +103,7 @@ public class CommentController {
 	})
 	@GetMapping("/{placeId}")
 	public ResponseModel<CommentListResponse> getReviewList(
+		@UserId User user,
 		@Parameter(
 			description = "장소 ID",
 			example = "1",
@@ -111,7 +111,7 @@ public class CommentController {
 		)
 		@PathVariable(name = "placeId") Long placeId
 	) {
-		CommentListResponse response = commentService.getReviewList(placeId);
+		CommentListResponse response = commentService.getReviewList(placeId, user);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
