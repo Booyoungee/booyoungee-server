@@ -15,13 +15,16 @@ import com.server.booyoungee.domain.kakaoMap.application.PlaceSearchService;
 import com.server.booyoungee.domain.kakaoMap.dto.KakaoAddressToCode;
 import com.server.booyoungee.domain.kakaoMap.dto.response.SearchDetailDto;
 import com.server.booyoungee.domain.like.dao.LikeRepository;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.dao.store.StorePlaceRepository;
+import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.store.StorePlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.store.StorePlaceResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.exception.store.NotFoundStorePlaceException;
 import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
@@ -39,6 +42,7 @@ public class StorePlaceService {
 	private final KakaoAddressSearchService kakaoAddressSearchService;
 	private final LikeRepository likeRepository;
 	private final CommentRepository commentRepository;
+	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	public StorePlaceListResponse getStoreByName(String name) {
 		List<StorePlace> stores = storePlaceRepository.findAllByName(name);
@@ -81,7 +85,7 @@ public class StorePlaceService {
 	public PlaceSummaryListResponse getStorePlacesByFilter(String filter) {
 		List<Long> storePlaceIds = new ArrayList<>();
 		List<PlaceSummaryResponse> storePlaces = new ArrayList<>();
-
+		PlaceType type = PlaceType.store;
 		storePlaceIds = switch (filter) {
 			case "like" -> likeRepository.findTopPlacesByLikes();
 			case "review" -> commentRepository.findTopPlacesByReviews();
@@ -98,8 +102,18 @@ public class StorePlaceService {
 					.collect(Collectors.toList());
 				int likeCount = likeRepository.countByPlaceId(id);
 				int reviewCount = commentRepository.countByPlaceId(id);
+				TourInfoDetailsResponseDto tourInfo = null;
+				List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
+					storePlace.get().getName());
+				List<String> image = new ArrayList<>();
+				// Use Optional to handle potential null or empty list
+				tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
+				if (tourInfo != null) {
+					image.add(tourInfo.firstimage());
+				}
+
 				storePlaces.add(
-					PlaceSummaryResponse.of(storePlace.get(), stars, likeCount, reviewCount)
+					PlaceSummaryResponse.of(storePlace.get(), stars, likeCount, reviewCount, type, image)
 				);
 			}
 		});
