@@ -1,11 +1,11 @@
 package com.server.booyoungee.domain.place.dto.response;
 
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED;
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
 import java.util.List;
 
 import com.server.booyoungee.domain.place.domain.Place;
+import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.domain.tour.TourPlace;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
@@ -16,7 +16,7 @@ import lombok.Builder;
 @Builder
 public record PlaceSummaryResponse(
 	@Schema(description = "장소 ID", example = "1", requiredMode = REQUIRED)
-	Long id,
+	String id,
 
 	@Schema(description = "장소명", example = "임랑해수욕장", requiredMode = REQUIRED)
 	String name,
@@ -34,40 +34,54 @@ public record PlaceSummaryResponse(
 	int reviews,
 
 	@Schema(description = "영화 제목", example = "극비 수사", requiredMode = NOT_REQUIRED)
-	String movieName
+	String movieName,
+
+	@Schema(description = "장소 타입", example = "MOVIE", requiredMode = REQUIRED)
+	PlaceType type,
+
+	@Schema(description = "이미지 URL", example = "[\"https://booyoungee.s3.ap-northeast-2.amazonaws.com/임랑해수욕장1.jpg\",\"https://booyoungee.s3.ap-northeast-2.amazonaws.com/임랑해수욕장2.jpg\"]", requiredMode = REQUIRED)
+	List<String> images
 ) {
 	public static PlaceSummaryResponse of(TourPlace tourPlace, String tourPlaceName, String tourPlaceBasicAddress,
-		List<Stars> stars, int likes, int reviews) {
+		List<Stars> stars, int likes, int reviews, PlaceType type, List<String> images) {
 		return PlaceSummaryResponse.builder()
-			.id(tourPlace.getId())
+			.id(tourPlace.getId() + "")
 			.name(tourPlaceName)
 			.basicAddress(tourPlaceBasicAddress)
 			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
 			.likes(likes)
 			.reviews(reviews)
+			.type(type)
+			.images(images)
 			.build();
 	}
 
-	public static PlaceSummaryResponse of(Place place, List<Stars> stars, int likes, int reviews) {
+	public static PlaceSummaryResponse of(Place place, List<Stars> stars, int likes, int reviews, PlaceType type,
+		List<String> images) {
 		return PlaceSummaryResponse.builder()
-			.id(place.getId())
+			.id(place.getId() + "")
 			.name(place.getName())
 			.basicAddress(place.getBasicAddress())
 			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
 			.likes(likes)
 			.reviews(reviews)
+			.type(type)
+			.images(images)
 			.build();
 	}
 
-	public static PlaceSummaryResponse of(MoviePlace moviePlace, List<Stars> stars, int likes, int reviews) {
+	public static PlaceSummaryResponse of(MoviePlace moviePlace, List<Stars> stars, int likes, int reviews,
+		PlaceType type, List<String> images) {
 		return PlaceSummaryResponse.builder()
-			.id(moviePlace.getId())
+			.id(moviePlace.getId() + "")
 			.name(moviePlace.getName())
 			.basicAddress(moviePlace.getBasicAddress())
 			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
 			.likes(likes)
 			.reviews(reviews)
 			.movieName(moviePlace.getMovieName())
+			.type(type)
+			.images(images)
 			.build();
 	}
 }

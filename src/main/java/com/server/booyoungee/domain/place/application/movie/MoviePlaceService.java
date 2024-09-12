@@ -1,6 +1,7 @@
 package com.server.booyoungee.domain.place.application.movie;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,13 +12,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.like.dao.LikeRepository;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
+import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
-import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
-import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.place.exception.movie.NotFoundMoviePlaceException;
 import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
@@ -34,6 +38,8 @@ public class MoviePlaceService {
 	private final MoviePlaceRepository moviePlaceRepository;
 	private final LikeRepository likeRepository;
 	private final CommentRepository commentRepository;
+
+	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	@Transactional
 	public void initData() throws Exception {
@@ -89,11 +95,29 @@ public class MoviePlaceService {
 	public PlaceSummaryListResponse getMoviePlacesByFilter(String filter) {
 		List<Long> moviePlaceIds = new ArrayList<>();
 		List<PlaceSummaryResponse> moviePlaces = new ArrayList<>();
-
+		PlaceType type = PlaceType.movie;
 		moviePlaceIds = switch (filter) {
-			case "like" -> likeRepository.findTopPlacesByLikes();
-			case "review" -> commentRepository.findTopPlacesByReviews();
-			case "star" -> commentRepository.findTopPlacesByStars();
+			case "like" -> {
+				List<Long> likeIds = likeRepository.findTopPlacesByLikes();
+				if (likeIds == null || likeIds.isEmpty()) {
+					yield moviePlaceIds;  // Default behavior if no results
+				}
+				yield likeIds;
+			}
+			case "review" -> {
+				List<Long> reviewIds = commentRepository.findTopPlacesByReviews();
+				if (reviewIds == null || reviewIds.isEmpty()) {
+					yield moviePlaceIds;  // Default behavior if no results
+				}
+				yield reviewIds;
+			}
+			case "star" -> {
+				List<Long> starIds = commentRepository.findTopPlacesByStars();
+				if (starIds == null || starIds.isEmpty()) {
+					yield moviePlaceIds;  // Default behavior if no results
+				}
+				yield starIds;
+			}
 			default -> moviePlaceIds;
 		};
 
@@ -106,8 +130,19 @@ public class MoviePlaceService {
 					.collect(Collectors.toList());
 				int likeCount = likeRepository.countByPlaceId(id);
 				int reviewCount = commentRepository.countByPlaceId(id);
+
+				TourInfoDetailsResponseDto tourInfo = null;
+				List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
+					moviePlace.get().getName());
+				List<String> image = new ArrayList<>();
+				// Use Optional to handle potential null or empty list
+				tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
+				if (tourInfo != null) {
+					image.add(tourInfo.firstimage());
+				}
+				
 				moviePlaces.add(
-					PlaceSummaryResponse.of(moviePlace.get(), stars, likeCount, reviewCount)
+					PlaceSummaryResponse.of(moviePlace.get(), stars, likeCount, reviewCount, type, image)
 				);
 			}
 		});
@@ -145,4 +180,18 @@ public class MoviePlaceService {
 		List<MoviePlace> moviePlaces = moviePlaceRepository.findMoviePlacesByMapXAndMapY(mapX, mapY, radius);
 		return MoviePlaceListResponse.of(moviePlaces);
 	}
+
+	@Transactional
+	public List<String> placeImageList(TourInfoDetailsResponseDto image) throws IOException {
+
+		List<String> imageList = new ArrayList<>();
+		if (image.firstimage() != null && !image.firstimage().equals("")) {
+			imageList.add(image.firstimage());
+			if (image.firstimage2() != null && !image.firstimage2().equals("")) {
+				imageList.add(image.firstimage2());
+			}
+		}
+		return imageList;
+	}
+
 }
