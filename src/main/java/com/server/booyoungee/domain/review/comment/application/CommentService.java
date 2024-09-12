@@ -47,6 +47,21 @@ public class CommentService {
 		return CommentListResponse.from(comments);
 	}
 
+	@Transactional
+	public CommentListResponse getReviewList(Long placeId, User user) {
+		List<User> blockedUsers = user.getBlockedUsers();
+
+		// If the user hasn't blocked anyone, simply return all comments
+		if (blockedUsers == null || blockedUsers.isEmpty()) {
+			List<Comment> comments = commentRepository.findAllByPlaceId(placeId);
+			return CommentListResponse.from(comments);
+		}
+		// Fetch comments that are not from blocked users
+		List<Comment> comments = commentRepository.findAllByPlaceIdAndWriterNotIn(placeId, blockedUsers);
+
+		return CommentListResponse.from(comments);
+	}
+
 	public List<Stars> getStars(Long placeId) {
 		List<Comment> comments = commentRepository.findAllByPlaceId(placeId);
 		return comments.stream()
@@ -59,7 +74,7 @@ public class CommentService {
 		List<Comment> comments = commentRepository.findAllByWriter(user);
 		return CommentListResponse.from(comments);
 	}
-	
+
 	@Transactional
 	public CommentPersistResponse deleteReview(User user, Long commentId) {
 		Comment comment = getComment(commentId);

@@ -1,8 +1,6 @@
 package com.server.booyoungee.domain.user.exception;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.HttpStatus;
 
@@ -19,7 +17,7 @@ public enum UserExceptionCode implements ExceptionCode {
 	NOT_FOUND_USER(NOT_FOUND, "유저를 찾을 수 없습니다"),
 	EMPTY_PRINCIPAL(NOT_FOUND, "토큰에 유저 정보가 없습니다"),
 	DUPLICATE_NICKNAME(CONFLICT, "이미 사용 중인 닉네임입니다"),
-	;
+	DUPLICATE_BLOCK_USER(CONFLICT, "이미 차단한 유저입니다");
 
 	private final HttpStatus status;
 	private final String message;
