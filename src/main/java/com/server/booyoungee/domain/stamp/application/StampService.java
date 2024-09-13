@@ -3,6 +3,7 @@ package com.server.booyoungee.domain.stamp.application;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import com.server.booyoungee.domain.place.application.PlaceService;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.domain.Place;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.stamp.dao.StampRepository;
@@ -68,11 +70,25 @@ public class StampService {
 	}
 
 	@Transactional
+	public boolean isExistStamp(User user, Long placeId) {
+
+		Place place = placeService.getByPlaceId(placeId);
+		return stampRepository.existsByUserAndPlace(user, place);
+	}
+
+	@Transactional
 	public StampListResponse getStamp(User user) throws IOException {
-		List<Stamp> stamps = stampRepository.findAllByUser(user);
-		List<StampResponse> stampResponses = new ArrayList<>();
-		for (Stamp stamp : stamps)
-			stampResponses.add(getStamp(user, stamp.getStampId()));
+		List<StampResponse> stampResponses = stampRepository.findAllByUser(user).stream()
+			.map(stamp -> {
+				try {
+					return getStamp(user, stamp.getStampId());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+
+			})
+			.collect(Collectors.toList());
+
 		return StampListResponse.from(stampResponses);
 	}
 
@@ -98,6 +114,27 @@ public class StampService {
 	}
 
 	@Transactional
+	public StampListResponse getNearbyStamp(User user, String userX, String userY) throws IOException {
+
+		MoviePlaceListResponse moviePlaceListResponse = moviePlaceService.getMoviePlacesNearby(userX, userY, 1000);
+
+		List<MoviePlaceResponse> moviePlaceList = moviePlaceListResponse.contents();
+		List<String> imageList = null;
+		List<StampResponse> stampResponses = new ArrayList<>();
+
+		for (MoviePlaceResponse moviePlace : moviePlaceList) {
+			if (!isExistStamp(user, moviePlace.id())) {
+				imageList = placeService.moviePosterList(moviePlace);
+				StampResponse stampResponse = StampResponse.of(moviePlace.id(), moviePlace.name(), "movie", imageList,
+					moviePlace.mapX(), moviePlace.mapY());
+				stampResponses.add(stampResponse);
+			}
+		}
+		return StampListResponse.from(stampResponses);
+
+	}
+
+	@Transactional
 	public int getStampCountByPlaceId(Long placeId) {
 		Place place = placeService.getByPlaceId(placeId);
 		return place.getStamps().size();
@@ -110,4 +147,5 @@ public class StampService {
 		stampRepository.delete(stamp);
 		return StampPersistResponse.of(stampId);
 	}
+
 }

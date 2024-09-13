@@ -174,6 +174,28 @@ public class StampController {
 		StampPersistResponse response = stampService.deleteStamp(user, stampId);
 		return ResponseModel.success(response);
 	}
+	
+	@GetMapping("/nearby")
+	public ResponseModel<StampListResponse> getNearbyStamp(
+		@UserId User user,
+		@Parameter(
+			description = "내 위치 X 좌표",
+			example = "129",
+			required = true
+		)
+		@RequestParam String userX,
+		@Parameter(
+			description = "내 위치 Y 좌표",
+			example = "35",
+			required = true
+		)
+		@RequestParam String userY
+	) throws IOException {
+		StampListResponse response = stampService.getNearbyStamp(user, userX, userY);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
+	}
 
 	@Hidden
 	@Operation(summary = "특정 장소 스탬프 수 조회")

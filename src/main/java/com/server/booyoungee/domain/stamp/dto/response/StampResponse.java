@@ -35,7 +35,13 @@ public record StampResponse(
 
 	@Schema(description = "수정일", example = "2021.09.01.12:00:00", requiredMode = REQUIRED)
 	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss.SSS")
-	LocalDateTime updatedAt
+	LocalDateTime updatedAt,
+
+	@Schema(description = "경도", example = "129.0650146", requiredMode = REQUIRED)
+	String mapX,
+
+	@Schema(description = "위도", example = "35.0686809", requiredMode = REQUIRED)
+	String mapY
 
 ) {
 	public static StampResponse from(Stamp stamp, List<String> images) {
@@ -52,15 +58,24 @@ public record StampResponse(
 	}
 
 	static public StampResponse of(Long stampId, LocalDateTime createdAt, LocalDateTime updatedAt, Long placeId,
-		String placeName, String type, List<String> images) {
+		String placeName, String type, List<String> images, String mapX, String mapY) {
 		return StampResponse.builder()
 			.stampId(stampId)
 			.placeId(placeId)
 			.placeName(placeName)
 			.type(type)
-			// .count(count)
 			.createdAt(createdAt)
 			.updatedAt(updatedAt)
+			.images(images)
+			.build();
+	}
+
+	static public StampResponse of(Long placeId,
+		String placeName, String type, List<String> images, String mapX, String mapY) {
+		return StampResponse.builder()
+			.placeId(placeId)
+			.placeName(placeName)
+			.type(type)
 			.images(images)
 			.build();
 	}

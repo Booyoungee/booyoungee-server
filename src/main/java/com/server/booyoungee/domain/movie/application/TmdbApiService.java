@@ -77,6 +77,7 @@ public class TmdbApiService {
 			saveMovie(title);
 			movieOptional = movieRepository.findByTitle(title);
 		}
+		System.out.println(title);
 
 		return movieOptional.map(this::mapToMovieDetailsDto)
 			.orElseThrow(NotFoundMovieInfoException::new);
