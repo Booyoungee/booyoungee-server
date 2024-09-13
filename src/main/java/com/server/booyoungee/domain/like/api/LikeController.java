@@ -1,6 +1,6 @@
 package com.server.booyoungee.domain.like.api;
 
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +67,11 @@ public class LikeController {
 			content = @Content(schema = @Schema(implementation = LikePersistResponse.class))
 		),
 		@ApiResponse(
+			responseCode = "401",
+			description = "Unauthorized(만료된 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
 			responseCode = "403",
 			description = "USER_NOT_LIKE_OWNER",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
@@ -77,12 +82,12 @@ public class LikeController {
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 	})
-	@DeleteMapping("/{likeId}")
+	@DeleteMapping("/{placeId}")
 	public ResponseModel<LikePersistResponse> deleteLike(
 		@UserId User user,
-		@Parameter(description = "좋아요 ID", example = "1", required = true) @PathVariable("likeId") @Positive Long likeId
+		@Parameter(description = "장소 ID", example = "1", required = true) @PathVariable("placeId") @Positive Long placeId
 	) {
-		LikePersistResponse response = likeService.deleteLike(user, likeId);
+		LikePersistResponse response = likeService.deleteLike(user, placeId);
 		return ResponseModel.success(response);
 	}
 
