@@ -1,6 +1,7 @@
 package com.server.booyoungee.domain.place.dto.response;
 
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import java.util.List;
 
@@ -24,6 +25,12 @@ public record PlaceSummaryResponse(
 	@Schema(description = "기본 주소", example = "부산광역시 기장군 장안읍 임랑해안길 51", requiredMode = REQUIRED)
 	String basicAddress,
 
+	@Schema(description = "경도", example = "129.244", requiredMode = REQUIRED)
+	String mapX,
+
+	@Schema(description = "위도", example = "35.244", requiredMode = REQUIRED)
+	String mapY,
+
 	@Schema(description = "별점", example = "4.7", requiredMode = REQUIRED)
 	double stars,
 
@@ -43,11 +50,13 @@ public record PlaceSummaryResponse(
 	List<String> images
 ) {
 	public static PlaceSummaryResponse of(TourPlace tourPlace, String tourPlaceName, String tourPlaceBasicAddress,
-		List<Stars> stars, int likes, int reviews, PlaceType type, List<String> images) {
+		List<Stars> stars, int likes, int reviews, PlaceType type, List<String> images, String mapX, String mapY) {
 		return PlaceSummaryResponse.builder()
 			.id(tourPlace.getId() + "")
 			.name(tourPlaceName)
 			.basicAddress(tourPlaceBasicAddress)
+			.mapX(mapX)
+			.mapY(mapY)
 			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
 			.likes(likes)
 			.reviews(reviews)
@@ -57,11 +66,13 @@ public record PlaceSummaryResponse(
 	}
 
 	public static PlaceSummaryResponse of(Place place, List<Stars> stars, int likes, int reviews, PlaceType type,
-		List<String> images) {
+		List<String> images, String mapX, String mapY) {
 		return PlaceSummaryResponse.builder()
 			.id(place.getId() + "")
 			.name(place.getName())
 			.basicAddress(place.getBasicAddress())
+			.mapX(mapX)
+			.mapY(mapY)
 			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
 			.likes(likes)
 			.reviews(reviews)
@@ -76,6 +87,8 @@ public record PlaceSummaryResponse(
 			.id(moviePlace.getId() + "")
 			.name(moviePlace.getName())
 			.basicAddress(moviePlace.getBasicAddress())
+			.mapX(moviePlace.getMapX())
+			.mapY(moviePlace.getMapY())
 			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
 			.likes(likes)
 			.reviews(reviews)

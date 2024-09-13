@@ -67,8 +67,8 @@ public class TourPlaceService {
 				}
 				tourPlaces.add(
 					PlaceSummaryResponse.of(tourPlace.get(), response.get(0).title(), response.get(0).addr1(), stars,
-						likeCount, reviewCount, type, image)
-				);
+						likeCount, reviewCount, type, image, response.get(0).mapx(), response.get(0).mapy()
+				));
 			}
 		});
 		return PlaceSummaryListResponse.of(tourPlaces);
