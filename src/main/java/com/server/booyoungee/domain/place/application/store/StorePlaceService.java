@@ -113,7 +113,7 @@ public class StorePlaceService {
 				}
 
 				storePlaces.add(
-					PlaceSummaryResponse.of(storePlace.get(), stars, likeCount, reviewCount, type, image)
+					PlaceSummaryResponse.of(storePlace.get(), stars, likeCount, reviewCount, type, image, storePlace.get().getMapX(), storePlace.get().getMapY())
 				);
 			}
 		});
