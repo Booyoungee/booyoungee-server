@@ -112,7 +112,7 @@ public class PlaceService {
 		return movieList;
 	}
 
-	private List<String> moviePosterList(MoviePlaceResponse moviePlace) {
+	public List<String> moviePosterList(MoviePlaceResponse moviePlace) {
 		List<String> posterUrl = new ArrayList<>();
 		List<MovieImagesDto.BackDrops> backdrops = movieService.getMovie(moviePlace.movieName()).getBackdrops();
 		for (MovieImagesDto.BackDrops backdrop : backdrops) {

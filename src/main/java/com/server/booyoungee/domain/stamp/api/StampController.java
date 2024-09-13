@@ -2,6 +2,8 @@ package com.server.booyoungee.domain.stamp.api;
 
 import static org.springframework.http.HttpStatus.*;
 
+import java.io.IOException;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,7 +97,7 @@ public class StampController {
 	@GetMapping
 	public ResponseModel<StampListResponse> getStamp(
 		@UserId User user
-	) {
+	) throws IOException {
 		StampListResponse response = stampService.getStamp(user);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
@@ -131,7 +133,7 @@ public class StampController {
 		)
 		@RequestParam Long stampId,
 		@UserId User user
-	) {
+	) throws IOException {
 		StampResponse response = stampService.getStamp(user, stampId);
 		return ResponseModel.success(response);
 	}
