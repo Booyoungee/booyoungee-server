@@ -32,8 +32,10 @@ public class LikeService {
 	}
 
 	@Transactional
-	public LikePersistResponse deleteLike(User user, Long likeId) {
-		Like like = getLikeById(likeId);
+	public LikePersistResponse deleteLike(User user, Long placeId) {
+		Place place = placeService.getByPlaceId(placeId);
+		Like like = likeRepository.findByUserAndPlace(user, place)
+			.orElseThrow(NotFoundLikeException::new);
 		validateIsOwner(like, user);
 		likeRepository.delete(like);
 		return LikePersistResponse.from(like);
