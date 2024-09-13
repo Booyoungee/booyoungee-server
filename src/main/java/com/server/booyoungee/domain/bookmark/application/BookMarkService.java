@@ -49,7 +49,7 @@ public class BookMarkService {
 		List<BookMark> bookMarkList = bookMarkRepository.findAllByUser(user);
 		List<PlaceDetailsResponse> dto = new ArrayList<>();
 		for (BookMark bookMark : bookMarkList) {
-			dto.add(placeService.getDetails(bookMark.getPlaceId().getId(), bookMark.getType(),user));
+			dto.add(placeService.getDetails(bookMark.getPlaceId().getId(), bookMark.getType(), user));
 		}
 		return dto;
 	}
@@ -71,8 +71,10 @@ public class BookMarkService {
 		return placeService.getPlace(id, placeId, type);
 	}
 
-	public BookMarkPersistResponse deleteBookMark(User user, Long bookMarkId) {
-		BookMark bookMark = bookMarkRepository.findByBookMarkIdAndUserId(bookMarkId, user);
+	public BookMarkPersistResponse deleteBookMark(User user, Long PlaceId) {
+		Place place = placeService.getByPlaceId(PlaceId);
+		BookMark bookMark = bookMarkRepository.findByPlaceIdAndUserId(place, user);
+
 		if (bookMark == null) {
 			throw new NotFoundBookMarkException();
 		}
