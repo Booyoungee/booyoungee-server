@@ -161,7 +161,7 @@ public class PlaceService {
 			dto = PlaceDetailsResponse.of(placeId + "", tourInfo.title(), tourInfo.addr1(), tourInfo.tel(),
 				imageList, type, movieList,
 				posterUrl, place.getLikes().size(),
-				0, place.getStamps().size(), place.getComments().size(), stars, userMe);
+				0, place.getStamps().size(), place.getComments().size(), place.getBookmarks().size(), stars, userMe);
 
 		} else {
 			List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(

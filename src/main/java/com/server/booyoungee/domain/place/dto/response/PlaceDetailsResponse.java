@@ -50,6 +50,9 @@ public record PlaceDetailsResponse(
 	@Schema(description = "리뷰 수", example = "1", requiredMode = REQUIRED)
 	int reviewCount,
 
+	@Schema(description = "북마크 수", example = "1", requiredMode = REQUIRED)
+	int bookmarkCount,
+
 	@Schema(description = "별점", example = "4.7", requiredMode = REQUIRED)
 	double stars,
 
@@ -60,9 +63,10 @@ public record PlaceDetailsResponse(
 ) {
 	public static PlaceDetailsResponse of(String placeId, String name, String address, String tel, List<String> images,
 		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount, int stampCount,
-		int reviewCount, List<Stars> stars, UserMeResponse me) {
+		int reviewCount, int bookmarkCount, List<Stars> stars, UserMeResponse me) {
 		return new PlaceDetailsResponse(placeId, name, address, tel, images, type, movies, posterUrl, likeCount,
-			starCount, stampCount, reviewCount, stars.stream().mapToDouble(Stars::getStars).average().orElse(0), me);
+			starCount, stampCount, reviewCount, bookmarkCount,
+			stars.stream().mapToDouble(Stars::getStars).average().orElse(0), me);
 	}
 
 	public static PlaceDetailsResponse from(Place place, PlaceType type, String tel, List<String> images,
@@ -71,6 +75,7 @@ public record PlaceDetailsResponse(
 			place.getId() + "", place.getName(), place.getBasicAddress(),
 			tel, images, type, movies, posterUrl,
 			place.getLikes().size(), 0, place.getStamps().size(), place.getComments().size(),
+			place.getBookmarks().size(),
 			stars.stream().mapToDouble(Stars::getStars).average().orElse(0),
 			me);
 	}

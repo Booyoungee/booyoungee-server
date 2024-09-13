@@ -3,9 +3,7 @@ package com.server.booyoungee.domain.bookmark.api;
 import static org.springframework.http.HttpStatus.*;
 
 import java.io.IOException;
-import java.util.List;
 
-import com.server.booyoungee.domain.place.dto.response.PlaceDetailsListResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +17,7 @@ import com.server.booyoungee.domain.bookmark.dto.response.BookMarkListResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkPersistResponse;
 import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.place.domain.PlaceType;
+import com.server.booyoungee.domain.place.dto.response.PlaceDetailsListResponse;
 import com.server.booyoungee.domain.place.dto.response.PlaceDetailsResponse;
 import com.server.booyoungee.domain.user.domain.User;
 import com.server.booyoungee.domain.user.interceptor.UserId;
@@ -73,26 +72,26 @@ public class BookMarkController {
 		description = "마이페이지에서 북마크에 등록된 장소들의 상세 정보들을 가져옵니다."
 	)
 	@ApiResponses({
-			@ApiResponse(
-					responseCode = "200",
-					description = "북마크 조회 성공",
-					content = @Content(schema = @Schema(implementation = PlaceDetailsResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "400",
-					description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "401",
-					description = "Unauthorized(만료된 토큰)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			),
-			@ApiResponse(
-					responseCode = "404",
-					description = "NOT_FOUND_MovieInfo(영화 API 오류)",
-					content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-			)
+		@ApiResponse(
+			responseCode = "200",
+			description = "북마크 조회 성공",
+			content = @Content(schema = @Schema(implementation = PlaceDetailsResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "NOT_FOUND_TOUR_PLACE (관광지 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "Unauthorized(만료된 토큰)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "NOT_FOUND_MovieInfo(영화 API 오류)",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
 	})
 	@GetMapping("/me")
 	ResponseModel<PlaceDetailsListResponse> getMyBookMarkDetails(
@@ -100,8 +99,8 @@ public class BookMarkController {
 	) throws IOException {
 		PlaceDetailsListResponse response = PlaceDetailsListResponse.of(bookMarkService.getMyBookMarkDetails(user));
 		return response.contents().isEmpty()
-				? ResponseModel.success(NO_CONTENT, response)
-				: ResponseModel.success(response);
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
 	}
 
 	@Operation(
@@ -177,13 +176,13 @@ public class BookMarkController {
 	ResponseModel<BookMarkPersistResponse> deleteBookMark(
 		@UserId User user,
 		@Parameter(
-			description = "북마크 ID",
+			description = "장소 ID",
 			example = "1",
 			required = true
 		)
-		@RequestParam Long bookMarkId
+		@RequestParam Long placeId
 	) {
-		BookMarkPersistResponse response = bookMarkService.deleteBookMark(user, bookMarkId);
+		BookMarkPersistResponse response = bookMarkService.deleteBookMark(user, placeId);
 		return ResponseModel.success(response);
 	}
 }

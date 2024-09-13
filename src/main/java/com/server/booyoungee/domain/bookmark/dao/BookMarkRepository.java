@@ -21,5 +21,7 @@ public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
 	BookMark findByBookMarkIdAndUserId(Long BookMarkId, User userId);
 
 	boolean existsByUserIdAndPlaceIdAndType(User user, Place placeId, PlaceType type);
+
+	BookMark findByPlaceIdAndUserId(Place place, User user);
 }
 
