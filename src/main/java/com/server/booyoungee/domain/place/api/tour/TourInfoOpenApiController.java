@@ -1,5 +1,7 @@
 package com.server.booyoungee.domain.place.api.tour;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
@@ -72,7 +75,7 @@ public class TourInfoOpenApiController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "키워드 기반 관광 정보 검색 성공",
-			content = @Content(schema = @Schema(implementation = TourInfoCommonResponse.class))
+			content = @Content(schema = @Schema(implementation = PlaceSummaryListResponse.class))
 		),
 		@ApiResponse(
 			responseCode = "400",
@@ -81,7 +84,7 @@ public class TourInfoOpenApiController {
 		),
 	})
 	@GetMapping("/keyword")
-	public ResponseModel<List<TourInfoCommonResponse>> getOpenApiInfoByKeyword(
+	public ResponseModel<PlaceSummaryListResponse> getOpenApiInfoByKeyword(
 		@Parameter(description = "페이지 내 최대 응답 개수", example = "10", required = true) @RequestParam @Positive int numOfRows,
 		@Parameter(description = "페이지 인덱스", example = "0", required = true) @RequestParam @PositiveOrZero int pageNo,
 		@Parameter(description = "검색 키워드", example = "해운대", required = true) @RequestParam String keyword
@@ -89,7 +92,11 @@ public class TourInfoOpenApiController {
 		List<TourInfoCommonResponse> jsonResult = tourInfoOpenApiService
 			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
 		tourPlaceService.viewContents(jsonResult);
-		return ResponseModel.success(jsonResult);
+
+		PlaceSummaryListResponse response = tourPlaceService.getPlaceByKeyword(jsonResult);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
 	}
 
 	@Hidden
