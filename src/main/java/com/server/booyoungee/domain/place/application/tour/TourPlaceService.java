@@ -68,9 +68,33 @@ public class TourPlaceService {
 				tourPlaces.add(
 					PlaceSummaryResponse.of(tourPlace.get(), response.get(0).title(), response.get(0).addr1(), stars,
 						likeCount, reviewCount, type, image, response.get(0).mapx(), response.get(0).mapy()
-				));
+					));
 			}
 		});
+		return PlaceSummaryListResponse.of(tourPlaces);
+	}
+
+	@Transactional
+	public PlaceSummaryListResponse getPlaceByKeyword(List<TourInfoCommonResponse> dto) {
+		List<PlaceSummaryResponse> tourPlaces = new ArrayList<>();
+		for (TourInfoCommonResponse response : dto) {
+			Optional<TourPlace> tourPlace = tourPlaceRepository.findByContentId(response.contentid());
+			if (tourPlace.isPresent()) {
+				Long id = tourPlace.get().getId();
+				List<Stars> stars = commentRepository.findAllByPlaceId(id)
+					.stream()
+					.map(Comment::getStars)
+					.collect(Collectors.toList());
+				int likeCount = likeRepository.countByPlaceId(id);
+				int reviewCount = commentRepository.countByPlaceId(id);
+				List<String> image = new ArrayList<>();
+				image.add(response.firstimage());
+				tourPlaces.add(
+					PlaceSummaryResponse.of(tourPlace.get(), response.title(), response.addr1(), stars,
+						likeCount, reviewCount, PlaceType.tour, image, response.mapx(), response.mapy()
+					));
+			}
+		}
 		return PlaceSummaryListResponse.of(tourPlaces);
 	}
 
