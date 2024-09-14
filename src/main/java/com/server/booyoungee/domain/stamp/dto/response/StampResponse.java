@@ -66,6 +66,8 @@ public record StampResponse(
 			.type(type)
 			.createdAt(createdAt)
 			.updatedAt(updatedAt)
+			.mapX(mapX)
+			.mapY(mapY)
 			.images(images)
 			.build();
 	}
@@ -77,6 +79,8 @@ public record StampResponse(
 			.placeName(placeName)
 			.type(type)
 			.images(images)
+			.mapX(mapX)
+			.mapY(mapY)
 			.build();
 	}
 

@@ -114,9 +114,9 @@ public class StampService {
 	}
 
 	@Transactional
-	public StampListResponse getNearbyStamp(User user, String userX, String userY) throws IOException {
+	public StampListResponse getNearbyStamp(User user, String userX, String userY, int radius) throws IOException {
 
-		MoviePlaceListResponse moviePlaceListResponse = moviePlaceService.getMoviePlacesNearby(userX, userY, 1000);
+		MoviePlaceListResponse moviePlaceListResponse = moviePlaceService.getMoviePlacesNearby(userX, userY, radius);
 
 		List<MoviePlaceResponse> moviePlaceList = moviePlaceListResponse.contents();
 		List<String> imageList = null;
