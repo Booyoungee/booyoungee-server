@@ -1,10 +1,11 @@
 package com.server.booyoungee.domain.review.comment.dto.request;
 
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
+
+import com.server.booyoungee.domain.place.domain.PlaceType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -23,6 +24,10 @@ public record CommentRequest(
 
 	@Schema(description = "별점", example = "5", requiredMode = REQUIRED)
 	@PositiveOrZero @Max(value = 5)
-	int stars
+	int stars,
+
+	@Schema(description = "장소 타입", example = "MOVIE", requiredMode = REQUIRED)
+	@NotNull
+	PlaceType type
 ) {
 }

@@ -1,11 +1,12 @@
 package com.server.booyoungee.domain.review.comment.dto.response;
 
-import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.*;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +41,10 @@ public record CommentResponse(
 
 	@Schema(description = "수정일", example = "2021.09.01.12:00:00", requiredMode = REQUIRED)
 	@JsonFormat(shape = STRING, pattern = "yyyy.MM.dd.HH:mm:ss.SSS")
-	LocalDateTime updatedAt
+	LocalDateTime updatedAt,
+
+	@Schema(description = "장소 타입", example = "MOVIE", requiredMode = REQUIRED)
+	PlaceType type
 ) {
 	public static CommentResponse from(Comment comment) {
 		return CommentResponse.builder()
@@ -53,6 +57,8 @@ public record CommentResponse(
 			.writerName(comment.getWriter().getName())
 			.createdAt(comment.getCreatedAt())
 			.updatedAt(comment.getUpdatedAt())
+			.type(comment.getType())
 			.build();
 	}
+
 }
