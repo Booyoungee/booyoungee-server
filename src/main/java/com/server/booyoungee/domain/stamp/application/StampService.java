@@ -1,13 +1,20 @@
 package com.server.booyoungee.domain.stamp.application;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.server.booyoungee.domain.place.application.PlaceService;
+import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.domain.Place;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
+import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
 import com.server.booyoungee.domain.stamp.dao.StampRepository;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
 import com.server.booyoungee.domain.stamp.dto.request.StampRequest;
@@ -30,6 +37,8 @@ public class StampService {
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	private final PlaceService placeService;
+
+	private final MoviePlaceService moviePlaceService;
 
 	@Transactional
 	public StampPersistResponse createStamp(User user, StampRequest dto) {
@@ -61,19 +70,68 @@ public class StampService {
 	}
 
 	@Transactional
-	public StampListResponse getStamp(User user) {
-		List<Stamp> stamps = stampRepository.findAllByUser(user);
-		List<StampResponse> stampResponses = stamps.stream()
-			.map(StampResponse::from)
-			.toList();
+	public boolean isExistStamp(User user, Long placeId) {
+
+		Place place = placeService.getByPlaceId(placeId);
+		return stampRepository.existsByUserAndPlace(user, place);
+	}
+
+	@Transactional
+	public StampListResponse getStamp(User user) throws IOException {
+		List<StampResponse> stampResponses = stampRepository.findAllByUser(user).stream()
+			.map(stamp -> {
+				try {
+					return getStamp(user, stamp.getStampId());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+
+			})
+			.collect(Collectors.toList());
+
 		return StampListResponse.from(stampResponses);
 	}
 
 	@Transactional
-	public StampResponse getStamp(User user, Long stampId) {
+	public StampResponse getStamp(User user, Long stampId) throws IOException {
 		Stamp stamp = stampRepository.findByUserAndStampId(user, stampId)
 			.orElseThrow(NotFoundStampException::new);
-		return StampResponse.from(stamp);
+		Place place = stamp.getPlace();
+		TourInfoDetailsResponseDto tourInfo = null;
+		List<String> imageList = null;
+
+		MoviePlaceResponse moviePlace = moviePlaceService.getMoviePlace(place.getId());
+		imageList = placeService.moviePosterList(moviePlace);
+		if (imageList.isEmpty()) {
+			List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
+				place.getName());
+			tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
+			if (tourInfo != null) {
+				imageList = placeService.placeImageList(tourInfo);
+			}
+		}
+		return StampResponse.from(stamp, imageList);
+	}
+
+	@Transactional
+	public StampListResponse getNearbyStamp(User user, String userX, String userY) throws IOException {
+
+		MoviePlaceListResponse moviePlaceListResponse = moviePlaceService.getMoviePlacesNearby(userX, userY, 1000);
+
+		List<MoviePlaceResponse> moviePlaceList = moviePlaceListResponse.contents();
+		List<String> imageList = null;
+		List<StampResponse> stampResponses = new ArrayList<>();
+
+		for (MoviePlaceResponse moviePlace : moviePlaceList) {
+			if (!isExistStamp(user, moviePlace.id())) {
+				imageList = placeService.moviePosterList(moviePlace);
+				StampResponse stampResponse = StampResponse.of(moviePlace.id(), moviePlace.name(), "movie", imageList,
+					moviePlace.mapX(), moviePlace.mapY());
+				stampResponses.add(stampResponse);
+			}
+		}
+		return StampListResponse.from(stampResponses);
+
 	}
 
 	@Transactional
@@ -89,4 +147,5 @@ public class StampService {
 		stampRepository.delete(stamp);
 		return StampPersistResponse.of(stampId);
 	}
+
 }

@@ -2,6 +2,8 @@ package com.server.booyoungee.domain.stamp.api;
 
 import static org.springframework.http.HttpStatus.*;
 
+import java.io.IOException;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,7 +97,7 @@ public class StampController {
 	@GetMapping
 	public ResponseModel<StampListResponse> getStamp(
 		@UserId User user
-	) {
+	) throws IOException {
 		StampListResponse response = stampService.getStamp(user);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
@@ -131,7 +133,7 @@ public class StampController {
 		)
 		@RequestParam Long stampId,
 		@UserId User user
-	) {
+	) throws IOException {
 		StampResponse response = stampService.getStamp(user, stampId);
 		return ResponseModel.success(response);
 	}
@@ -171,6 +173,28 @@ public class StampController {
 	) {
 		StampPersistResponse response = stampService.deleteStamp(user, stampId);
 		return ResponseModel.success(response);
+	}
+	
+	@GetMapping("/nearby")
+	public ResponseModel<StampListResponse> getNearbyStamp(
+		@UserId User user,
+		@Parameter(
+			description = "내 위치 X 좌표",
+			example = "129",
+			required = true
+		)
+		@RequestParam String userX,
+		@Parameter(
+			description = "내 위치 Y 좌표",
+			example = "35",
+			required = true
+		)
+		@RequestParam String userY
+	) throws IOException {
+		StampListResponse response = stampService.getNearbyStamp(user, userX, userY);
+		return response.contents().isEmpty()
+			? ResponseModel.success(NO_CONTENT, response)
+			: ResponseModel.success(response);
 	}
 
 	@Hidden

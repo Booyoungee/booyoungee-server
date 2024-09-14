@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.place.application;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import com.server.booyoungee.domain.bookmark.dto.response.BookMarkResponse;
 import com.server.booyoungee.domain.like.dao.LikeRepository;
 import com.server.booyoungee.domain.movie.application.TmdbApiService;
 import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
+import com.server.booyoungee.domain.movie.dto.response.MovieDetailsDto;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.application.store.StorePlaceService;
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
@@ -112,9 +114,17 @@ public class PlaceService {
 		return movieList;
 	}
 
-	private List<String> moviePosterList(MoviePlaceResponse moviePlace) {
+	public List<String> moviePosterList(MoviePlaceResponse moviePlace) {
 		List<String> posterUrl = new ArrayList<>();
-		List<MovieImagesDto.BackDrops> backdrops = movieService.getMovie(moviePlace.movieName()).getBackdrops();
+		List<MovieImagesDto.BackDrops> backdrops = null;
+		MovieDetailsDto movieDetails = movieService.getMovie(moviePlace.movieName());
+
+		if (movieDetails != null) {
+			backdrops = movieDetails.getBackdrops();
+		} else {
+			// Handle the case when getMovie returns null, either set default values or leave it as null
+			backdrops = Collections.emptyList(); // or return null based on your use case
+		}
 		for (MovieImagesDto.BackDrops backdrop : backdrops) {
 			posterUrl.add(backdrop.getFilePath());
 		}

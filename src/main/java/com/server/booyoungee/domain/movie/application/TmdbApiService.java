@@ -77,13 +77,16 @@ public class TmdbApiService {
 			saveMovie(title);
 			movieOptional = movieRepository.findByTitle(title);
 		}
-
-		return movieOptional.map(this::mapToMovieDetailsDto)
-			.orElseThrow(NotFoundMovieInfoException::new);
+		if (!movieOptional.isEmpty()) {
+			return movieOptional.map(this::mapToMovieDetailsDto)
+				.orElseThrow(NotFoundMovieInfoException::new);
+		}
+		return null;
 	}
 
 	private MovieDetailsDto mapToMovieDetailsDto(Movie movie) {
 		List<MovieImagesDto.BackDrops> backDropsList = getBackDropList(movie);
+		System.out.println("poster " + movie.getPosterPath());
 		return MovieDetailsDto.builder()
 			.id(movie.getMovieid())
 			.title(movie.getTitle())
@@ -95,6 +98,7 @@ public class TmdbApiService {
 	private List<MovieImagesDto.BackDrops> getBackDropList(Movie movie) {
 		return List.of(movie.getBackdrops().split("\\|")).stream()
 			.map(path -> {
+				System.out.println("path" + path);
 				MovieImagesDto.BackDrops backDrops = new MovieImagesDto.BackDrops();
 				backDrops.setFilePath("https://image.tmdb.org/t/p/w500" + path);
 				return backDrops;
