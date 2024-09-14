@@ -1,6 +1,6 @@
 package com.server.booyoungee.domain.place.api.movie;
 
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.place.application.movie.MoviePlaceService;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryPageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
@@ -59,16 +60,16 @@ public class MoviePlaceController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "영화 제목으로 촬영지 검색 성공",
-			content = @Content(schema = @Schema(implementation = MoviePlacePageResponse.class))
+			content = @Content(schema = @Schema(implementation = PlaceSummaryPageResponse.class))
 		),
 	})
 	@GetMapping("/search")
-	public ResponseModel<MoviePlacePageResponse<MoviePlace>> getMovieLocationByMovieName(
+	public ResponseModel<PlaceSummaryPageResponse> getMovieLocationByMovieName(
 		@Parameter(description = "영화 이름", example = "해운대", required = true) @RequestParam String keyword,
 		@RequestParam(defaultValue = "0") @PositiveOrZero int page,
 		@RequestParam(defaultValue = "10") @Positive int size
 	) {
-		MoviePlacePageResponse<MoviePlace> response = moviePlaceService
+		PlaceSummaryPageResponse response = moviePlaceService
 			.getMoviePlacesByMovieNameKeyword(keyword, page, size);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
@@ -123,8 +124,6 @@ public class MoviePlaceController {
 		MoviePlacePageResponse<MoviePlace> response = moviePlaceService.getMoviePlaces(page, size);
 		return ResponseModel.success(response);
 	}
-
-
 
 	@Hidden
 	@GetMapping("/location")

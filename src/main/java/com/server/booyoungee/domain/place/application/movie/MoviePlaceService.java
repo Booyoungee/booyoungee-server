@@ -17,6 +17,7 @@ import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.movie.MoviePlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryPageResponse;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
@@ -124,40 +125,42 @@ public class MoviePlaceService {
 		moviePlaceIds.forEach(id -> {
 			Optional<MoviePlace> moviePlace = moviePlaceRepository.findById(id);
 			if (moviePlace.isPresent()) {
-				List<Stars> stars = commentRepository.findAllByPlaceId(id)
-					.stream()
-					.map(Comment::getStars)
-					.collect(Collectors.toList());
-				int likeCount = likeRepository.countByPlaceId(id);
-				int reviewCount = commentRepository.countByPlaceId(id);
-
-				TourInfoDetailsResponseDto tourInfo = null;
-				List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
-					moviePlace.get().getName());
-				List<String> image = new ArrayList<>();
-				// Use Optional to handle potential null or empty list
-				tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
-				if (tourInfo != null) {
-					image.add(tourInfo.firstimage());
-				}
-				
 				moviePlaces.add(
-					PlaceSummaryResponse.of(moviePlace.get(), stars, likeCount, reviewCount, type, image)
+					placeSummaryResponse(moviePlace.get())
 				);
 			}
 		});
 		return PlaceSummaryListResponse.of(moviePlaces);
 	}
 
-	public MoviePlacePageResponse<MoviePlace> getMoviePlacesByMovieNameKeyword(String keyword, int page, int size) {
+	public PlaceSummaryResponse placeSummaryResponse(MoviePlace moviePlace) {
+		List<Stars> stars = commentRepository.findAllByPlaceId(moviePlace.getId())
+			.stream()
+			.map(Comment::getStars)
+			.collect(Collectors.toList());
+		int likeCount = likeRepository.countByPlaceId(moviePlace.getId());
+		int reviewCount = commentRepository.countByPlaceId(moviePlace.getId());
+		TourInfoDetailsResponseDto tourInfo = null;
+		List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
+			moviePlace.getName());
+		List<String> image = new ArrayList<>();
+		// Use Optional to handle potential null or empty list
+		tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
+		if (tourInfo != null) {
+			image.add(tourInfo.firstimage());
+		}
+		return PlaceSummaryResponse.of(moviePlace, stars, likeCount, reviewCount, PlaceType.movie, image);
+	}
+
+	public PlaceSummaryPageResponse getMoviePlacesByMovieNameKeyword(String keyword, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Long totalElements = moviePlaceRepository.countByMovieNameContaining(keyword);
 		List<MoviePlace> moviePlaces = moviePlaceRepository.findAllByMovieNameContainingOrderByViewCount(keyword,
 			pageable);
-		List<MoviePlaceResponse> moviePlaceList = moviePlaces.stream()
-			.map(MoviePlaceResponse::from)
-			.collect(java.util.stream.Collectors.toList());
-		return MoviePlacePageResponse.of(moviePlaceList, PageableResponse.of(pageable, totalElements));
+		List<PlaceSummaryResponse> placeSummary = moviePlaces.stream()
+			.map(this::placeSummaryResponse)
+			.collect(Collectors.toList());
+		return PlaceSummaryPageResponse.of(placeSummary, PageableResponse.of(pageable, totalElements));
 	}
 
 	public MoviePlacePageResponse<MoviePlace> getMoviePlacesByKeyword(String keyword, int page, int size) {
