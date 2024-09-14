@@ -26,7 +26,7 @@ public record CommentRequest(
 	@PositiveOrZero @Max(value = 5)
 	int stars,
 
-	@Schema(description = "장소 타입", example = "MOVIE", requiredMode = REQUIRED)
+	@Schema(description = "장소 타입", example = "movie", requiredMode = REQUIRED)
 	@NotNull
 	PlaceType type
 ) {
