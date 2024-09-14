@@ -174,7 +174,7 @@ public class StampController {
 		StampPersistResponse response = stampService.deleteStamp(user, stampId);
 		return ResponseModel.success(response);
 	}
-	
+
 	@GetMapping("/nearby")
 	public ResponseModel<StampListResponse> getNearbyStamp(
 		@UserId User user,
@@ -189,9 +189,15 @@ public class StampController {
 			example = "35",
 			required = true
 		)
-		@RequestParam String userY
+		@RequestParam String userY,
+		@Parameter(
+			description = "radois",
+			example = "1000m",
+			required = true
+		)
+		@RequestParam int radius
 	) throws IOException {
-		StampListResponse response = stampService.getNearbyStamp(user, userX, userY);
+		StampListResponse response = stampService.getNearbyStamp(user, userX, userY, radius);
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
