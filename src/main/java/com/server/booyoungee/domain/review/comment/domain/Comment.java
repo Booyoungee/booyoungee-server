@@ -1,13 +1,13 @@
 package com.server.booyoungee.domain.review.comment.domain;
 
-import static jakarta.persistence.FetchType.EAGER;
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.server.booyoungee.domain.place.domain.Place;
+import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.review.accuse.domain.Accuse;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.domain.user.domain.User;
@@ -18,6 +18,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
@@ -59,6 +61,10 @@ public class Comment extends BaseTimeEntity {
 	@JoinColumn(name = "place_id")
 	private Place place;
 
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PlaceType type;
+
 	@ElementCollection(fetch = LAZY)
 	@CollectionTable(
 		name = "accuse",
@@ -66,12 +72,13 @@ public class Comment extends BaseTimeEntity {
 	)
 	private List<Accuse> accuseList = new ArrayList<>();
 
-	public static Comment of(User user, Place place, String content, int stars) {
+	public static Comment of(User user, Place place, String content, int stars, PlaceType type) {
 		return Comment.builder()
 			.content(content)
 			.stars(Stars.of(stars))
 			.writer(user)
 			.place(place)
+			.type(type)
 			.build();
 	}
 

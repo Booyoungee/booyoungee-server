@@ -1,6 +1,6 @@
 package com.server.booyoungee.domain.review.comment.dto.response;
 
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
 import java.util.List;
 

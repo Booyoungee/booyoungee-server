@@ -28,8 +28,8 @@ public class CommentService {
 
 	@Transactional
 	public CommentPersistResponse saveReview(User user, CommentRequest request) {
-		Place place = placeService.getByPlaceId(request.placeId());
-		Comment comment = Comment.of(user, place, request.content(), request.stars());
+		Place place = placeService.getByPlaceId(request.placeId(), request.type().getKey());
+		Comment comment = Comment.of(user, place, request.content(), request.stars(), request.type());
 		commentRepository.save(comment);
 		return CommentPersistResponse.from(comment);
 	}
