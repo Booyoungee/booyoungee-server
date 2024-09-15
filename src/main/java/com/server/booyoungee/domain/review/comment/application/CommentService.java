@@ -1,5 +1,6 @@
 package com.server.booyoungee.domain.review.comment.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.server.booyoungee.domain.place.application.PlaceService;
+import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
@@ -17,6 +19,7 @@ import com.server.booyoungee.domain.review.comment.exception.NotFoundCommentExce
 import com.server.booyoungee.domain.review.comment.exception.UserNotWriterOfCommentException;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
 import com.server.booyoungee.domain.user.domain.User;
+import com.server.booyoungee.global.common.PlaceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class CommentService {
 	private final CommentRepository commentRepository;
 	private final PlaceService placeService;
+	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	@Transactional
 	public CommentPersistResponse saveReview(User user, CommentRequest request) {
@@ -72,7 +76,18 @@ public class CommentService {
 	@Transactional
 	public CommentListResponse getMyReviewList(User user) {
 		List<Comment> comments = commentRepository.findAllByWriter(user);
-		return CommentListResponse.from(comments);
+		List<String> places = new ArrayList<>();
+		for (Comment comment : comments) {
+			if (comment.getType().equals("TOUR")) {
+				String placeName = tourInfoOpenApiService
+					.getCommonInfoByContentId(String.valueOf(comment.getPlace().getId()))
+					.get(0).title();
+				places.add(placeName);
+			}else {
+				places.add(comment.getPlace().getName());
+			}
+		}
+		return CommentListResponse.from(comments, places);
 	}
 
 	@Transactional
