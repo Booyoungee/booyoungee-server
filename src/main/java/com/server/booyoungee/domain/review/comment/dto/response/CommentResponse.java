@@ -6,6 +6,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.server.booyoungee.domain.place.domain.Place;
 import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 
@@ -51,6 +52,21 @@ public record CommentResponse(
 			.id(comment.getId())
 			.placeId(comment.getPlace().getId())
 			.placeName(comment.getPlace().getName())
+			.content(comment.getContent())
+			.stars(comment.getStars().getStars())
+			.writerId(comment.getWriter().getUserId())
+			.writerName(comment.getWriter().getName())
+			.createdAt(comment.getCreatedAt())
+			.updatedAt(comment.getUpdatedAt())
+			.type(comment.getType())
+			.build();
+	}
+
+	public static CommentResponse from(Comment comment, String placeName) {
+		return CommentResponse.builder()
+			.id(comment.getId())
+			.placeId(comment.getPlace().getId())
+			.placeName(placeName)
 			.content(comment.getContent())
 			.stars(comment.getStars().getStars())
 			.writerId(comment.getWriter().getUserId())
