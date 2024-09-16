@@ -170,4 +170,10 @@ public class TourPlaceService {
 		return tourPlaceRepository.existsByContentId(contentId);
 	}
 
+	public String getContentId(Long placeId) {
+		TourPlace tourPlace = tourPlaceRepository.findById(placeId)
+				.orElseThrow(NotFoundPlaceException::new);
+		System.out.println("tourPlace.getContentId() = " + tourPlace.getContentId());
+		return tourPlace.getContentId();
+	}
 }

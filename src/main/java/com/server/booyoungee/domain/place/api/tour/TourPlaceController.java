@@ -58,7 +58,7 @@ public class TourPlaceController {
 		@PathVariable String contentId
 	) throws IOException {
 		//tourPlaceService.viewContent(contentId);
-		TourInfoDetailsResponseDto tourInfo = tourPlaceService.getTour(Long.valueOf(contentId));
+		TourInfoDetailsResponseDto tourInfo = tourPlaceService.getTourDetails(contentId);
 		return ResponseModel.success(tourInfo);
 	}
 

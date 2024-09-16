@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
+import com.server.booyoungee.domain.place.domain.tour.TourPlace;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,8 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final PlaceService placeService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
+
+	private final TourPlaceService tourPlaceService;
 
 	@Transactional
 	public CommentPersistResponse saveReview(User user, CommentRequest request) {
@@ -88,10 +92,10 @@ public class CommentService {
 		final String TOUR_TYPE_UPPER = "TOUR";
 		final String TOUR_TYPE_LOWER = "tour";
 
-		if (comment.getType().equals(TOUR_TYPE_UPPER) || comment.getType().equals(TOUR_TYPE_LOWER)) {
-			return tourInfoOpenApiService
-				.getCommonInfoByContentId(String.valueOf(comment.getPlace().getId()))
-				.get(0).title();
+		if (comment.getType().getKey().equals(TOUR_TYPE_UPPER) || comment.getType().getKey().equals(TOUR_TYPE_LOWER)) {
+			return tourPlaceService
+				.getTourDetails(tourPlaceService.getContentId(comment.getPlace().getId()))
+				.title();
 		} else {
 			return comment.getPlace().getName();
 		}
