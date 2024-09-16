@@ -76,19 +76,27 @@ public class CommentService {
 	@Transactional
 	public CommentListResponse getMyReviewList(User user) {
 		List<Comment> comments = commentRepository.findAllByWriter(user);
-		List<String> places = new ArrayList<>();
-		for (Comment comment : comments) {
-			if (comment.getType().equals("TOUR")) {
-				String placeName = tourInfoOpenApiService
-					.getCommonInfoByContentId(String.valueOf(comment.getPlace().getId()))
-					.get(0).title();
-				places.add(placeName);
-			}else {
-				places.add(comment.getPlace().getName());
-			}
-		}
+
+		List<String> places = comments.stream()
+			.map(this::resolvePlaceName)
+			.collect(Collectors.toList());
+
 		return CommentListResponse.from(comments, places);
 	}
+
+	private String resolvePlaceName(Comment comment) {
+		final String TOUR_TYPE_UPPER = "TOUR";
+		final String TOUR_TYPE_LOWER = "tour";
+
+		if (comment.getType().equals(TOUR_TYPE_UPPER) || comment.getType().equals(TOUR_TYPE_LOWER)) {
+			return tourInfoOpenApiService
+				.getCommonInfoByContentId(String.valueOf(comment.getPlace().getId()))
+				.get(0).title();
+		} else {
+			return comment.getPlace().getName();
+		}
+	}
+
 
 	@Transactional
 	public CommentPersistResponse deleteReview(User user, Long commentId) {
