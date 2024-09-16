@@ -26,6 +26,13 @@ public record PlaceDetailsResponse(
 	@Schema(description = "전화번호", example = "051-123-4567", requiredMode = NOT_REQUIRED)
 	String tel,
 
+	// TODO : mapX mapY 실제 값 넣어주세요
+	@Schema(description = "경도", example = "129.244", requiredMode = REQUIRED)
+	String mapX,
+
+	@Schema(description = "위도", example = "35.244", requiredMode = REQUIRED)
+	String mapY,
+
 	@Schema(description = "이미지 URL", example = "[\"https://booyoungee.s3.ap-northeast-2.amazonaws.com/임랑해수욕장1.jpg\",\"https://booyoungee.s3.ap-northeast-2.amazonaws.com/임랑해수욕장2.jpg\"]", requiredMode = REQUIRED)
 	List<String> images,
 
@@ -64,19 +71,47 @@ public record PlaceDetailsResponse(
 	public static PlaceDetailsResponse of(String placeId, String name, String address, String tel, List<String> images,
 		PlaceType type, List<String> movies, List<String> posterUrl, int likeCount, int starCount, int stampCount,
 		int reviewCount, int bookmarkCount, List<Stars> stars, UserMeResponse me) {
-		return new PlaceDetailsResponse(placeId, name, address, tel, images, type, movies, posterUrl, likeCount,
-			starCount, stampCount, reviewCount, bookmarkCount,
-			stars.stream().mapToDouble(Stars::getStars).average().orElse(0), me);
+		return PlaceDetailsResponse.builder()
+			.placeId(placeId)
+			.name(name)
+			.address(address)
+			.tel(tel)
+			.mapX(null)
+			.mapY(null)
+			.images(images)
+			.type(type)
+			.movies(movies)
+			.posterUrl(posterUrl)
+			.likeCount(likeCount)
+			.starCount(starCount)
+			.stampCount(stampCount)
+			.reviewCount(reviewCount)
+			.bookmarkCount(bookmarkCount)
+			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
+			.me(me)
+			.build();
 	}
 
 	public static PlaceDetailsResponse from(Place place, PlaceType type, String tel, List<String> images,
 		List<String> movies, List<String> posterUrl, List<Stars> stars, UserMeResponse me) {
-		return new PlaceDetailsResponse(
-			place.getId() + "", place.getName(), place.getBasicAddress(),
-			tel, images, type, movies, posterUrl,
-			place.getLikes().size(), 0, place.getStamps().size(), place.getComments().size(),
-			place.getBookmarks().size(),
-			stars.stream().mapToDouble(Stars::getStars).average().orElse(0),
-			me);
+		return PlaceDetailsResponse.builder()
+			.placeId(place.getId() + "")
+			.name(place.getName())
+			.address(place.getBasicAddress())
+			.tel(tel)
+			.mapX(null)
+			.mapY(null)
+			.images(images)
+			.type(type)
+			.movies(movies)
+			.posterUrl(posterUrl)
+			.likeCount(place.getLikes().size())
+			.starCount(0)
+			.stampCount(place.getStamps().size())
+			.reviewCount(place.getComments().size())
+			.bookmarkCount(place.getBookmarks().size())
+			.stars(stars.stream().mapToDouble(Stars::getStars).average().orElse(0))
+			.me(me)
+			.build();
 	}
 }
