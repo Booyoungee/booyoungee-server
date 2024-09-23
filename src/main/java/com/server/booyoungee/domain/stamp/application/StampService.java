@@ -50,7 +50,7 @@ public class StampService {
 
 		Place place = placeService.getByPlaceId(dto.placeId());
 
-		if (distance <= 50) {
+		if (distance <= 1000) {
 			if (!isExistStamp(user, place)) {
 				Stamp stamp = Stamp.of(user, place, dto.type());
 				return StampPersistResponse.of(stampRepository.save(stamp).getStampId());
@@ -110,7 +110,8 @@ public class StampService {
 				imageList = placeService.placeImageList(tourInfo);
 			}
 		}
-		return StampResponse.from(stamp, imageList);
+
+		return StampResponse.from(stamp, moviePlace, imageList);
 	}
 
 	@Transactional

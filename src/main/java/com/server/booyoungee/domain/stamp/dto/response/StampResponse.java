@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.domain.stamp.domain.Stamp;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,12 +45,14 @@ public record StampResponse(
 	String mapY
 
 ) {
-	public static StampResponse from(Stamp stamp, List<String> images) {
+	public static StampResponse from(Stamp stamp, MoviePlaceResponse moviePlace, List<String> images) {
 		return StampResponse.builder()
 			.stampId(stamp.getStampId())
 			.placeId(stamp.getPlace().getId())
 			.placeName(stamp.getPlace().getName())
 			.type(stamp.getType())
+			.mapX(moviePlace.mapX())
+			.mapY(moviePlace.mapY())
 			// .count(count)
 			.createdAt(stamp.getCreatedAt())
 			.updatedAt(stamp.getUpdatedAt())
