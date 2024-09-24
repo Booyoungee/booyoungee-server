@@ -17,6 +17,7 @@ import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceListRespo
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlacePageResponse;
 import com.server.booyoungee.domain.place.dto.response.movie.MoviePlaceResponse;
 import com.server.booyoungee.global.common.ResponseModel;
+import com.server.booyoungee.global.exception.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +44,11 @@ public class MoviePlaceController {
 			responseCode = "200",
 			description = "영화 촬영지 카테고리 필터 조회 성공",
 			content = @Content(schema = @Schema(implementation = PlaceSummaryListResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "오픈 API 호출 중 오류가 발생했습니다.",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
 	})
 	@GetMapping
