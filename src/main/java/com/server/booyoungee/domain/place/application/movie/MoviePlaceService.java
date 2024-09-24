@@ -3,6 +3,7 @@ package com.server.booyoungee.domain.place.application.movie;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.server.booyoungee.domain.like.dao.LikeRepository;
+import com.server.booyoungee.domain.movie.application.TmdbApiService;
+import com.server.booyoungee.domain.movie.dto.request.MovieImagesDto;
+import com.server.booyoungee.domain.movie.dto.response.MovieDetailsDto;
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.dao.movie.MoviePlaceRepository;
 import com.server.booyoungee.domain.place.domain.PlaceType;
@@ -39,7 +43,7 @@ public class MoviePlaceService {
 	private final MoviePlaceRepository moviePlaceRepository;
 	private final LikeRepository likeRepository;
 	private final CommentRepository commentRepository;
-
+	private final TmdbApiService movieService;
 	private final TourInfoOpenApiService tourInfoOpenApiService;
 
 	@Transactional
@@ -148,6 +152,8 @@ public class MoviePlaceService {
 		tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
 		if (tourInfo != null) {
 			image.add(tourInfo.firstimage());
+		} else {
+			image = moviePosterList(MoviePlaceResponse.from(moviePlace));
 		}
 		return PlaceSummaryResponse.of(moviePlace, stars, likeCount, reviewCount, PlaceType.movie, image);
 	}
@@ -195,6 +201,23 @@ public class MoviePlaceService {
 			}
 		}
 		return imageList;
+	}
+
+	public List<String> moviePosterList(MoviePlaceResponse moviePlace) {
+		List<String> posterUrl = new ArrayList<>();
+		List<MovieImagesDto.BackDrops> backdrops = null;
+		MovieDetailsDto movieDetails = movieService.getMovie(moviePlace.movieName());
+
+		if (movieDetails != null) {
+			backdrops = movieDetails.getBackdrops();
+		} else {
+			// Handle the case when getMovie returns null, either set default values or leave it as null
+			backdrops = Collections.emptyList(); // or return null based on your use case
+		}
+		for (MovieImagesDto.BackDrops backdrop : backdrops) {
+			posterUrl.add(backdrop.getFilePath());
+		}
+		return posterUrl;
 	}
 
 }
