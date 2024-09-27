@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
 import com.server.booyoungee.domain.place.domain.tour.TourPlace;
+import com.server.booyoungee.domain.review.comment.exception.DuplicateCommentException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,11 @@ public class CommentService {
 	@Transactional
 	public CommentPersistResponse saveReview(User user, CommentRequest request) {
 		Place place = placeService.getByPlaceId(request.placeId(), request.type().getKey());
+
+		if(commentRepository.existsByWriterAndPlace(user, place)) {
+			throw new DuplicateCommentException();
+		}
+
 		Comment comment = Comment.of(user, place, request.content(), request.stars(), request.type());
 		commentRepository.save(comment);
 		return CommentPersistResponse.from(comment);

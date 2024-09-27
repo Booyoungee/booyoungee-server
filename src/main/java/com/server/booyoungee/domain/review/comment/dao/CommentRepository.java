@@ -2,6 +2,7 @@ package com.server.booyoungee.domain.review.comment.dao;
 
 import java.util.List;
 
+import com.server.booyoungee.domain.place.domain.Place;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	@Query("SELECT c FROM Comment c WHERE c.place.id = :placeId AND c.writer NOT IN :blockedUsers")
 	List<Comment> findAllByPlaceIdAndWriterNotIn(@Param("placeId") Long placeId,
 		@Param("blockedUsers") List<User> blockedUsers);
+
+	@Query("SELECT c FROM Comment c WHERE c.place = :place AND c.writer = :writer")
+	Comment findByWriterAndPlace(@Param("writer") User writer, @Param("place") Place place);
+
+	//existsByWriterAndPlace
+	boolean existsByWriterAndPlace(User writer, Place place);
 }
