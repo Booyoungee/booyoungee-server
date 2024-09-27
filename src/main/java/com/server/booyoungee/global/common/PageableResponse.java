@@ -58,4 +58,14 @@ public record PageableResponse<T>(
 			.isEnd(isEnd)
 			.build();
 	}
+
+	public static <T> PageableResponse<T> of(Pageable pageable) {
+		return PageableResponse.<T>builder()
+			.page(pageable.getPageNumber())
+			.size(pageable.getPageSize())
+			.totalPages(0)
+			.totalElements(0L)
+			.isEnd(false)
+			.build();
+	}
 }

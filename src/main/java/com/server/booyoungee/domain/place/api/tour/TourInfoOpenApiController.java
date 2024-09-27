@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.server.booyoungee.domain.place.application.tour.TourInfoOpenApiService;
 import com.server.booyoungee.domain.place.application.tour.TourPlaceService;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryPageResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoAreaResponseDto;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
@@ -75,7 +77,7 @@ public class TourInfoOpenApiController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "키워드 기반 관광 정보 검색 성공",
-			content = @Content(schema = @Schema(implementation = PlaceSummaryListResponse.class))
+			content = @Content(schema = @Schema(implementation = PlaceSummaryPageResponse.class))
 		),
 		@ApiResponse(
 			responseCode = "400",
@@ -84,7 +86,7 @@ public class TourInfoOpenApiController {
 		),
 	})
 	@GetMapping("/keyword")
-	public ResponseModel<PlaceSummaryListResponse> getOpenApiInfoByKeyword(
+	public ResponseModel<PlaceSummaryPageResponse> getOpenApiInfoByKeyword(
 		@Parameter(description = "페이지 내 최대 응답 개수", example = "10", required = true) @RequestParam @Positive int numOfRows,
 		@Parameter(description = "페이지 인덱스", example = "0", required = true) @RequestParam @PositiveOrZero int pageNo,
 		@Parameter(description = "검색 키워드", example = "해운대", required = true) @RequestParam String keyword
@@ -93,7 +95,7 @@ public class TourInfoOpenApiController {
 			.getTourInfoByKeyword(numOfRows, pageNo, keyword);
 		tourPlaceService.viewContents(jsonResult);
 
-		PlaceSummaryListResponse response = tourPlaceService.getPlaceByKeyword(jsonResult);
+		PlaceSummaryPageResponse response = tourPlaceService.getPlaceByKeyword(jsonResult, PageRequest.of(pageNo, numOfRows));
 		return response.contents().isEmpty()
 			? ResponseModel.success(NO_CONTENT, response)
 			: ResponseModel.success(response);
