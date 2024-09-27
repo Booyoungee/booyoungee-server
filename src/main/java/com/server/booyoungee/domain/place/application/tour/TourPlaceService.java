@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import com.server.booyoungee.domain.place.domain.PlaceType;
 import com.server.booyoungee.domain.place.domain.tour.TourContentType;
 import com.server.booyoungee.domain.place.domain.tour.TourPlace;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryListResponse;
+import com.server.booyoungee.domain.place.dto.response.PlaceSummaryPageResponse;
 import com.server.booyoungee.domain.place.dto.response.PlaceSummaryResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoCommonResponse;
 import com.server.booyoungee.domain.place.dto.response.tour.TourInfoDetailsResponseDto;
@@ -25,6 +27,7 @@ import com.server.booyoungee.domain.place.exception.NotFoundPlaceException;
 import com.server.booyoungee.domain.review.comment.dao.CommentRepository;
 import com.server.booyoungee.domain.review.comment.domain.Comment;
 import com.server.booyoungee.domain.review.stars.domain.Stars;
+import com.server.booyoungee.global.common.PageableResponse;
 import com.server.booyoungee.global.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
@@ -75,7 +78,7 @@ public class TourPlaceService {
 	}
 
 	@Transactional
-	public PlaceSummaryListResponse getPlaceByKeyword(List<TourInfoCommonResponse> dto) {
+	public PlaceSummaryPageResponse getPlaceByKeyword(List<TourInfoCommonResponse> dto, PageRequest request) {
 		List<PlaceSummaryResponse> tourPlaces = new ArrayList<>();
 		for (TourInfoCommonResponse response : dto) {
 			Optional<TourPlace> tourPlace = tourPlaceRepository.findByContentId(response.contentid());
@@ -95,7 +98,7 @@ public class TourPlaceService {
 					));
 			}
 		}
-		return PlaceSummaryListResponse.of(tourPlaces);
+		return PlaceSummaryPageResponse.of(tourPlaces, PageableResponse.of(request));
 	}
 
 	@Transactional //북마크 조회시 사용
