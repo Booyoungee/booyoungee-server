@@ -54,6 +54,11 @@ public class CommentController {
 			description = "NOT_FOUND_PLACE",
 			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 		),
+		@ApiResponse(
+			responseCode = "409",
+			description = "DUPLICATED",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+			),
 	})
 	@ResponseStatus(CREATED)
 	@PostMapping
