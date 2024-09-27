@@ -39,13 +39,17 @@ public class CommentService {
 	public CommentPersistResponse saveReview(User user, CommentRequest request) {
 		Place place = placeService.getByPlaceId(request.placeId(), request.type().getKey());
 
-		if(commentRepository.existsByWriterAndPlace(user, place)) {
+		if (existsByWriterAndPlace(user, place)) {
 			throw new DuplicateCommentException();
 		}
 
 		Comment comment = Comment.of(user, place, request.content(), request.stars(), request.type());
 		commentRepository.save(comment);
 		return CommentPersistResponse.from(comment);
+	}
+
+	private boolean existsByWriterAndPlace(User writer, Place place) {
+		return commentRepository.existsByWriterAndPlace(writer, place);
 	}
 
 	@Transactional
