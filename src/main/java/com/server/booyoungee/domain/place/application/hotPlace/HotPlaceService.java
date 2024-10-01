@@ -85,4 +85,8 @@ public class HotPlaceService {
 
 	}
 
+	public void updateViewCount() {
+		placeService.updateViewCount();
+	}
+
 }
