@@ -2,11 +2,7 @@ package com.server.booyoungee.domain.place.api.hotPlace;
 
 import static org.springframework.http.HttpStatus.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.server.booyoungee.domain.place.application.hotPlace.HotPlaceService;
 import com.server.booyoungee.domain.place.dto.response.hotPlace.HotPlaceListResponse;
@@ -79,6 +75,12 @@ public class HotPlaceController {
 	public ResponseModel<HotPlacePersistResponse> saveHotPlace() {
 		HotPlacePersistResponse response = hotPlaceService.saveHotPlace();
 		return ResponseModel.success(CREATED, response);
+	}
+
+	@PatchMapping()
+	public ResponseModel<Object> updateHotPlace() {
+		hotPlaceService.updateViewCount();
+		return ResponseModel.success(OK);
 	}
 
 }

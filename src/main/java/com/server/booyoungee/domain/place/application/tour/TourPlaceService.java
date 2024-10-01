@@ -106,6 +106,7 @@ public class TourPlaceService {
 
 		TourPlace tourPlace = tourPlaceRepository.findById(placeId)
 			.orElseThrow(NotFoundPlaceException::new);
+		tourPlace.increaseViewCount();
 		TourInfoDetailsResponseDto tourInfo = getTourDetails(tourPlace.getContentId());
 		tourPlaceRepository.save(tourPlace);
 

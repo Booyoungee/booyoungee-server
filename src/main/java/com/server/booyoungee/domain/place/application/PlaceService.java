@@ -235,4 +235,8 @@ public class PlaceService {
 		Pageable pageable = PageRequest.of(0, 10);
 		return placeRepository.findTop10ByOrderByViewCountDesc(pageable);
 	}
+	public void updateViewCount()
+	{
+		placeRepository.updateAllViewCountToZero();
+	}
 }
