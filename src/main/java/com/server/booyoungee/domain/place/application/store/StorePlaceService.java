@@ -93,7 +93,7 @@ public class StorePlaceService {
 			default -> storePlaceIds;
 		};
 
-		storePlaceIds.forEach(id -> {
+		storePlaceIds.stream().limit(15).forEach(id -> {
 			Optional<StorePlace> storePlace = storePlaceRepository.findById(id);
 			if (storePlace.isPresent()) {
 				List<Stars> stars = commentRepository.findAllByPlaceId(id)

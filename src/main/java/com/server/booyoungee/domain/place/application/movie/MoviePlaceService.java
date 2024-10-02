@@ -126,7 +126,7 @@ public class MoviePlaceService {
 			default -> moviePlaceIds;
 		};
 
-		moviePlaceIds.forEach(id -> {
+		moviePlaceIds.stream().limit(15).forEach(id -> {
 			Optional<MoviePlace> moviePlace = moviePlaceRepository.findById(id);
 			if (moviePlace.isPresent()) {
 				moviePlaces.add(
