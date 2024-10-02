@@ -53,7 +53,7 @@ public class TourPlaceService {
 			default -> tourPlaceIds;
 		};
 
-		tourPlaceIds.forEach(id -> {
+		tourPlaceIds.stream().limit(15).forEach(id -> {
 			Optional<TourPlace> tourPlace = tourPlaceRepository.findById(id);
 			if (tourPlace.isPresent()) {
 				List<TourInfoDetailsResponseDto> response = tourInfoOpenApiService.getCommonInfoByContentId(
