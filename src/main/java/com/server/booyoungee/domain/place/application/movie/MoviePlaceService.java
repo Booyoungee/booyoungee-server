@@ -126,14 +126,14 @@ public class MoviePlaceService {
 			default -> moviePlaceIds;
 		};
 
-		moviePlaceIds.stream().limit(15).forEach(id -> {
-			Optional<MoviePlace> moviePlace = moviePlaceRepository.findById(id);
-			if (moviePlace.isPresent()) {
-				moviePlaces.add(
-					placeSummaryResponse(moviePlace.get())
-				);
-			}
-		});
+		moviePlaceIds.stream()
+			.map(moviePlaceRepository::findById)
+			.filter(Optional::isPresent)
+			.map(Optional::get)
+			.map(this::placeSummaryResponse)
+			.limit(15)
+			.forEach(moviePlaces::add);
+
 		return PlaceSummaryListResponse.of(moviePlaces);
 	}
 

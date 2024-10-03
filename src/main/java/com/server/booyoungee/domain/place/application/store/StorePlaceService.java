@@ -93,7 +93,9 @@ public class StorePlaceService {
 			default -> storePlaceIds;
 		};
 
-		storePlaceIds.stream().limit(15).forEach(id -> {
+		for (Long id : storePlaceIds) {
+			if (storePlaces.size() >= 15) break;
+
 			Optional<StorePlace> storePlace = storePlaceRepository.findById(id);
 			if (storePlace.isPresent()) {
 				List<Stars> stars = commentRepository.findAllByPlaceId(id)
@@ -106,7 +108,7 @@ public class StorePlaceService {
 				List<TourInfoDetailsResponseDto> tourInfoList = tourInfoOpenApiService.getTourInfoByKeyword(
 					storePlace.get().getName());
 				List<String> image = new ArrayList<>();
-				// Use Optional to handle potential null or empty list
+
 				tourInfo = tourInfoList != null && !tourInfoList.isEmpty() ? tourInfoList.get(0) : null;
 				if (tourInfo != null) {
 					image.add(tourInfo.firstimage());
@@ -116,7 +118,8 @@ public class StorePlaceService {
 					PlaceSummaryResponse.of(storePlace.get(), stars, likeCount, reviewCount, type, image, storePlace.get().getMapX(), storePlace.get().getMapY())
 				);
 			}
-		});
+		}
+
 		return PlaceSummaryListResponse.of(storePlaces);
 	}
 
