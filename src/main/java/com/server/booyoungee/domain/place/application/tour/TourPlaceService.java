@@ -53,7 +53,9 @@ public class TourPlaceService {
 			default -> tourPlaceIds;
 		};
 
-		tourPlaceIds.stream().limit(15).forEach(id -> {
+		for (Long id : tourPlaceIds) {
+			if (tourPlaces.size() >= 15) break;
+
 			Optional<TourPlace> tourPlace = tourPlaceRepository.findById(id);
 			if (tourPlace.isPresent()) {
 				List<TourInfoDetailsResponseDto> response = tourInfoOpenApiService.getCommonInfoByContentId(
@@ -65,15 +67,18 @@ public class TourPlaceService {
 				int likeCount = likeRepository.countByPlaceId(id);
 				int reviewCount = commentRepository.countByPlaceId(id);
 				List<String> image = new ArrayList<>();
+
 				if (!response.isEmpty()) {
 					image.add(response.get(0).firstimage());
 				}
+
 				tourPlaces.add(
 					PlaceSummaryResponse.of(tourPlace.get(), response.get(0).title(), response.get(0).addr1(), stars,
 						likeCount, reviewCount, type, image, response.get(0).mapx(), response.get(0).mapy()
 					));
 			}
-		});
+		}
+
 		return PlaceSummaryListResponse.of(tourPlaces);
 	}
 
